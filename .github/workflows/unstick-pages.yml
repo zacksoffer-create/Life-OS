@@ -1,0 +1,28 @@
+# Clears a publish that GitHub left stuck, then publishes again.
+# Use it when a "pages build and deployment" run fails with "in progress deployment. Please cancel <commit> first":
+# Actions tab > Unstick the phone app publish > Run workflow, paste that commit (the long id after "cancel").
+name: Unstick the phone app publish
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: The commit GitHub says to cancel first
+        required: true
+permissions:
+  pages: write
+  contents: read
+jobs:
+  unstick:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      COMMIT: ${{ inputs.commit }}
+    steps:
+      - name: What GitHub thinks that publish is doing
+        run: gh api "repos/${{ github.repository }}/pages/deployments/$COMMIT" || true
+      - name: Cancel it
+        run: gh api -X POST "repos/${{ github.repository }}/pages/deployments/$COMMIT/cancel" && echo "cancelled"
+      - name: Publish the latest again
+        run: |
+          sleep 10
+          gh api -X POST "repos/${{ github.repository }}/pages/builds"
