@@ -1,0 +1,426 @@
+{
+ "version": 1,
+ "notes": "Text messages. Placeholders: {me} (your first name), {name} (sender), {other}, {pet}, {place}, {team}, {opp}, {chore}, {n}, {college}, {sib}, {event}. Teens get a voice pass (lowercase, emoji, abbreviations) based on their personality; parents and coaches don't. Each list is a pool; one is picked deterministically per message.",
+ "invite": [
+  "wanna hang after school?",
+  "u free later? thinking {place}",
+  "come to {place} w me",
+  "hey are you doing anything later",
+  "bored. {place}?",
+  "we should hang today",
+  "you around later? i need to get out of the house"
+ ],
+ "invite_date": [
+  "so... {place} tonight? just us?",
+  "want to get food later? my treat",
+  "i was thinking we could go to {place} later. if you want",
+  "hey. want to do something tonight?"
+ ],
+ "after_good": [
+  "that was fun today",
+  "had a really good time today",
+  "we gotta do that again",
+  "today was exactly what i needed",
+  "ok that was a top 5 day",
+  "thanks for today fr",
+  "still laughing about earlier"
+ ],
+ "after_good_date": [
+  "i had a really nice time tonight",
+  "home. tonight was really fun",
+  "can't stop smiling lol",
+  "ok i'm not gonna play it cool. i really like hanging out with you"
+ ],
+ "after_awkward": [
+  "today was kinda weird huh",
+  "sorry if i was off today",
+  "hey are we good?"
+ ],
+ "u_ok": [
+  "hey heard what happened w {other}. u ok?",
+  "{other} was so out of line today",
+  "ignore {other}, seriously",
+  "you good? that whole thing w {other} was a lot"
+ ],
+ "they_apologize": [
+  "hey. i'm sorry about earlier",
+  "i was a jerk today. sorry",
+  "can we talk? i feel bad about what happened"
+ ],
+ "congrats_team": [
+  "YOOO congrats on making {team}!!",
+  "told you you'd make it",
+  "{team}!!! let's go",
+  "congrats!! you earned that"
+ ],
+ "consolation_cut": [
+  "that's messed up. you deserved a spot",
+  "their loss honestly",
+  "sorry about tryouts. want to get food?",
+  "coach is wrong about this one"
+ ],
+ "congrats_award": [
+  "{event}!! that's huge",
+  "congrats on {event}, so deserved",
+  "saw the news. {event}. let's goooo"
+ ],
+ "rumor": [
+  "ok so people are saying something about you... want to know?",
+  "have you heard what people are saying??",
+  "just so you know there's a rumor going around. don't worry about it",
+  "people are talking about you in the group chat. it's dumb"
+ ],
+ "chatter_partner": [
+  "thinking about you",
+  "goodnight 🌙",
+  "miss you already",
+  "can't wait to see you tomorrow",
+  "how was practice?",
+  "you looked good today. just saying"
+ ],
+ "flirt_in": [
+  "random but you're really funny",
+  "saw you at the game 👀",
+  "ok you looked good today",
+  "you're kind of distracting in class",
+  "why do i always end up smiling at my phone when you text"
+ ],
+ "asked_out": [
+  "ok i'm just going to say it. want to go out sometime?",
+  "this is scary but. would you want to go on a date with me?",
+  "so i like you. like LIKE you. want to go out?"
+ ],
+ "asked_to_dance": [
+  "would you want to go to {event} with me?",
+  "ok so {event}... want to go together?"
+ ],
+ "park_followup": [
+  "{pet} is the best dog ever btw",
+  "tell {pet} i said hi lol",
+  "that was random running into you. fun though",
+  "we should walk the dogs together sometime"
+ ],
+ "team_pregame": [
+  "big one tomorrow 🔥",
+  "everyone get sleep tonight",
+  "{opp} tomorrow. we're not losing this one",
+  {"text": "lock in tomorrow boys", "when": ["guys"]},
+  {"text": "lock in tomorrow ladies", "when": ["girls"]},
+  "bus at 3:15 don't be late"
+ ],
+ "team_win": [
+  "LETS GOOOO",
+  "what a game",
+  "W",
+  "{opp} didn't know what hit them",
+  "great game everybody",
+  "that's how we do it"
+ ],
+ "team_loss": [
+  "we'll get em next week",
+  "rough one. heads up",
+  "film tomorrow is gonna hurt",
+  "that one stings",
+  "we were right there"
+ ],
+ "parent_pregame": [
+  "Good luck tonight! We'll be in the stands.",
+  "Big game today! Eat something real at lunch please.",
+  "Go get 'em tonight. Proud of you no matter what."
+ ],
+ "parent_win": [
+  "What a game!! So proud of you ❤️",
+  "Great game tonight! Dinner's in the oven.",
+  "Your dad hasn't stopped talking about that play."
+ ],
+ "parent_loss": [
+  "Tough one tonight. Proud of how you played.",
+  "Can't win them all. Proud of you.",
+  "Hang in there. Want me to save you some dinner?"
+ ],
+ "parent_made_team": [
+  "{team}!! So proud of you ❤️",
+  "Making {team}... we're celebrating this weekend. Pick the restaurant.",
+  "Your hard work paid off. Proud of you for making {team}."
+ ],
+ "parent_cut": [
+  "We're proud of you for putting yourself out there.",
+  "Their loss. Love you.",
+  "Want to talk about it tonight? No pressure."
+ ],
+ "parent_award": [
+  "{event}!!! We're so proud of you!",
+  "Grandma wants to know if it'll be in the paper 😂",
+  "Framing this one. So proud."
+ ],
+ "parent_offer": [
+  "{college}!!! Can't believe it. So proud!",
+  "Your dad is already looking up flights to visit {college}.",
+  "We need to talk about {college} at dinner!!"
+ ],
+ "parent_report_proud": [
+  "Saw your report card. Really proud of you.",
+  "Great grades this quarter! Keep it up."
+ ],
+ "parent_report_worried": [
+  "We need to talk about your grades tonight.",
+  "Report card came. Let's sit down after dinner."
+ ],
+ "parent_grounded": [
+  "You know why. Phone stays downstairs this week.",
+  "We're disappointed. We'll talk at home."
+ ],
+ "parent_drafted": [
+  "THE {team}!!!! I'm crying",
+  "We are SO proud of you. Call us when you can!!"
+ ],
+ "pet_adopted": [
+  "Welcome home {pet}!! ❤️",
+  "{pet} already found the couch.",
+  "Rules for {pet}: no feeding from the table. (That means you.)"
+ ],
+ "pet_chores_set": [
+  "Okay, official: you're on {chores} for {pet}. We're trusting you!",
+  "From now on you handle {chores} for {pet}. {pet} is counting on you."
+ ],
+ "pet_you_forgot": [
+  "{me}. {pet} never got {chore_a} today.",
+  "Did you forget about {pet}'s {chore}?",
+  "{pet} is looking at me like nobody did the {chore}. Was that you?"
+ ],
+ "pet_you_forgot_strict": [
+  "{pet} never got {chore_a} today. That's your job. Don't let it happen again.",
+  "We talked about this. {pet}'s {chore} is on you."
+ ],
+ "pet_sibling_forgot": [
+  "Somebody (cough {who}) forgot {pet}'s {chore}.",
+  "{who}, {pet} is still waiting on {chore_a}."
+ ],
+ "pet_streak": [
+  "{pet} has been so happy lately. Thank you for taking care of {pet} ❤️",
+  "{n} days in a row taking care of {pet}. We noticed. Thank you."
+ ],
+ "pet_sad": [
+  "{pet} has been moping around. Maybe some extra attention this week?",
+  "Has anyone played with {pet} lately? Looking a little sad."
+ ],
+ "pet_vet": [
+  "{pet} had to go to the vet. All okay, just needs rest.",
+  "Vet says {pet} will be fine. Extra gentle this week please."
+ ],
+ "pet_reminder": [
+  "Don't forget {pet}'s {chore} tonight!",
+  "{pet} needs {chore_a}. You're up today.",
+  "Reminder: {chore} for {pet} is on you today 🐾"
+ ],
+ "sibling_home": [
+  "home friday!! 🎉",
+  "coming home this weekend. you better be around",
+  "miss you loser. home soon"
+ ],
+ "sibling_leaving": [
+  "gonna miss you. don't touch my room",
+  "you're the oldest one at home now. good luck lol",
+  "text me if mom and dad get weird"
+ ],
+ "sibling_chatter": [
+  "can you cover for me tonight",
+  "mom is in a MOOD",
+  "did you eat the last of the cereal",
+  "saw your game. not bad",
+  "you owe me for driving you"
+ ],
+ "coach_starting": [
+  "You're starting Friday. Be ready.",
+  "Earned the start. Don't waste it."
+ ],
+ "coach_bench": [
+  "Keep working. Your time is coming.",
+  "Come see me before practice. Let's talk about minutes."
+ ],
+ "react_warm": [
+  "haha",
+  "❤️",
+  "for sure",
+  "yesss",
+  "ok good",
+  "same",
+  "love that",
+  "bet"
+ ],
+ "react_funny": [
+  "LMAO",
+  "stoppp",
+  "i'm crying",
+  "💀💀",
+  "you're ridiculous"
+ ],
+ "react_dry": [
+  "k",
+  "ok",
+  "cool",
+  "sure"
+ ],
+ "react_flirt_yes": [
+  "oh?? 😳",
+  "stop it 😊",
+  "i was hoping you'd say that",
+  "ok now i'm smiling"
+ ],
+ "react_flirt_no": [
+  "haha… ok",
+  "lol thanks?",
+  "you're funny"
+ ],
+ "react_plans_yes": [
+  "bet, see you then",
+  "yes!!",
+  "perfect. i'll be there",
+  "ok it's a plan"
+ ],
+ "react_plans_no": [
+  "can't today, sorry",
+  "ugh i have stuff. another time?",
+  "not today but soon"
+ ],
+ "react_parent": [
+  "Thank you ❤️",
+  "Love you.",
+  "👍",
+  "Good."
+ ],
+ "react_parent_annoyed": [
+  "Watch the attitude.",
+  "We'll talk later.",
+  "Excuse me?"
+ ],
+ "reply_hey": [
+  "hey",
+  "what's up",
+  "hiii",
+  "yo",
+  "not much, you?"
+ ],
+ "reply_hey_dry": [
+  "hey",
+  "hi"
+ ],
+ "first_hey": [
+  "hey what's up",
+  "yo",
+  "hiii",
+  "what are you up to"
+ ],
+ "first_hang": [
+  "wanna hang later?",
+  "you free after school?",
+  "{place} later?"
+ ],
+ "first_flirt": [
+  "random but i like talking to you",
+  "you looked good today",
+  "thinking about you lol"
+ ],
+ "first_good_luck": [
+  "good luck today!!",
+  "go kill it today",
+  "you got this today"
+ ],
+ "first_congrats": [
+  "congrats!! so happy for you",
+  "you deserve it fr"
+ ],
+ "first_sorry": [
+  "hey. i'm sorry about everything",
+  "can we talk? i feel bad"
+ ],
+ "chatter_plans": [
+  "what are you doing this weekend",
+  "what's the move tonight",
+  "food later?",
+  "this weekend we're doing something. no excuses",
+  "bored. you around later?"
+ ],
+ "chatter_school": [
+  "did you do the chem hw",
+  "do you have notes from today",
+  "can't believe we have a test friday",
+  "what did you get on the quiz"
+ ],
+ "chatter_vent": [
+  "i'm so tired. how is it only tuesday",
+  "today was so long",
+  "my mom is on my case about everything lol"
+ ],
+ "chatter_funny": [
+  "lmao did you see what happened in the hall today",
+  "random but i just remembered that thing from freshman year and i'm crying",
+  "my mom just asked about you lol",
+  "ok i have a story for you later"
+ ],
+ "chatter_game": [
+  "watching the game?",
+  "did you see that score last night??"
+ ],
+ "parent_first_day": [
+  "Have a great first day! We're proud of you ❤️",
+  "First day of high school!! Don't forget your lunch.",
+  "Big day. Be yourself and you'll be fine. Love you."
+ ],
+ "friend_first_day": [
+  "first day. you ready?",
+  "meet at the front steps before first period?",
+  "can't believe we're actually in high school lol",
+  "what lunch do you have??"
+ ],
+ "hang_talk": [
+  "ok this place is actually good",
+  "we should do this every week honestly",
+  "i needed this today",
+  "remind me why we don't come to {place} more",
+  "you have to try this",
+  "wait, tell me the rest of that story",
+  "i'm not going home yet",
+  "this is the most fun i've had all week",
+  "ok next time you're picking the place",
+  "how is it already this late"
+ ],
+ "date_talk": [
+  "i'm really glad you said yes",
+  "ok i might have been a little nervous about tonight",
+  "you look really nice",
+  "i like {place}. good call",
+  "i've been looking forward to this all week",
+  "so what's something nobody knows about you",
+  "we should do this again",
+  "is it weird that i'm not ready for tonight to end"
+ ],
+ "chat_talk": [
+  "did you see what happened in second period",
+  "i swear this week is never ending",
+  "are you going to the game friday",
+  "ok i need your opinion on something",
+  "what are you doing later",
+  "you were so right about that, by the way",
+  "how did you do on the quiz",
+  "i'm starving. is it lunch yet"
+ ],
+ "awkward_talk": [
+  "so... yeah",
+  "anyway. i should probably go",
+  "this is weird, right? it's not just me",
+  "i don't really know what to say",
+  "maybe we just try again another time",
+  "sorry. i'm kind of out of it today"
+ ],
+ "invite_later": [
+  "you around later? wanna hang",
+  "saw you were busy. later this week?",
+  "we should hang soon. when are you free",
+  "ok you're busy rn but {place} later?",
+  "rain check? i still wanna hang",
+  "free later? thinking {place}",
+  "you've been busy lol. this week sometime?",
+  "next time you're free, {place}?"
+ ]
+}

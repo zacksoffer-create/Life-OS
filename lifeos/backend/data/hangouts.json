@@ -1,0 +1,1229 @@
+{
+  "_about": "Hangouts that play out (hangouts.py). After a hangout, date or crew hangout you picked, one of these comes up: a quick scene with one choice. Each choice is a style (tease, sweet, bold, funny, cheesy, or chill for a safe pick); how it goes depends on what the person likes (chat.py tastes). kind: hang (a friend), date (someone you're into or dating), group (the crew). likes: interests that make it fit (yours or theirs). {them_first} is who you're with, {crew_first} the rest of the crew, {place} where you are. acts: which group activities a scene fits (squad.py): game, park, hoops, food, movie, beach, study.",
+  "scenes": [
+    {
+      "id": "dock_dare",
+      "kind": [
+        "hang",
+        "group"
+      ],
+      "title": "The dock dare",
+      "text": [
+        "Out at the pond, {them_first} walks to the end of the dock and turns around. \"Bet you won't jump in.\" The water is absolutely freezing.",
+        "{them_first} kicks off their shoes at the end of the dock. \"Last one in buys food.\" It is not swimming weather."
+      ],
+      "choices": [
+        {
+          "label": "Cannonball. Right now.",
+          "style": "bold",
+          "good": [
+            "You hit the water and come up screaming. {them_first} is laughing so hard they almost fall in too."
+          ],
+          "meh": [
+            "You jump. It's cold. {them_first} films it and says it was \"a solid six.\""
+          ],
+          "bad": [
+            "You jump and {them_first} just stares. \"I was kidding. You're soaked. We have to walk home.\""
+          ]
+        },
+        {
+          "label": "\"You first, chicken.\"",
+          "style": "tease",
+          "good": [
+            "\"Oh it's ON,\" {them_first} says, and jumps. You both end up in. Worth it."
+          ],
+          "meh": [
+            "{them_first} rolls their eyes but jumps anyway. You stay dry and smug."
+          ],
+          "bad": [
+            "{them_first} gets weirdly quiet. \"Whatever. Never mind.\" The dare's dead."
+          ]
+        },
+        {
+          "label": "Film it for the group chat",
+          "style": "funny",
+          "good": [
+            "You narrate it like a nature documentary. {them_first} can't stop laughing and makes you send it to everyone."
+          ],
+          "meh": [
+            "You get the video. It's fine. Nobody jumps."
+          ],
+          "bad": [
+            "\"Put the phone down for once,\" {them_first} says. Oof."
+          ]
+        }
+      ],
+      "acts": [
+        "park",
+        "beach"
+      ]
+    },
+    {
+      "id": "diner_bet",
+      "kind": [
+        "hang",
+        "group",
+        "date"
+      ],
+      "likes": [
+        "food"
+      ],
+      "title": "Late night at the diner",
+      "text": [
+        "The diner's almost empty. {them_first} has been drawing on the paper placemat with a crayon from the kids' cup. \"Rate it. Be honest.\"",
+        "{them_first} is drawing on the paper placemat with a crayon from the kids' cup. \"Rate my art. Be honest.\""
+      ],
+      "choices": [
+        {
+          "label": "Honest. Brutally honest.",
+          "style": "tease",
+          "good": [
+            "You give it a 3 out of 10. {them_first} gasps, then cracks up and signs it \"for my harshest critic.\""
+          ],
+          "meh": [
+            "{them_first} shrugs. \"Fair.\""
+          ],
+          "bad": [
+            "{them_first} crumples it up. \"Okay, wow.\""
+          ]
+        },
+        {
+          "label": "Tell them it's actually really good",
+          "style": "sweet",
+          "good": [
+            "{them_first} pretends not to care, then folds it up and puts it in their pocket."
+          ],
+          "meh": [
+            "\"You're just saying that,\" {them_first} says, but they're smiling a little."
+          ],
+          "bad": [
+            "\"Don't be weird about it,\" {them_first} says."
+          ]
+        },
+        {
+          "label": "Just order more fries",
+          "style": "chill",
+          "good": [
+            "More fries. Nobody regrets the fries."
+          ],
+          "meh": [
+            "More fries. Nobody regrets the fries."
+          ]
+        }
+      ],
+      "acts": [
+        "food"
+      ]
+    },
+    {
+      "id": "pickup_game",
+      "kind": [
+        "hang",
+        "group"
+      ],
+      "likes": [
+        "basketball",
+        "football",
+        "baseball",
+        "fitness"
+      ],
+      "title": "Pickup at the park",
+      "text": [
+        "There's a pickup game going at the park and they're one short. {them_first} looks at you. \"We're in, right?\"",
+        "Two older guys at the court want to play two-on-two. {them_first} is already stretching."
+      ],
+      "choices": [
+        {
+          "label": "\"We're taking them out.\"",
+          "style": "bold",
+          "good": [
+            "You talk a big game and then actually back it up. {them_first} won't stop bringing it up for days."
+          ],
+          "meh": [
+            "You lose, but it's close. Good sweat."
+          ],
+          "bad": [
+            "You talk a big game and get cooked. {them_first} is embarrassed to be seen with you."
+          ]
+        },
+        {
+          "label": "Trash talk {them_first} the whole time",
+          "style": "tease",
+          "good": [
+            "Every miss, you're on them. Every make, they're on you. Best game in weeks."
+          ],
+          "meh": [
+            "You get a couple of laughs. Fine game."
+          ],
+          "bad": [
+            "{them_first} snaps at you after the third miss. It stops being fun."
+          ]
+        },
+        {
+          "label": "Pass them the ball every time",
+          "style": "sweet",
+          "good": [
+            "{them_first} gets hot and you keep feeding them. \"You're the best teammate ever.\""
+          ],
+          "meh": [
+            "Nice teamwork. Nobody notices."
+          ],
+          "bad": [
+            "\"I don't need charity,\" {them_first} says. Huh."
+          ]
+        }
+      ],
+      "acts": [
+        "park",
+        "hoops"
+      ]
+    },
+    {
+      "id": "record_store",
+      "kind": [
+        "hang",
+        "date"
+      ],
+      "likes": [
+        "music",
+        "art"
+      ],
+      "title": "Digging through records",
+      "text": [
+        "{them_first} holds up the ugliest album cover in the store. \"If you can make me like a song off this, I'll buy it.\"",
+        "At the record store, {them_first} hands you one headphone. \"Okay. Tell me what you think. And be honest.\""
+      ],
+      "choices": [
+        {
+          "label": "Do a dramatic review out loud",
+          "style": "funny",
+          "good": [
+            "You review it like a movie trailer. The cashier laughs. {them_first} laughs harder."
+          ],
+          "meh": [
+            "A couple of laughs. Pretty good song, actually."
+          ],
+          "bad": [
+            "{them_first} takes the headphone back. \"It's not a joke to me.\""
+          ]
+        },
+        {
+          "label": "\"I like anything you're into\"",
+          "style": "cheesy",
+          "good": [
+            "\"That is SO corny,\" {them_first} says, grinning like an idiot."
+          ],
+          "meh": [
+            "{them_first} snorts. \"Okay, smooth.\""
+          ],
+          "bad": [
+            "\"Ew. Be serious,\" {them_first} says."
+          ]
+        },
+        {
+          "label": "Actually listen and say what you think",
+          "style": "sweet",
+          "good": [
+            "You really listen. {them_first} talks about that song for twenty minutes and you get why they love it."
+          ],
+          "meh": [
+            "You say it's good. {them_first} nods."
+          ],
+          "bad": [
+            "You overthink it and it gets awkward. \"It's just a song,\" {them_first} says."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "movie_pick",
+      "kind": [
+        "hang",
+        "date",
+        "group"
+      ],
+      "title": "Movie night",
+      "text": [
+        "Nobody can pick a movie. {them_first} has been scrolling for fifteen minutes. \"Okay, YOU pick. No pressure.\"",
+        "{them_first} wants the horror movie. You can already tell it's going to be a lot."
+      ],
+      "choices": [
+        {
+          "label": "Pick the scariest one",
+          "style": "bold",
+          "good": [
+            "{them_first} screams at the first jump scare and grabs your arm. Neither of you mentions it."
+          ],
+          "meh": [
+            "It's scary. Fine. You both survive."
+          ],
+          "bad": [
+            "{them_first} is not having it and turns it off halfway. \"Why would you pick that.\""
+          ]
+        },
+        {
+          "label": "Make fun of every scene",
+          "style": "funny",
+          "good": [
+            "You do voices for every character. Best bad movie night ever."
+          ],
+          "meh": [
+            "A couple of good jokes, a couple of misses."
+          ],
+          "bad": [
+            "\"Can you let me watch it?\" {them_first} asks. Okay."
+          ]
+        },
+        {
+          "label": "Let them pick, whatever they want",
+          "style": "chill",
+          "good": [
+            "Their pick. Good pick, honestly."
+          ],
+          "meh": [
+            "Their pick. Good pick, honestly."
+          ]
+        }
+      ],
+      "acts": [
+        "movie"
+      ]
+    },
+    {
+      "id": "mall_photo",
+      "kind": [
+        "hang",
+        "group",
+        "date"
+      ],
+      "title": "The photo booth",
+      "text": [
+        "There's a photo booth by the food court. {them_first} is already pulling you in. \"Four pictures. Make them count.\"",
+        "{crew_first} and {them_first} are cramming into the photo booth. There is room for maybe two people."
+      ],
+      "choices": [
+        {
+          "label": "Serious model faces, all four",
+          "style": "funny",
+          "good": [
+            "The pictures are unhinged. {them_first} puts the strip in their phone case."
+          ],
+          "meh": [
+            "Decent pictures. You look sleepy in one."
+          ],
+          "bad": [
+            "{them_first} wanted cute ones. You got weird ones."
+          ]
+        },
+        {
+          "label": "One normal, one goofy, one sweet",
+          "style": "sweet",
+          "good": [
+            "The last one is the best picture of you two ever taken. {them_first} makes it their lock screen."
+          ],
+          "meh": [
+            "Nice strip. Into the backpack it goes."
+          ],
+          "bad": [
+            "It's a little much. {them_first} laughs it off."
+          ]
+        },
+        {
+          "label": "Photobomb them on purpose",
+          "style": "tease",
+          "good": [
+            "Every picture has your face somewhere it shouldn't be. {them_first} is dying."
+          ],
+          "meh": [
+            "{them_first} is mildly annoyed, mostly amused."
+          ],
+          "bad": [
+            "{them_first} wanted ONE good picture. \"Seriously?\""
+          ]
+        }
+      ],
+      "acts": [
+        "food"
+      ]
+    },
+    {
+      "id": "lost_bet",
+      "kind": [
+        "hang",
+        "group"
+      ],
+      "title": "Rock paper scissors for real",
+      "text": [
+        "{them_first} has decided that whoever loses rock paper scissors has to text their crush \"hey.\" Just \"hey.\"",
+        "{them_first} has decided: best of three, loser has to sing at the next red light. {them_first} is weirdly confident."
+      ],
+      "choices": [
+        {
+          "label": "Play. And win.",
+          "style": "bold",
+          "good": [
+            "You win two straight. {them_first} has to do it. Legendary."
+          ],
+          "meh": [
+            "You split it and call it a draw. Cowards, both of you."
+          ],
+          "bad": [
+            "You lose. You have to do it. {them_first} has the video."
+          ]
+        },
+        {
+          "label": "\"You're scared, admit it\"",
+          "style": "tease",
+          "good": [
+            "\"I'm NOT,\" {them_first} says, and then proves it. Chaos."
+          ],
+          "meh": [
+            "{them_first} laughs it off."
+          ],
+          "bad": [
+            "It hits a nerve. {them_first} changes the subject."
+          ]
+        },
+        {
+          "label": "Change the bet to loser buys ice cream",
+          "style": "chill",
+          "good": [
+            "Ice cream it is. Everybody wins, technically."
+          ],
+          "meh": [
+            "Ice cream it is. Everybody wins, technically."
+          ]
+        }
+      ],
+      "acts": [
+        "park",
+        "food",
+        "beach",
+        "movie"
+      ]
+    },
+    {
+      "id": "sunset_drive",
+      "kind": [
+        "date"
+      ],
+      "title": "Sunset at the green",
+      "text": [
+        "The two of you end up sitting on the town green as the sun goes down. {them_first} goes quiet for a second. It's nice.",
+        "Walking back from getting food, {them_first} bumps your shoulder. \"This was fun. Like actually.\""
+      ],
+      "choices": [
+        {
+          "label": "Hold their hand",
+          "style": "bold",
+          "good": [
+            "They don't say anything. They just lace their fingers through yours."
+          ],
+          "meh": [
+            "A small smile. They let you, for a minute."
+          ],
+          "bad": [
+            "They pull back, gently. \"Maybe not yet.\""
+          ]
+        },
+        {
+          "label": "Tell them you've been looking forward to this all week",
+          "style": "sweet",
+          "good": [
+            "\"Me too,\" {them_first} says, and it's obvious they mean it."
+          ],
+          "meh": [
+            "\"Aw,\" {them_first} says. Cute."
+          ],
+          "bad": [
+            "\"Okay, intense,\" {them_first} laughs, a little stiff."
+          ]
+        },
+        {
+          "label": "Say something dumb to break the quiet",
+          "style": "funny",
+          "good": [
+            "{them_first} laughs and leans into you. You're so in."
+          ],
+          "meh": [
+            "A laugh. The moment passes, but it was a good one."
+          ],
+          "bad": [
+            "It kills the mood. {them_first} checks their phone."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ice_cream_line",
+      "kind": [
+        "date",
+        "hang"
+      ],
+      "likes": [
+        "food"
+      ],
+      "title": "The ice cream line",
+      "text": [
+        "The line at the ice cream place goes out the door. {them_first} studies the menu like it's a test. \"What are you getting? Don't say vanilla.\"",
+        "{them_first} can't decide between two flavors and has been switching for five minutes."
+      ],
+      "choices": [
+        {
+          "label": "\"Vanilla. Fight me.\"",
+          "style": "tease",
+          "good": [
+            "{them_first} acts personally offended for the entire walk. Best walk ever."
+          ],
+          "meh": [
+            "\"Boring,\" {them_first} says, stealing a bite anyway."
+          ],
+          "bad": [
+            "{them_first} just says \"okay\" and gets quiet. Huh."
+          ]
+        },
+        {
+          "label": "Get both flavors and split them",
+          "style": "sweet",
+          "good": [
+            "{them_first} lights up. \"Okay, you're the best.\""
+          ],
+          "meh": [
+            "Good plan. Good ice cream."
+          ],
+          "bad": [
+            "\"I can pick my own ice cream,\" {them_first} says. Fair."
+          ]
+        },
+        {
+          "label": "\"I'll take whatever's sweetest. Oh wait, you're already here\"",
+          "style": "cheesy",
+          "good": [
+            "{them_first} groans so loud people turn around, then laughs for a full minute."
+          ],
+          "meh": [
+            "\"Wow,\" {them_first} says. \"Wow.\""
+          ],
+          "bad": [
+            "{them_first} physically cringes. The cashier does too."
+          ]
+        }
+      ],
+      "acts": [
+        "food"
+      ]
+    },
+    {
+      "id": "crew_roadtrip",
+      "kind": [
+        "group"
+      ],
+      "title": "Who gets shotgun",
+      "text": [
+        "Somehow {crew_first} and {them_first} all end up arguing about who gets shotgun on the way to get food. It's getting heated.",
+        "{them_first} and {crew_first} are planning the weekend and nobody can agree on anything."
+      ],
+      "choices": [
+        {
+          "label": "Call it. You're the decider now.",
+          "style": "bold",
+          "good": [
+            "You make the call like a coach. Everyone just goes with it. Leader energy."
+          ],
+          "meh": [
+            "Half of them grumble, but it works."
+          ],
+          "bad": [
+            "\"Who made you in charge?\" {them_first} says. Now it's worse."
+          ]
+        },
+        {
+          "label": "Make it a contest",
+          "style": "funny",
+          "good": [
+            "Thumb war tournament in the parking lot. {them_first} wins and is unbearable. Perfect."
+          ],
+          "meh": [
+            "The contest is dumb. It works anyway."
+          ],
+          "bad": [
+            "Nobody's in the mood. The contest flops."
+          ]
+        },
+        {
+          "label": "Let everyone else pick",
+          "style": "chill",
+          "good": [
+            "You stay out of it. Everybody's happy eventually."
+          ],
+          "meh": [
+            "You stay out of it. Everybody's happy eventually."
+          ]
+        }
+      ],
+      "acts": [
+        "food"
+      ]
+    },
+    {
+      "id": "crew_inside_joke",
+      "kind": [
+        "group"
+      ],
+      "title": "An inside joke is born",
+      "text": [
+        "{crew_first} trips over absolutely nothing, and {them_first} makes a sound you've never heard a person make. Everyone loses it.",
+        "Someone mispronounces \"quinoa\" and now {them_first} and {crew_first} won't stop saying it."
+      ],
+      "choices": [
+        {
+          "label": "Give it a name. It's a whole thing now.",
+          "style": "funny",
+          "good": [
+            "It becomes the crew's inside joke for the rest of the year. You started it."
+          ],
+          "meh": [
+            "It's funny for an hour."
+          ],
+          "bad": [
+            "It doesn't stick. Oh well."
+          ]
+        },
+        {
+          "label": "Roast {them_first} for the noise",
+          "style": "tease",
+          "good": [
+            "{them_first} takes it and dishes it back. Everyone's crying laughing."
+          ],
+          "meh": [
+            "A couple of laughs."
+          ],
+          "bad": [
+            "{them_first} gets embarrassed. Not great."
+          ]
+        },
+        {
+          "label": "Make sure nobody actually got hurt",
+          "style": "sweet",
+          "good": [
+            "Small thing, but {them_first} notices you're the one who checks on people."
+          ],
+          "meh": [
+            "Everyone's fine. Back to laughing."
+          ],
+          "bad": [
+            "\"We're fine, mom,\" {them_first} says."
+          ]
+        }
+      ],
+      "acts": [
+        "park",
+        "food",
+        "movie",
+        "beach",
+        "hoops",
+        "study"
+      ]
+    },
+    {
+      "id": "arcade",
+      "kind": [
+        "hang",
+        "date",
+        "group"
+      ],
+      "title": "The arcade",
+      "text": [
+        "{them_first} has twelve tokens left and wants the giant stuffed shark from the prize counter. It costs four thousand tickets.",
+        "There's one air hockey table open. {them_first} cracks their knuckles. \"Prepare to lose.\""
+      ],
+      "choices": [
+        {
+          "label": "Go all in. Spend everything.",
+          "style": "bold",
+          "good": [
+            "You both go broke and come out with a keychain and the best night in a while."
+          ],
+          "meh": [
+            "You win some tickets. You get a pencil. A great pencil."
+          ],
+          "bad": [
+            "You blow your money in ten minutes. {them_first} has to buy the drinks."
+          ]
+        },
+        {
+          "label": "Talk trash through the whole game",
+          "style": "tease",
+          "good": [
+            "Air hockey has never been this loud. {them_first} wants a rematch immediately."
+          ],
+          "meh": [
+            "A good game. You lose by one."
+          ],
+          "bad": [
+            "{them_first} quits halfway. \"You're being annoying.\""
+          ]
+        },
+        {
+          "label": "Win them the prize, whatever it takes",
+          "style": "sweet",
+          "good": [
+            "It takes everything you have, but {them_first} leaves with a tiny shark. They name it after you."
+          ],
+          "meh": [
+            "You get a small one. It counts."
+          ],
+          "bad": [
+            "You try too hard and it gets awkward. \"It's fine, really.\""
+          ]
+        }
+      ],
+      "acts": [
+        "food"
+      ]
+    },
+    {
+      "id": "secret",
+      "kind": [
+        "hang"
+      ],
+      "title": "A real conversation",
+      "text": [
+        "Out of nowhere, {them_first} says, \"Can I tell you something? Don't make it a thing.\" They look nervous.",
+        "{them_first} has been quiet all afternoon. Finally: \"Things are kind of weird at home right now.\""
+      ],
+      "choices": [
+        {
+          "label": "Just listen",
+          "style": "sweet",
+          "good": [
+            "You don't say much. You don't need to. {them_first} says thanks like they really mean it."
+          ],
+          "meh": [
+            "You listen. They feel a little better."
+          ],
+          "bad": [
+            "You say the wrong thing. {them_first} shuts down. \"Forget it.\""
+          ]
+        },
+        {
+          "label": "Make them laugh to lighten it",
+          "style": "funny",
+          "good": [
+            "They laugh for the first time all day. \"I needed that.\""
+          ],
+          "meh": [
+            "A small laugh. Better than nothing."
+          ],
+          "bad": [
+            "\"This isn't funny,\" {them_first} says. You feel terrible."
+          ]
+        },
+        {
+          "label": "Tell them something real about you too",
+          "style": "bold",
+          "good": [
+            "You both open up. You're closer than you were an hour ago."
+          ],
+          "meh": [
+            "It's a little awkward, but it's honest."
+          ],
+          "bad": [
+            "Somehow it turns into being about you. {them_first} notices."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rain",
+      "kind": [
+        "date",
+        "hang"
+      ],
+      "title": "Caught in the rain",
+      "text": [
+        "It starts pouring out of nowhere. You're both two blocks from anywhere. {them_first} looks at you like, now what?",
+        "The sky opens up the second you leave the store. {them_first} pulls their hood up and laughs."
+      ],
+      "choices": [
+        {
+          "label": "Run for it, race them",
+          "style": "bold",
+          "good": [
+            "You race the whole way, soaked, laughing. {them_first} beats you and won't let you forget it."
+          ],
+          "meh": [
+            "You get soaked. It's kind of fun."
+          ],
+          "bad": [
+            "{them_first} slips and is NOT happy about it."
+          ]
+        },
+        {
+          "label": "Give them your hoodie",
+          "style": "sweet",
+          "good": [
+            "{them_first} doesn't give it back. You never see that hoodie again, and you don't mind."
+          ],
+          "meh": [
+            "\"Thanks,\" {them_first} says, zipping it up."
+          ],
+          "bad": [
+            "\"I'm fine,\" {them_first} says, a little embarrassed."
+          ]
+        },
+        {
+          "label": "Dance in it like a movie",
+          "style": "cheesy",
+          "good": [
+            "{them_first} tries to look embarrassed and fails. They dance too."
+          ],
+          "meh": [
+            "You dance alone. {them_first} films it. Fair."
+          ],
+          "bad": [
+            "People are watching. {them_first} wants to disappear."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gym_challenge",
+      "kind": [
+        "hang",
+        "group"
+      ],
+      "likes": [
+        "football",
+        "basketball",
+        "baseball",
+        "fitness"
+      ],
+      "title": "Weight room bet",
+      "text": [
+        "{them_first} bets you can't hold a plank longer than them. Loser carries the gym bags for a week.",
+        "Free shots at the park. {them_first}: \"First to ten. Loser does the dishes at my house.\""
+      ],
+      "choices": [
+        {
+          "label": "Accept. Obviously.",
+          "style": "bold",
+          "good": [
+            "You win by a hair. {them_first} demands a rematch tomorrow."
+          ],
+          "meh": [
+            "You lose by a hair. Respectable."
+          ],
+          "bad": [
+            "You lose badly. {them_first} brags to everyone."
+          ]
+        },
+        {
+          "label": "Distract them with jokes mid-plank",
+          "style": "funny",
+          "good": [
+            "{them_first} collapses laughing. You win on a technicality."
+          ],
+          "meh": [
+            "It half works."
+          ],
+          "bad": [
+            "\"That's cheating,\" {them_first} says, actually annoyed."
+          ]
+        },
+        {
+          "label": "Turn it into a workout together",
+          "style": "chill",
+          "good": [
+            "You both get better. That's the whole point."
+          ],
+          "meh": [
+            "You both get better. That's the whole point."
+          ]
+        }
+      ],
+      "acts": [
+        "park",
+        "hoops"
+      ]
+    },
+    {
+      "id": "bonfire",
+      "kind": [
+        "group",
+        "date"
+      ],
+      "title": "Around the fire",
+      "text": [
+        "Somebody's backyard fire pit. {crew_first} is roasting marshmallows badly. {them_first} sits down next to you.",
+        "The fire's going and someone suggests scary stories. {them_first} is already scooting closer."
+      ],
+      "choices": [
+        {
+          "label": "Tell the scariest story you know",
+          "style": "bold",
+          "good": [
+            "Everyone's quiet by the end. Then {them_first} screams at a stick snapping and the whole crew loses it."
+          ],
+          "meh": [
+            "Decent story. One person jumped."
+          ],
+          "bad": [
+            "You mess up the ending. Brutal."
+          ]
+        },
+        {
+          "label": "Make {them_first} a perfect marshmallow",
+          "style": "sweet",
+          "good": [
+            "Golden brown. {them_first} says it's the best one they've ever had and looks at you a second too long."
+          ],
+          "meh": [
+            "It's a good marshmallow."
+          ],
+          "bad": [
+            "You burn it. They eat it anyway to be nice."
+          ]
+        },
+        {
+          "label": "Roast the marshmallow AND {crew_first}",
+          "style": "tease",
+          "good": [
+            "The fire, the jokes, the crew. Perfect night."
+          ],
+          "meh": [
+            "Some laughs."
+          ],
+          "bad": [
+            "It goes a little too far. Awkward silence."
+          ]
+        }
+      ],
+      "acts": [
+        "movie",
+        "beach"
+      ]
+    },
+    {
+      "id": "game_mic",
+      "kind": [
+        "group"
+      ],
+      "acts": [
+        "game"
+      ],
+      "title": "Hot mic",
+      "text": [
+        "{them_first}'s mic is on, and somebody in their house is yelling about the dishes. The whole lobby can hear it.",
+        "{them_first} forgot to mute and is singing. Badly. Nobody has said anything yet."
+      ],
+      "choices": [
+        {
+          "label": "Turn it into a remix",
+          "style": "funny",
+          "good": [
+            "You beatbox under it. Now it's a song. {group} will be quoting it for a month."
+          ],
+          "meh": [
+            "A couple of laughs, then back to the game."
+          ],
+          "bad": [
+            "Nobody's in the mood. The bit dies."
+          ]
+        },
+        {
+          "label": "Roast them. Mercilessly.",
+          "style": "tease",
+          "good": [
+            "You go all in. {them_first} fires back and the lobby loses it."
+          ],
+          "meh": [
+            "{them_first} mutes, unmutes, says \"anyway\". Fair."
+          ],
+          "bad": [
+            "{them_first} leaves the party for ten minutes. Too far."
+          ]
+        },
+        {
+          "label": "Say nothing, keep playing",
+          "style": "chill",
+          "good": [
+            "You let it ride. Somehow you win the round anyway."
+          ],
+          "meh": [
+            "You let it ride. Somehow you win the round anyway."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game_clutch",
+      "kind": [
+        "group"
+      ],
+      "acts": [
+        "game"
+      ],
+      "title": "Last one alive",
+      "text": [
+        "Final round. It's you against three, and {group} have gone dead silent in the chat.",
+        "Everyone's down but you. {them_first} is whispering \"you got this\" like it's the World Series."
+      ],
+      "choices": [
+        {
+          "label": "Go in loud",
+          "style": "bold",
+          "good": [
+            "You take all three. The chat explodes. {them_first} is screaming your name."
+          ],
+          "meh": [
+            "You get two. So close. Respect from everyone."
+          ],
+          "bad": [
+            "You go in loud and get dropped instantly. {other_first} sighs into the mic."
+          ]
+        },
+        {
+          "label": "Narrate your own funeral",
+          "style": "funny",
+          "good": [
+            "You do a full sports-announcer play-by-play of yourself losing. Nobody can breathe."
+          ],
+          "meh": [
+            "A few laughs while you lose."
+          ],
+          "bad": [
+            "\"Can you focus,\" {them_first} says. You cannot."
+          ]
+        },
+        {
+          "label": "Play it slow and smart",
+          "style": "chill",
+          "good": [
+            "Patient. Careful. You win it by a hair."
+          ],
+          "meh": [
+            "Patient. Careful. You win it by a hair."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game_ragequit",
+      "kind": [
+        "group"
+      ],
+      "acts": [
+        "game"
+      ],
+      "title": "The rage quit",
+      "text": [
+        "{them_first} just lost to a twelve-year-old and is threatening to throw the controller.",
+        "{them_first} has been tilted for an hour and just said \"this game is rigged\" for the ninth time."
+      ],
+      "choices": [
+        {
+          "label": "\"You're the best player here, reset\"",
+          "style": "sweet",
+          "good": [
+            "{them_first} takes a breath and wins the next three. \"Okay. Okay. Thank you.\""
+          ],
+          "meh": [
+            "It helps a little."
+          ],
+          "bad": [
+            "\"Don't baby me,\" {them_first} says. Now it's worse."
+          ]
+        },
+        {
+          "label": "Screenshot it for the group chat",
+          "style": "tease",
+          "good": [
+            "It becomes the group chat's background. {them_first} is furious and also laughing."
+          ],
+          "meh": [
+            "{them_first} calls you a word that isn't allowed in school. Fair."
+          ],
+          "bad": [
+            "{them_first} logs off. You might've pushed it."
+          ]
+        },
+        {
+          "label": "Challenge them to a 1v1. Right now.",
+          "style": "bold",
+          "good": [
+            "The 1v1 goes nine rounds. {them_first} wins the last one and forgets they were ever mad."
+          ],
+          "meh": [
+            "You split it. Everybody's calm now."
+          ],
+          "bad": [
+            "You beat them easily. Somehow that made it worse."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game_little_brother",
+      "kind": [
+        "group"
+      ],
+      "acts": [
+        "game"
+      ],
+      "title": "The little brother",
+      "text": [
+        "{them_first}'s little brother grabbed the controller mid-match and is somehow winning.",
+        "Somebody's little sibling took over {them_first}'s account and is talking way too much trash for a nine-year-old."
+      ],
+      "choices": [
+        {
+          "label": "Recruit the kid",
+          "style": "funny",
+          "good": [
+            "The kid joins the squad for one round and gets MVP. {group} have a new hero."
+          ],
+          "meh": [
+            "The kid plays one round and gets bored. Classic."
+          ],
+          "bad": [
+            "The kid gets you all eliminated. {them_first} is mortified."
+          ]
+        },
+        {
+          "label": "Let the kid play the whole round",
+          "style": "sweet",
+          "good": [
+            "You hype the kid up the entire time. {them_first} says their brother won't stop talking about you."
+          ],
+          "meh": [
+            "Nice of you. The round's a loss."
+          ],
+          "bad": [
+            "The whole lobby gets impatient."
+          ]
+        },
+        {
+          "label": "Trash talk the kid back",
+          "style": "tease",
+          "good": [
+            "You and a nine-year-old trade insults for five minutes. Best entertainment all week."
+          ],
+          "meh": [
+            "The kid wins the argument. Fair."
+          ],
+          "bad": [
+            "The kid cries. {them_first}'s mom gets on the mic. Nightmare."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game_one_more",
+      "kind": [
+        "group"
+      ],
+      "acts": [
+        "game"
+      ],
+      "title": "One more game",
+      "text": [
+        "It's way past midnight. Somebody says \"one more\" for the fifth time.",
+        "{them_first}: \"Last one. For real this time.\" Nobody believes it, including {them_first}."
+      ],
+      "choices": [
+        {
+          "label": "One more. Always one more.",
+          "style": "bold",
+          "good": [
+            "The \"last\" game is the best one of the night. Worth every lost minute of sleep."
+          ],
+          "meh": [
+            "Two more, actually. You're going to be tired."
+          ],
+          "bad": [
+            "You lose it, and now you're tired AND mad."
+          ]
+        },
+        {
+          "label": "Call it, you've got a test",
+          "style": "chill",
+          "good": [
+            "You log off like an adult. Nobody judges. Much."
+          ],
+          "meh": [
+            "You log off like an adult. Nobody judges. Much."
+          ]
+        },
+        {
+          "label": "Loser has to change their profile pic",
+          "style": "tease",
+          "good": [
+            "{other_first} loses. Their profile pic is now a potato. It stays for a week."
+          ],
+          "meh": [
+            "Nobody loses. Somehow a tie."
+          ],
+          "bad": [
+            "You lose. You are the potato now."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game_new_game",
+      "kind": [
+        "group"
+      ],
+      "acts": [
+        "game"
+      ],
+      "title": "The new game",
+      "text": [
+        "{other_first} wants everyone to try a new game. It's a farming simulator. They're very excited about it.",
+        "{other_first} bought a game nobody's heard of and is begging everyone to download it. It's 40 gigs."
+      ],
+      "choices": [
+        {
+          "label": "Commit to the bit. Best farmer in the server.",
+          "style": "funny",
+          "good": [
+            "You roleplay as a very serious farmer for two hours. {group} have never laughed harder at a crop."
+          ],
+          "meh": [
+            "It's actually kind of fun?"
+          ],
+          "bad": [
+            "The bit wears thin by minute ten."
+          ]
+        },
+        {
+          "label": "Clown on their taste in games",
+          "style": "tease",
+          "good": [
+            "You clown it, play it anyway, and end up hooked. {other_first} never lets you forget it."
+          ],
+          "meh": [
+            "{other_first} rolls their eyes. You still play."
+          ],
+          "bad": [
+            "{other_first} really wanted this one to land. Oops."
+          ]
+        },
+        {
+          "label": "Actually give it a real try",
+          "style": "sweet",
+          "good": [
+            "You try it for real. {other_first} is so happy someone gets it."
+          ],
+          "meh": [
+            "It's fine. You go back to the usual game after an hour."
+          ],
+          "bad": [
+            "You try to like it. You do not like it."
+          ]
+        }
+      ]
+    }
+  ]
+}

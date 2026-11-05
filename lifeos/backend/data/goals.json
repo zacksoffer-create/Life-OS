@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "notes": "Goal types. Generation conditions live in development.py (they read circumstances); labels, advancing actions and weights are data. 'advances' maps action id -> how strongly doing it moves the goal. 'match' says how the action's target must relate to the goal's target: 'goal_target' (same person/group), 'goal_skill' (same skill), or 'any'.",
+  "goals": {
+    "make_group": {"label": "Make {target}", "advances": {"practice_skill": [1.0, "goal_skill"], "sign_up": [1.2, "goal_target"], "attend_event": [1.2, "goal_target"], "attend_practice": [0.4, "goal_skill"]}, "base_priority": 55},
+    "improve_skill": {"label": "Get better at {target}", "advances": {"practice_skill": [1.2, "goal_skill"], "attend_practice": [0.8, "goal_skill"]}, "base_priority": 45},
+    "befriend": {"label": "Get closer to {target}", "advances": {"hang_out": [1.0, "goal_target"], "chat_online": [0.6, "goal_target"], "sit_with": [0.8, "goal_target"], "help_friend": [0.8, "goal_target"], "introduce": [1.0, "goal_target"]}, "base_priority": 40},
+    "romance": {"label": "Win over {target}", "advances": {"flirt": [1.0, "goal_target"], "ask_out": [1.4, "goal_target"], "ask_to_dance": [1.2, "goal_target"], "hang_out": [0.7, "goal_target"], "chat_online": [0.4, "goal_target"], "sit_with": [0.4, "goal_target"]}, "base_priority": 45},
+    "grades": {"label": "Bring grades up", "advances": {"study": [1.2, "any"], "study_at_lunch": [0.8, "any"]}, "base_priority": 50},
+    "popularity": {"label": "Be someone people notice", "advances": {"throw_party": [1.2, "any"], "go_to_party": [0.9, "any"], "sit_with": [0.5, "popular"], "sign_up": [0.4, "any"], "introduce": [0.5, "any"], "attend_event": [0.3, "any"]}, "base_priority": 40},
+    "get_even": {"label": "Get even with {target}", "advances": {"confront": [1.0, "goal_target"], "spread_rumor": [1.0, "goal_target"], "tease": [0.8, "goal_target"]}, "base_priority": 40},
+    "make_amends": {"label": "Make things right with {target}", "advances": {"apologize": [1.5, "goal_target"], "help_friend": [0.6, "goal_target"], "chat_online": [0.4, "goal_target"]}, "base_priority": 50},
+    "belonging": {"label": "Find my people", "advances": {"introduce": [1.0, "any"], "sit_with": [0.6, "any"], "sign_up": [0.6, "any"], "hang_out": [0.6, "any"], "go_to_party": [0.4, "any"]}, "base_priority": 45},
+    "earn_money": {"label": "Earn some money", "advances": {"sign_up": [1.0, "job"], "work_shift": [1.0, "any"]}, "base_priority": 35},
+    "win_election": {"label": "Win the Student Council election", "advances": {"sit_with": [0.5, "any"], "hang_out": [0.5, "any"], "introduce": [0.8, "any"], "throw_party": [0.4, "any"]}, "base_priority": 60}
+  }
+}

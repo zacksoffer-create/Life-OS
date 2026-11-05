@@ -1,0 +1,858 @@
+{
+ "cbase": {
+  "label": "College baseball",
+  "event": "College World Series",
+  "rows": [
+   [
+    2005,
+    "2005-06-26",
+    "Texas",
+    "Florida",
+    "2-0",
+    ""
+   ],
+   [
+    2006,
+    "2006-06-26",
+    "Oregon State",
+    "North Carolina",
+    "2-1",
+    ""
+   ],
+   [
+    2007,
+    "2007-06-24",
+    "Oregon State",
+    "North Carolina",
+    "2-0",
+    ""
+   ],
+   [
+    2008,
+    "2008-06-25",
+    "Fresno State",
+    "Georgia",
+    "2-1",
+    ""
+   ],
+   [
+    2009,
+    "2009-06-24",
+    "LSU",
+    "Texas",
+    "2-1",
+    ""
+   ],
+   [
+    2010,
+    "2010-06-29",
+    "South Carolina",
+    "UCLA",
+    "2-0",
+    ""
+   ],
+   [
+    2011,
+    "2011-06-28",
+    "South Carolina",
+    "Florida",
+    "2-0",
+    ""
+   ],
+   [
+    2012,
+    "2012-06-25",
+    "Arizona",
+    "South Carolina",
+    "2-0",
+    ""
+   ],
+   [
+    2013,
+    "2013-06-25",
+    "UCLA",
+    "Mississippi State",
+    "2-0",
+    ""
+   ],
+   [
+    2014,
+    "2014-06-25",
+    "Vanderbilt",
+    "Virginia",
+    "2-1",
+    ""
+   ],
+   [
+    2015,
+    "2015-06-24",
+    "Virginia",
+    "Vanderbilt",
+    "2-1",
+    ""
+   ],
+   [
+    2016,
+    "2016-06-30",
+    "Coastal Carolina",
+    "Arizona",
+    "2-1",
+    ""
+   ],
+   [
+    2017,
+    "2017-06-27",
+    "Florida",
+    "LSU",
+    "2-0",
+    ""
+   ],
+   [
+    2018,
+    "2018-06-28",
+    "Oregon State",
+    "Arkansas",
+    "2-1",
+    ""
+   ],
+   [
+    2019,
+    "2019-06-26",
+    "Vanderbilt",
+    "Michigan",
+    "2-1",
+    ""
+   ],
+   [
+    2020,
+    null,
+    null,
+    null,
+    null,
+    "Canceled (COVID-19)"
+   ],
+   [
+    2021,
+    "2021-06-30",
+    "Mississippi State",
+    "Vanderbilt",
+    "2-1",
+    ""
+   ],
+   [
+    2022,
+    "2022-06-26",
+    "Ole Miss",
+    "Oklahoma",
+    "2-0",
+    ""
+   ],
+   [
+    2023,
+    "2023-06-26",
+    "LSU",
+    "Florida",
+    "2-1",
+    ""
+   ],
+   [
+    2024,
+    "2024-06-24",
+    "Tennessee",
+    "Texas A&M",
+    "2-1",
+    ""
+   ],
+   [
+    2025,
+    "2025-06-22",
+    "LSU",
+    "Coastal Carolina",
+    "2-0",
+    ""
+   ]
+  ]
+ },
+ "msoc": {
+  "label": "College soccer (men)",
+  "event": "College Cup",
+  "rows": [
+   [
+    2005,
+    "2005-12-11",
+    "Maryland",
+    "New Mexico",
+    "1-0",
+    ""
+   ],
+   [
+    2006,
+    "2006-12-03",
+    "UC Santa Barbara",
+    "UCLA",
+    "2-1",
+    ""
+   ],
+   [
+    2007,
+    "2007-12-16",
+    "Wake Forest",
+    "Ohio State",
+    "2-1",
+    ""
+   ],
+   [
+    2008,
+    "2008-12-14",
+    "Maryland",
+    "North Carolina",
+    "1-0",
+    ""
+   ],
+   [
+    2009,
+    "2009-12-13",
+    "Virginia",
+    "Akron",
+    "0-0",
+    "on penalties"
+   ],
+   [
+    2010,
+    "2010-12-12",
+    "Akron",
+    "Louisville",
+    "1-0",
+    ""
+   ],
+   [
+    2011,
+    "2011-12-11",
+    "North Carolina",
+    "Charlotte",
+    "1-0",
+    ""
+   ],
+   [
+    2012,
+    "2012-12-16",
+    "Indiana",
+    "Georgetown",
+    "1-0",
+    ""
+   ],
+   [
+    2013,
+    "2013-12-15",
+    "Notre Dame",
+    "Maryland",
+    "2-1",
+    ""
+   ],
+   [
+    2014,
+    "2014-12-14",
+    "Virginia",
+    "UCLA",
+    "0-0",
+    "on penalties"
+   ],
+   [
+    2015,
+    "2015-12-13",
+    "Stanford",
+    "Clemson",
+    "4-0",
+    ""
+   ],
+   [
+    2016,
+    "2016-12-11",
+    "Stanford",
+    "Wake Forest",
+    "0-0",
+    "on penalties"
+   ],
+   [
+    2017,
+    "2017-12-10",
+    "Stanford",
+    "Indiana",
+    "1-0",
+    "in double overtime"
+   ],
+   [
+    2018,
+    "2018-12-09",
+    "Maryland",
+    "Akron",
+    "1-0",
+    ""
+   ],
+   [
+    2019,
+    "2019-12-15",
+    "Georgetown",
+    "Virginia",
+    "3-3",
+    "on penalties"
+   ],
+   [
+    2020,
+    "2021-05-17",
+    "Marshall",
+    "Indiana",
+    "1-0",
+    "in overtime (played in spring 2021)"
+   ],
+   [
+    2021,
+    "2021-12-12",
+    "Clemson",
+    "Washington",
+    "2-0",
+    ""
+   ],
+   [
+    2022,
+    "2022-12-12",
+    "Syracuse",
+    "Indiana",
+    "2-2",
+    "on penalties"
+   ],
+   [
+    2023,
+    "2023-12-11",
+    "Clemson",
+    "Notre Dame",
+    "2-1",
+    ""
+   ],
+   [
+    2024,
+    "2024-12-16",
+    "Vermont",
+    "Marshall",
+    "2-1",
+    ""
+   ]
+  ]
+ },
+ "wsoc": {
+  "label": "College soccer (women)",
+  "event": "Women's College Cup",
+  "rows": [
+   [
+    2005,
+    "2005-12-04",
+    "Portland",
+    "UCLA",
+    "4-0",
+    ""
+   ],
+   [
+    2006,
+    "2006-12-03",
+    "North Carolina",
+    "Notre Dame",
+    "2-1",
+    ""
+   ],
+   [
+    2007,
+    "2007-12-09",
+    "USC",
+    "Florida State",
+    "2-0",
+    ""
+   ],
+   [
+    2008,
+    "2008-12-07",
+    "North Carolina",
+    "Notre Dame",
+    "2-1",
+    ""
+   ],
+   [
+    2009,
+    "2009-12-06",
+    "North Carolina",
+    "Stanford",
+    "1-0",
+    ""
+   ],
+   [
+    2010,
+    "2010-12-05",
+    "Notre Dame",
+    "Stanford",
+    "1-0",
+    ""
+   ],
+   [
+    2011,
+    "2011-12-04",
+    "Stanford",
+    "Duke",
+    "1-0",
+    ""
+   ],
+   [
+    2012,
+    "2012-12-02",
+    "North Carolina",
+    "Penn State",
+    "4-1",
+    ""
+   ],
+   [
+    2013,
+    "2013-12-08",
+    "UCLA",
+    "Florida State",
+    "1-0",
+    "in overtime"
+   ],
+   [
+    2014,
+    "2014-12-07",
+    "Florida State",
+    "Virginia",
+    "1-0",
+    ""
+   ],
+   [
+    2015,
+    "2015-12-06",
+    "Penn State",
+    "Duke",
+    "1-0",
+    ""
+   ],
+   [
+    2016,
+    "2016-12-04",
+    "USC",
+    "West Virginia",
+    "3-1",
+    ""
+   ],
+   [
+    2017,
+    "2017-12-03",
+    "Stanford",
+    "UCLA",
+    "3-2",
+    ""
+   ],
+   [
+    2018,
+    "2018-12-02",
+    "Florida State",
+    "North Carolina",
+    "1-0",
+    ""
+   ],
+   [
+    2019,
+    "2019-12-08",
+    "Stanford",
+    "North Carolina",
+    "0-0",
+    "on penalties"
+   ],
+   [
+    2020,
+    "2021-05-17",
+    "Santa Clara",
+    "Florida State",
+    "1-1",
+    "on penalties (played in spring 2021)"
+   ],
+   [
+    2021,
+    "2021-12-06",
+    "Florida State",
+    "BYU",
+    "0-0",
+    "on penalties"
+   ],
+   [
+    2022,
+    "2022-12-05",
+    "UCLA",
+    "North Carolina",
+    "3-2",
+    "in overtime"
+   ],
+   [
+    2023,
+    "2023-12-04",
+    "Florida State",
+    "Stanford",
+    "5-1",
+    ""
+   ],
+   [
+    2024,
+    "2024-12-08",
+    "North Carolina",
+    "Wake Forest",
+    "1-0",
+    ""
+   ]
+  ]
+ },
+ "ucl": {
+  "label": "Champions League",
+  "event": "Champions League",
+  "split": true,
+  "rows": [
+   [
+    2006,
+    "2006-05-17",
+    "Barcelona",
+    "Arsenal",
+    "2-1",
+    ""
+   ],
+   [
+    2007,
+    "2007-05-23",
+    "AC Milan",
+    "Liverpool",
+    "2-1",
+    ""
+   ],
+   [
+    2008,
+    "2008-05-21",
+    "Manchester United",
+    "Chelsea",
+    "1-1",
+    "on penalties"
+   ],
+   [
+    2009,
+    "2009-05-27",
+    "Barcelona",
+    "Manchester United",
+    "2-0",
+    ""
+   ],
+   [
+    2010,
+    "2010-05-22",
+    "Inter Milan",
+    "Bayern Munich",
+    "2-0",
+    ""
+   ],
+   [
+    2011,
+    "2011-05-28",
+    "Barcelona",
+    "Manchester United",
+    "3-1",
+    ""
+   ],
+   [
+    2012,
+    "2012-05-19",
+    "Chelsea",
+    "Bayern Munich",
+    "1-1",
+    "on penalties"
+   ],
+   [
+    2013,
+    "2013-05-25",
+    "Bayern Munich",
+    "Borussia Dortmund",
+    "2-1",
+    ""
+   ],
+   [
+    2014,
+    "2014-05-24",
+    "Real Madrid",
+    "Atl\u00e9tico Madrid",
+    "4-1",
+    "after extra time"
+   ],
+   [
+    2015,
+    "2015-06-06",
+    "Barcelona",
+    "Juventus",
+    "3-1",
+    ""
+   ],
+   [
+    2016,
+    "2016-05-28",
+    "Real Madrid",
+    "Atl\u00e9tico Madrid",
+    "1-1",
+    "on penalties"
+   ],
+   [
+    2017,
+    "2017-06-03",
+    "Real Madrid",
+    "Juventus",
+    "4-1",
+    ""
+   ],
+   [
+    2018,
+    "2018-05-26",
+    "Real Madrid",
+    "Liverpool",
+    "3-1",
+    ""
+   ],
+   [
+    2019,
+    "2019-06-01",
+    "Liverpool",
+    "Tottenham Hotspur",
+    "2-0",
+    ""
+   ],
+   [
+    2020,
+    "2020-08-23",
+    "Bayern Munich",
+    "Paris Saint-Germain",
+    "1-0",
+    ""
+   ],
+   [
+    2021,
+    "2021-05-29",
+    "Chelsea",
+    "Manchester City",
+    "1-0",
+    ""
+   ],
+   [
+    2022,
+    "2022-05-28",
+    "Real Madrid",
+    "Liverpool",
+    "1-0",
+    ""
+   ],
+   [
+    2023,
+    "2023-06-10",
+    "Manchester City",
+    "Inter Milan",
+    "1-0",
+    ""
+   ],
+   [
+    2024,
+    "2024-06-01",
+    "Real Madrid",
+    "Borussia Dortmund",
+    "2-0",
+    ""
+   ],
+   [
+    2025,
+    "2025-05-31",
+    "Paris Saint-Germain",
+    "Inter Milan",
+    "5-0",
+    ""
+   ],
+   [
+    2026,
+    "2026-05-30",
+    "Paris Saint-Germain",
+    "Arsenal",
+    "1-1",
+    "on penalties"
+   ]
+  ]
+ },
+ "ballon": {
+  "label": "Ballon d'Or",
+  "event": "Ballon d'Or",
+  "award": true,
+  "rows": [
+   [
+    2005,
+    "2005-11-28",
+    "Ronaldinho",
+    "Barcelona",
+    null,
+    null
+   ],
+   [
+    2006,
+    "2006-11-27",
+    "Fabio Cannavaro",
+    "Real Madrid",
+    null,
+    null
+   ],
+   [
+    2007,
+    "2007-12-02",
+    "Kak\u00e1",
+    "AC Milan",
+    null,
+    null
+   ],
+   [
+    2008,
+    "2008-12-02",
+    "Cristiano Ronaldo",
+    "Manchester United",
+    null,
+    null
+   ],
+   [
+    2009,
+    "2009-12-01",
+    "Lionel Messi",
+    "Barcelona",
+    null,
+    null
+   ],
+   [
+    2010,
+    "2011-01-10",
+    "Lionel Messi",
+    "Barcelona",
+    null,
+    null
+   ],
+   [
+    2011,
+    "2012-01-09",
+    "Lionel Messi",
+    "Barcelona",
+    null,
+    null
+   ],
+   [
+    2012,
+    "2013-01-07",
+    "Lionel Messi",
+    "Barcelona",
+    null,
+    null
+   ],
+   [
+    2013,
+    "2014-01-13",
+    "Cristiano Ronaldo",
+    "Real Madrid",
+    null,
+    null
+   ],
+   [
+    2014,
+    "2015-01-12",
+    "Cristiano Ronaldo",
+    "Real Madrid",
+    null,
+    null
+   ],
+   [
+    2015,
+    "2016-01-11",
+    "Lionel Messi",
+    "Barcelona",
+    null,
+    null
+   ],
+   [
+    2016,
+    "2016-12-12",
+    "Cristiano Ronaldo",
+    "Real Madrid",
+    null,
+    null
+   ],
+   [
+    2017,
+    "2017-12-07",
+    "Cristiano Ronaldo",
+    "Real Madrid",
+    null,
+    null
+   ],
+   [
+    2018,
+    "2018-12-03",
+    "Luka Modri\u0107",
+    "Real Madrid",
+    "Ada Hegerberg",
+    "Lyon"
+   ],
+   [
+    2019,
+    "2019-12-02",
+    "Lionel Messi",
+    "Barcelona",
+    "Megan Rapinoe",
+    "Reign FC"
+   ],
+   [
+    2020,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   [
+    2021,
+    "2021-11-29",
+    "Lionel Messi",
+    "Paris Saint-Germain",
+    "Alexia Putellas",
+    "Barcelona"
+   ],
+   [
+    2022,
+    "2022-10-17",
+    "Karim Benzema",
+    "Real Madrid",
+    "Alexia Putellas",
+    "Barcelona"
+   ],
+   [
+    2023,
+    "2023-10-30",
+    "Lionel Messi",
+    "Inter Miami",
+    "Aitana Bonmat\u00ed",
+    "Barcelona"
+   ],
+   [
+    2024,
+    "2024-10-28",
+    "Rodri",
+    "Manchester City",
+    "Aitana Bonmat\u00ed",
+    "Barcelona"
+   ],
+   [
+    2025,
+    "2025-09-22",
+    "Ousmane Demb\u00e9l\u00e9",
+    "Paris Saint-Germain",
+    "Aitana Bonmat\u00ed",
+    "Barcelona"
+   ]
+  ]
+ }
+}

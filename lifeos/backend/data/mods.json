@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "notes": "Mods dress a line for its context. open: said before a text ('ok so', 'u up?'). close: tacked on after ('lol'). talk: how a line is said in person; {them_first} is who's talking and {says} becomes 'says' or 'asks'. Keys are context tags (see lines.TAGS), several joined with + when all must hold ('close+guys'), or 'any'. Dialogue packs add more.",
+  "open": {
+    "any": [
+      "ok so",
+      "wait",
+      "random but"
+    ],
+    "late_night": [
+      "u up?",
+      "can't sleep.",
+      "random but"
+    ],
+    "morning": [
+      "morning.",
+      "ok so"
+    ],
+    "close": [
+      "yo",
+      "ok listen"
+    ],
+    "close+guys": [
+      "bro"
+    ],
+    "close+girls": [
+      "girl.",
+      "ok girl"
+    ],
+    "partner": [
+      "hey you."
+    ],
+    "down": [
+      "ugh.",
+      "long day."
+    ],
+    "stressed": [
+      "ok i'm losing it but",
+      "quick thing,"
+    ],
+    "weekend": [
+      "ok so this weekend"
+    ],
+    "teammate": [
+      "yo"
+    ]
+  },
+  "close": {
+    "any": [
+      "lol",
+      "haha"
+    ],
+    "close": [
+      "fr",
+      "lmao",
+      "no cap"
+    ],
+    "happy": [
+      "lol",
+      "haha"
+    ],
+    "partner": [
+      "❤️"
+    ],
+    "crush": [
+      "😊"
+    ]
+  },
+  "talk": {
+    "any": [
+      "{them_first} {says}",
+      "{them_first} {says} with a shrug",
+      "{them_first} {says}, half laughing"
+    ],
+    "morning": [
+      "{them_first} {says}, still half asleep",
+      "{them_first} {says} through a yawn"
+    ],
+    "afternoon": [
+      "{them_first} {says}, stretching",
+      "{them_first} {says} out of nowhere"
+    ],
+    "evening": [
+      "{them_first} {says}, kicking at the curb",
+      "{them_first} {says}, looking at the sky"
+    ],
+    "late_night": [
+      "{them_first} {says}, way too awake for this hour",
+      "{them_first} {says} quietly"
+    ],
+    "happy": [
+      "{them_first} {says}, grinning",
+      "{them_first} {says}, still laughing"
+    ],
+    "down": [
+      "{them_first} {says}, not really looking at you",
+      "{them_first} {says} quietly"
+    ],
+    "stressed": [
+      "{them_first} {says}, rubbing their eyes",
+      "{them_first} {says} too fast"
+    ],
+    "tired": [
+      "{them_first} {says} through a yawn"
+    ],
+    "close": [
+      "{them_first} {says}, with a shoulder bump",
+      "{them_first} {says}, like it's obvious"
+    ],
+    "crush": [
+      "{them_first} {says}, not quite making eye contact",
+      "{them_first} {says}, a little too casually"
+    ],
+    "partner": [
+      "{them_first} {says}, leaning in",
+      "{them_first} {says} softly"
+    ],
+    "rival": [
+      "{them_first} {says}, arms crossed",
+      "{them_first} {says} with a smirk"
+    ],
+    "new": [
+      "{them_first} {says}, a little awkward",
+      "{them_first} {says}, testing it out"
+    ],
+    "sibling": [
+      "{them_first} {says}, stealing a fry",
+      "{them_first} {says}, rolling their eyes"
+    ],
+    "teammate": [
+      "{them_first} {says}, spinning a ball on one finger",
+      "{them_first} {says}, still sweaty from practice"
+    ]
+  }
+}

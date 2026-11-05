@@ -1,0 +1,202 @@
+{
+ "_about": "Group chats that talk (groupchat.py). Each burst is a little conversation between the people in one of your group chats (chat: crew, team or family). Roles: A, B, C are people in the chat (your crew or teammates); in the family chat P and Q are your parents, S and T your siblings. {A} etc. are their first names, {me} yours, {opp} the other team, {team} your team, {pet} your pet. lines arrive one at a time; you can jump in with one of `you` (say, then what they say back, fx: role -> {affection: n} is how they feel about you, me -> {fun, stress, mood}, crew -> {cohesion}, parents -> {trust}). side is someone DMing you after (only after the `you` options listed in after, or any).",
+ "bursts": [
+  {"id": "haircut", "chat": "crew",
+   "lines": [["A", "yo did everyone see {B}'s haircut today"], ["C", "i thought it was a dare"], ["B", "it's growing out ok"], ["A", "it better be"], ["C", "😂😂"]],
+   "you": [
+    {"say": "honestly it's not that bad", "then": [["B", "THANK YOU {me}. finally"], ["A", "you're both blind"]], "fx": {"B": {"affection": 2}, "A": {"affection": -0.5}}},
+    {"say": "it looks like someone did it in the dark", "then": [["A", "LMAOOO"], ["C", "{me} is ruthless"], ["B", "i'm leaving this chat"]], "fx": {"A": {"affection": 1.5}, "C": {"affection": 1}, "B": {"affection": -1}, "me": {"fun": 3}}},
+    {"say": "send a pic for the people who missed it", "then": [["B", "absolutely not"], ["A", "📸 [pic of {B}'s haircut]"], ["C", "NOT THE PIC 😭"]], "fx": {"A": {"affection": 1}, "C": {"affection": 1}, "B": {"affection": -0.5}, "me": {"fun": 4}}}
+   ],
+   "side": {"from": "B", "after": [1, 2], "text": "ok be honest. is it actually that bad"}},
+  {"id": "the_move", "chat": "crew", "when": ["weekend"],
+   "lines": [["A", "what's the move tonight"], ["B", "{A} you ask this every week and we always end up at the diner"], ["A", "and every week it's a good time"], ["C", "i can't, my mom's making me go to my cousin's thing"]],
+   "you": [
+    {"say": "diner it is", "then": [["A", "see {me} gets it"], ["B", "fine. 8?"]], "fx": {"A": {"affection": 1.5}, "B": {"affection": 0.5}, "crew": {"cohesion": 2}}},
+    {"say": "someone's basement and we play video games", "then": [["B", "my basement's open"], ["C", "now i'm mad i can't come"]], "fx": {"B": {"affection": 1.5}, "C": {"affection": 0.5}}},
+    {"say": "{C} just tell your mom you're sick", "then": [["C", "and get grounded until college? pass"], ["A", "lol {me} the bad influence"]], "fx": {"A": {"affection": 1}, "C": {"affection": -0.5}, "me": {"fun": 2}}}
+   ]},
+  {"id": "test_panic", "chat": "crew", "when": ["school_night"],
+   "lines": [["A", "is the test tomorrow on chapter 5 or 6"], ["B", "...there's a test tomorrow"], ["C", "both. it's both chapters"], ["B", "i'm gonna be sick"]],
+   "you": [
+    {"say": "i made a study guide, i'll send it", "then": [["B", "{me} you're a legend"], ["A", "this is why we keep you around"]], "fx": {"B": {"affection": 2}, "A": {"affection": 1.5}, "C": {"affection": 1}}},
+    {"say": "we're all failing together then", "then": [["C", "group fail. i like it"], ["A", "speak for yourself"]], "fx": {"C": {"affection": 0.5}, "me": {"fun": 2}}},
+    {"say": "library after school tomorrow? i'll quiz everyone", "then": [["A", "i'm in"], ["B", "only if we get food after"]], "fx": {"A": {"affection": 1}, "B": {"affection": 1}, "me": {"stress": -2}}}
+   ],
+   "side": {"from": "B", "after": [0], "text": "seriously thank you. i was about to panic"}},
+  {"id": "goat", "chat": "crew",
+   "lines": [["A", "settle this. jordan or lebron"], ["B", "jordan and it's not close"], ["C", "lebron could guard all 5 positions"], ["B", "jordan went 6-0 in the finals. next"]],
+   "you": [
+    {"say": "jordan. six rings. done", "then": [["B", "THANK YOU"], ["C", "you two are stuck in the past"]], "fx": {"B": {"affection": 1.5}, "C": {"affection": -0.5}}},
+    {"say": "lebron. he's not done yet", "then": [["C", "{me} is the only one with sense"], ["B", "talk to me when he has 6"]], "fx": {"C": {"affection": 1.5}, "B": {"affection": -0.5}}},
+    {"say": "kobe", "then": [["A", "oh no"], ["B", "{me} chose violence"], ["C", "...honestly not crazy"]], "fx": {"A": {"affection": 0.5}, "C": {"affection": 0.5}, "me": {"fun": 3}}}
+   ]},
+  {"id": "class_nap", "chat": "crew", "when": ["school_day"],
+   "lines": [["A", "{B} fell asleep in class today and SNORED"], ["C", "there's video"], ["B", "there is NOT video"], ["C", "📹 [video] there's video"]],
+   "you": [
+    {"say": "this is the best day of my life", "then": [["A", "send it to everyone"], ["B", "i'm moving schools"]], "fx": {"A": {"affection": 1}, "C": {"affection": 1}, "B": {"affection": -0.5}, "me": {"fun": 4}}},
+    {"say": "delete it, that's messed up", "then": [["B", "{me} is the only real friend here"], ["C", "ok fine. it's deleted. (it's not)"]], "fx": {"B": {"affection": 2}, "C": {"affection": -0.5}}},
+    {"say": "in fairness that class is so boring", "then": [["B", "EXACTLY"], ["A", "you're both enablers"]], "fx": {"B": {"affection": 1}, "A": {"affection": 0.5}}}
+   ],
+   "side": {"from": "B", "after": [1], "text": "for real thanks for having my back in there"}},
+  {"id": "rage_quit", "chat": "crew",
+   "lines": [["A", "{B} just rage quit for the third time tonight"], ["B", "the game is broken"], ["C", "the game is fine you're just bad"], ["B", "1v1 me then"]],
+   "you": [
+    {"say": "i'll take that 1v1", "then": [["B", "you're on. loser buys food friday"], ["A", "oh this is happening"]], "fx": {"B": {"affection": 1}, "A": {"affection": 1}, "me": {"fun": 3}}},
+    {"say": "{B} you're actually good you just get heated", "then": [["B", "see someone gets it"], ["C", "{me} being nice for no reason"]], "fx": {"B": {"affection": 2}}},
+    {"say": "post the clip", "then": [["C", "🎮 [clip] say less"], ["B", "i hate it here"], ["A", "😂😂😂"]], "fx": {"C": {"affection": 1}, "A": {"affection": 1}, "B": {"affection": -0.5}, "me": {"fun": 3}}}
+   ],
+   "side": {"from": "B", "after": [0], "text": "ok don't tell them but i've been practicing. you're going down"}},
+  {"id": "mystery_meat", "chat": "crew", "when": ["school_night"],
+   "lines": [["A", "$10 if someone eats the mystery meat tomorrow"], ["C", "make it 20"], ["B", "for 20 i'll eat the tray"]],
+   "you": [
+    {"say": "i'll do it for 20", "then": [["A", "deal. it's going on camera"], ["C", "{me} fears nothing"]], "fx": {"A": {"affection": 1}, "C": {"affection": 1}, "me": {"fun": 4}}},
+    {"say": "{B} said they'd eat the tray. holding them to it", "then": [["B", "...i was kidding"], ["A", "too late. it's in writing"]], "fx": {"A": {"affection": 1}, "B": {"affection": -0.5}, "me": {"fun": 3}}},
+    {"say": "you guys are disgusting", "then": [["C", "says the person who ate a crayon in 2nd grade"], ["A", "the crayon incident 😂"]], "fx": {"me": {"fun": 2}}}
+   ]},
+  {"id": "phone_smile", "chat": "crew",
+   "lines": [["A", "why has {B} been smiling at their phone all day"], ["C", "oh they're texting someone"], ["B", "i'm not texting anyone"], ["C", "then why'd you just put your phone face down"]],
+   "you": [
+    {"say": "spill. now.", "then": [["B", "ok fine. i'll tell you guys tomorrow"], ["A", "TOMORROW??"]], "fx": {"A": {"affection": 1}, "C": {"affection": 1}, "me": {"fun": 2}}},
+    {"say": "leave them alone, let them have this", "then": [["B", "{me} the only one who respects privacy"], ["A", "boring"]], "fx": {"B": {"affection": 2}}},
+    {"say": "i already know who it is 👀", "then": [["B", "no you don't"], ["A", "{me} WHO"], ["C", "TELL US"]], "fx": {"A": {"affection": 1}, "B": {"affection": -0.5}, "me": {"fun": 3}}}
+   ],
+   "side": {"from": "B", "after": [0, 1], "text": "ok i'll tell you first. promise you won't say anything"}},
+  {"id": "shotgun", "chat": "crew", "when": ["weekend"],
+   "lines": [["A", "who's driving saturday"], ["B", "not me my car's in the shop"], ["C", "{A} you literally just got your license"], ["A", "and i'm a great driver"]],
+   "you": [
+    {"say": "{A} drives. i call shotgun", "then": [["A", "finally someone believes in me"], ["C", "i'm writing my will"]], "fx": {"A": {"affection": 2}, "me": {"fun": 2}}},
+    {"say": "my mom can drive us", "then": [["B", "a mom ride. we've peaked"], ["A", "honestly respect"]], "fx": {"A": {"affection": 0.5}, "B": {"affection": 0.5}}},
+    {"say": "we're walking. it's good for us", "then": [["C", "absolutely not"], ["B", "{me} we are NOT walking"]], "fx": {"me": {"fun": 2}}}
+   ]},
+  {"id": "thirsty_fish", "chat": "crew",
+   "lines": [["A", "do fish get thirsty"], ["B", "it's 11pm why are you like this"], ["C", "no bc they're always drinking"], ["A", "but what if they're drinking and STILL thirsty"]],
+   "you": [
+    {"say": "go to sleep {A}", "then": [["A", "i can't. i have too many questions"], ["B", "same honestly"]], "fx": {"A": {"affection": 1}}},
+    {"say": "this is the most important question of our time", "then": [["A", "FINALLY someone takes me seriously"], ["C", "i hate all of you"]], "fx": {"A": {"affection": 2}, "me": {"fun": 2}}},
+    {"say": "what if fish think we're the ones underwater", "then": [["B", "ok i'm not sleeping tonight"], ["A", "{me} broke my brain"], ["C", "🤯"]], "fx": {"A": {"affection": 1}, "B": {"affection": 1}, "me": {"fun": 4}}}
+   ]},
+  {"id": "snow_day", "chat": "crew", "when": ["school_night", "winter"],
+   "lines": [["A", "if it snows tomorrow i'm not even setting an alarm"], ["B", "the forecast says 2 inches. that's nothing"], ["C", "flip your pajamas inside out. it works"], ["B", "that's not science"]],
+   "you": [
+    {"say": "already flipped. we're getting a snow day", "then": [["C", "that's the spirit"], ["A", "we're manifesting this"]], "fx": {"C": {"affection": 1.5}, "A": {"affection": 1}, "me": {"fun": 2}}},
+    {"say": "they never cancel for 2 inches", "then": [["B", "thank you, voice of reason"], ["A", "{me} why would you say that"]], "fx": {"B": {"affection": 1}, "A": {"affection": -0.5}}},
+    {"say": "if it snows we're sledding at the big hill", "then": [["A", "PLAN"], ["C", "i'll bring the good sled"], ["B", "fine. i'm in"]], "fx": {"A": {"affection": 1}, "B": {"affection": 1}, "C": {"affection": 1}, "crew": {"cohesion": 2}}}
+   ]},
+  {"id": "dodgeball", "chat": "crew", "when": ["school_day"],
+   "lines": [["A", "{B} got absolutely destroyed in dodgeball today"], ["B", "i caught one!!"], ["C", "with your face"], ["B", "that counts"]],
+   "you": [
+    {"say": "it was honestly impressive how fast you went down", "then": [["A", "😂😂"], ["B", "everyone in this chat is fired"]], "fx": {"A": {"affection": 1}, "C": {"affection": 1}, "B": {"affection": -0.5}, "me": {"fun": 3}}},
+    {"say": "{B} took one for the team. respect", "then": [["B", "THANK you"], ["C", "the team lost"]], "fx": {"B": {"affection": 2}}},
+    {"say": "revenge game next week. we're all on {B}'s side", "then": [["B", "that's what i'm talking about"], ["A", "fine. but i'm captain"]], "fx": {"B": {"affection": 1.5}, "A": {"affection": 0.5}, "crew": {"cohesion": 2}}}
+   ]},
+  {"id": "birthday", "chat": "crew",
+   "lines": [["A", "{C}'s birthday is next week what are we doing"], ["C", "i'm right here"], ["A", "act surprised then"], ["B", "cake. we're doing cake"]],
+   "you": [
+    {"say": "cake AND pizza. i'll get the pizza", "then": [["C", "{me} is my favorite person in this chat"], ["B", "rude but fair"]], "fx": {"C": {"affection": 2}, "B": {"affection": 0.5}}},
+    {"say": "surprise party. {C} leave the chat", "then": [["C", "i'm not leaving"], ["A", "{C} LEAVE"]], "fx": {"A": {"affection": 1}, "me": {"fun": 3}}},
+    {"say": "we get {C} the worst gift we can find. on purpose", "then": [["C", "please don't"], ["B", "oh this is happening"], ["A", "budget is $5"]], "fx": {"A": {"affection": 1}, "B": {"affection": 1}, "me": {"fun": 3}}}
+   ]},
+  {"id": "aux_ban", "chat": "crew",
+   "lines": [["A", "whoever had aux in {B}'s car today should be banned"], ["B", "that was a CLASSIC"], ["C", "it was the same song 4 times"], ["B", "because it's a classic"]],
+   "you": [
+    {"say": "i actually liked it", "then": [["B", "{me} has taste. the rest of you don't"], ["A", "betrayal"]], "fx": {"B": {"affection": 2}, "A": {"affection": -0.5}}},
+    {"say": "{B} is banned from aux until further notice", "then": [["A", "seconded"], ["C", "motion passed"], ["B", "this is a dictatorship"]], "fx": {"A": {"affection": 1}, "C": {"affection": 1}, "B": {"affection": -0.5}, "me": {"fun": 2}}},
+    {"say": "next time i'm on aux. throwback playlist", "then": [["C", "finally"], ["B", "fine but i get one song"]], "fx": {"C": {"affection": 1}, "B": {"affection": 0.5}}}
+   ]},
+
+  {"id": "pregame_hype", "chat": "team", "when": ["pregame"],
+   "lines": [["A", "{opp} tomorrow. we owe them one"], ["B", "early bus. don't be late {C}"], ["C", "that was ONE time"], ["A", "let's go get it"]],
+   "you": [
+    {"say": "let's go. nobody's beating us tomorrow", "then": [["A", "THAT's the energy"], ["B", "💪"]], "fx": {"A": {"affection": 1}, "B": {"affection": 1}, "me": {"mood": 2}}},
+    {"say": "{C} i'm calling you at 6 to make sure you're up", "then": [["C", "i will not be answering"], ["B", "😂"]], "fx": {"B": {"affection": 1}, "me": {"fun": 2}}},
+    {"say": "early night everyone. no excuses", "then": [["B", "yes captain"], ["A", "who made {me} captain"]], "fx": {"B": {"affection": 1}, "A": {"affection": 0.5}, "me": {"stress": -2}}}
+   ]},
+  {"id": "pregame_nerves", "chat": "team", "when": ["pregame"],
+   "lines": [["A", "anyone else nervous for tomorrow"], ["B", "nah"], ["C", "{B} you've been pacing all day"], ["B", "...a little nervous"]],
+   "you": [
+    {"say": "nervous means it matters. we're ready", "then": [["A", "ok that actually helped"], ["B", "{me} with the speech"]], "fx": {"A": {"affection": 1.5}, "B": {"affection": 1}, "me": {"stress": -2}}},
+    {"say": "same honestly", "then": [["C", "good. we're all nervous together"], ["A", "team bonding"]], "fx": {"A": {"affection": 1}, "C": {"affection": 1}}},
+    {"say": "just don't think about it. that's my secret", "then": [["B", "that's not a secret that's just not thinking"], ["C", "😂"]], "fx": {"me": {"fun": 2}}}
+   ],
+   "side": {"from": "A", "after": [0], "text": "real talk thanks for that. i needed it"}},
+  {"id": "after_win", "chat": "team", "when": ["win"],
+   "lines": [["A", "LETS GOOOOO"], ["B", "{opp} is going home sad"], ["C", "{A} was a menace today"], ["A", "we all were"]],
+   "you": [
+    {"say": "best team in the league. i said what i said", "then": [["B", "facts"], ["C", "no doubt"]], "fx": {"A": {"affection": 1}, "B": {"affection": 1}, "me": {"mood": 2}}},
+    {"say": "{A} carried us today honestly", "then": [["A", "stop 🙏 team win"], ["C", "true though"]], "fx": {"A": {"affection": 2}}},
+    {"say": "team dinner to celebrate?", "then": [["B", "pizza. now."], ["A", "i'm already in the car"]], "fx": {"A": {"affection": 1}, "B": {"affection": 1}, "me": {"fun": 3}}}
+   ]},
+  {"id": "after_loss", "chat": "team", "when": ["loss"],
+   "lines": [["A", "that one hurt"], ["B", "refs were blind"], ["C", "we'll see them again"], ["A", "practice monday is gonna be rough"]],
+   "you": [
+    {"say": "we'll get them next time. heads up", "then": [["C", "for real. heads up"], ["A", "👊"]], "fx": {"A": {"affection": 1}, "C": {"affection": 1}, "me": {"mood": 1}}},
+    {"say": "it was on us, not the refs", "then": [["B", "...yeah. fair"], ["A", "real talk"]], "fx": {"A": {"affection": 1}, "B": {"affection": 0.5}}},
+    {"say": "i'm bringing donuts to practice monday. we need it", "then": [["A", "this is why we love you"], ["C", "chocolate ones pls"]], "fx": {"A": {"affection": 1.5}, "C": {"affection": 1}, "me": {"fun": 2}}}
+   ]},
+  {"id": "suicides", "chat": "team", "when": ["school_day"],
+   "lines": [["A", "coach made us run for 40 minutes today"], ["B", "i can't feel my legs"], ["C", "i saw my life flash before my eyes"], ["B", "and we have practice again tomorrow"]],
+   "you": [
+    {"say": "pain is temporary", "then": [["C", "who let {me} read a poster"], ["A", "😂"]], "fx": {"A": {"affection": 0.5}, "me": {"fun": 2}}},
+    {"say": "ice bath at my house", "then": [["B", "{me} has an ice bath??"], ["A", "it's a bathtub with ice"], ["B", "i'm in"]], "fx": {"A": {"affection": 1}, "B": {"affection": 1}}},
+    {"say": "honestly we needed it", "then": [["A", "ok coach"], ["B", "{me} is a coach's kid now"]], "fx": {"A": {"affection": 0.5}}}
+   ]},
+  {"id": "game_socks", "chat": "team", "when": ["pregame"],
+   "lines": [["A", "who took my game socks"], ["B", "check your bag"], ["A", "i checked my bag"], ["C", "they're in the lost and found with your dignity"]],
+   "you": [
+    {"say": "i have extras, i'll bring them", "then": [["A", "{me} is a hero"], ["C", "boring answer"]], "fx": {"A": {"affection": 2}}},
+    {"say": "{C} definitely took them", "then": [["C", "i would never"], ["B", "{C} is sweating"]], "fx": {"C": {"affection": -0.5}, "me": {"fun": 2}}},
+    {"say": "play barefoot. intimidation", "then": [["A", "...this is actually genius"], ["B", "it is NOT"]], "fx": {"me": {"fun": 3}}}
+   ]},
+
+  {"id": "leftovers", "chat": "family",
+   "lines": [["P", "Who ate the leftovers I was saving for lunch?"], ["S", "not me"], ["Q", "Not me either."], ["S", "{me} 👀"]],
+   "you": [
+    {"say": "it was me. i'm sorry. it was really good", "then": [["P", "At least you're honest. You're making dinner Friday."], ["S", "lol"]], "fx": {"parents": {"trust": 1}}},
+    {"say": "{S} is lying, i saw them do it", "then": [["S", "SNITCH"], ["P", "{S}. Kitchen. Now."]], "fx": {"S": {"affection": -1}, "me": {"fun": 2}}},
+    {"say": "a raccoon got in", "then": [["Q", "We don't have a raccoon problem."], ["P", "We do now apparently"]], "fx": {"me": {"fun": 2}}}
+   ]},
+  {"id": "lol", "chat": "family",
+   "lines": [["Q", "Grandma called. She says hi LOL"], ["S", "{Q} why are you laughing at grandma"], ["Q", "LOL means lots of love"], ["S", "it does NOT"]],
+   "you": [
+    {"say": "it means laugh out loud", "then": [["Q", "Oh no. I've been sending that to everyone."], ["S", "😭😭"]], "fx": {"me": {"fun": 4}}},
+    {"say": "lol (lots of love)", "then": [["Q", "See? {me} gets it."], ["S", "you're enabling this"]], "fx": {"me": {"fun": 2}, "parents": {"trust": 1}}},
+    {"say": "love you too grandma lol", "then": [["P", "Please don't encourage this."], ["Q", "LOL"]], "fx": {"me": {"fun": 3}}}
+   ]},
+  {"id": "dinner_six", "chat": "family", "when": ["school_day"],
+   "lines": [["P", "Dinner at 6. Everyone home."], ["S", "can i eat at a friend's"], ["P", "No."], ["S", "can {me} eat at a friend's"], ["P", "Also no."]],
+   "you": [
+    {"say": "i'll be home at 6. what are we having", "then": [["P", "Tacos. Thank you {me}."], ["S", "suck up"]], "fx": {"S": {"affection": -0.5}, "parents": {"trust": 2}}},
+    {"say": "can we do 6:30", "then": [["P", "6:15. Final offer."], ["S", "you negotiated??"]], "fx": {"me": {"fun": 1}}},
+    {"say": "{S} is just trying to get out of dishes", "then": [["S", "LIES"], ["Q", "Now that you mention it, {S} has dishes tonight."]], "fx": {"S": {"affection": -1}, "me": {"fun": 2}}}
+   ]},
+  {"id": "store_run", "chat": "family",
+   "lines": [["P", "Going to the store. Need anything?"], ["S", "chips. the good ones"], ["Q", "We have chips at home."], ["S", "the chips at home are not the good ones"]],
+   "you": [
+    {"say": "ice cream. please. i'm begging", "then": [["P", "Fine. One."], ["S", "how come {me} gets ice cream"]], "fx": {"me": {"fun": 1}, "parents": {"trust": 1}}},
+    {"say": "fruit. i'm being healthy now", "then": [["S", "who are you"], ["P", "Proud of you!"]], "fx": {"parents": {"trust": 2}}},
+    {"say": "same as {S}. the good chips", "then": [["S", "teamwork"], ["P", "You two are a menace."]], "fx": {"S": {"affection": 1.5}}}
+   ]},
+  {"id": "grandma_visit", "chat": "family", "when": ["weekend"],
+   "lines": [["P", "Grandma's coming this weekend. Everyone be on your best behavior."], ["S", "define best behavior"], ["Q", "No phones at the table."], ["S", "this is a hostage situation"]],
+   "you": [
+    {"say": "i'll be an angel", "then": [["Q", "That's what you said last time."], ["S", "😂"]], "fx": {"me": {"fun": 2}, "parents": {"trust": 1}}},
+    {"say": "can i keep my phone if i'm quiet about it", "then": [["P", "No."], ["S", "worth a shot"]], "fx": {"S": {"affection": 0.5}}},
+    {"say": "i'll make grandma's favorite dessert", "then": [["P", "Now that's the spirit."], ["S", "teacher's pet"]], "fx": {"parents": {"trust": 2}}}
+   ]},
+  {"id": "walk_the_pet", "chat": "family", "when": ["has_pet"],
+   "lines": [["P", "Who's walking {pet} tonight?"], ["S", "i did it yesterday"], ["P", "Did you though?"], ["S", "...spiritually"]],
+   "you": [
+    {"say": "i got it", "then": [["P", "Thank you!!"], ["S", "thank u {me}"]], "fx": {"S": {"affection": 1}, "parents": {"trust": 2}}},
+    {"say": "{S} did not do it yesterday", "then": [["S", "traitor"], ["P", "{S}. Leash."]], "fx": {"S": {"affection": -1}, "me": {"fun": 2}}},
+    {"say": "we'll both go", "then": [["S", "fine. but i'm holding the leash"], ["P", "My kids are cooperating?? Taking a screenshot."]], "fx": {"S": {"affection": 1.5}, "parents": {"trust": 1}}}
+   ]},
+  {"id": "data_plan", "chat": "family",
+   "lines": [["Q", "Who used all the data this month?"], ["S", "not me"], ["Q", "It was the phone with your name on it."], ["S", "...that's a different phone"]],
+   "you": [
+    {"say": "it was videos. they were educational", "then": [["Q", "Wifi only from now on."], ["S", "this is your fault {me}"]], "fx": {"S": {"affection": -0.5}, "me": {"fun": 1}}},
+    {"say": "{S} watches videos on the bus every day", "then": [["S", "SNITCH. again"], ["Q", "Thank you for your service {me}."]], "fx": {"S": {"affection": -1}, "parents": {"trust": 1}}},
+    {"say": "maybe we just need a bigger plan", "then": [["Q", "Maybe you need a job."], ["S", "😂"]], "fx": {"me": {"fun": 2}}}
+   ]}
+ ]
+}

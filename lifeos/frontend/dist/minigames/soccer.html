@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Penalty Kicks · LIFE OS</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0f2418; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none;
+    font-family: "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
+  canvas { display: block; width: 100vw; height: 100vh; height: 100dvh; }
+  .ov { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px;
+    background: rgba(8, 22, 14, 0.62); padding: 24px; }
+  .ov[hidden] { display: none; }
+  .ov h1 { margin: 0; font-size: 30px; letter-spacing: 0.01em; }
+  .ov p { margin: 0; max-width: 300px; color: #d5ecdf; font-weight: 600; line-height: 1.45; }
+  .ov .big { font-size: 78px; font-weight: 800; line-height: 1; }
+  .ov .big small { font-size: 34px; opacity: 0.7; }
+  .btn { margin-top: 12px; border: 0; border-radius: 18px; padding: 15px 34px; font-weight: 800; font-size: 17px; font-family: inherit; color: #fff; cursor: pointer;
+    background: linear-gradient(135deg, #ff6650, #ff9459); box-shadow: 0 14px 26px -14px rgba(255, 92, 66, 0.9); }
+  .btn.ghost { background: rgba(255, 255, 255, 0.14); box-shadow: none; }
+  .hint { position: fixed; left: 0; right: 0; bottom: calc(18px + env(safe-area-inset-bottom)); text-align: center; font-weight: 800; font-size: 14px;
+    color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6); pointer-events: none; transition: opacity 0.3s; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="hint" id="hint">Swipe from the ball toward the goal</div>
+<div class="ov" id="intro">
+  <h1>Penalty kicks</h1>
+  <p>Five shots from the spot. Swipe from the ball toward where you want it.</p>
+  <p>Faster swipe = harder and higher. Too hard and it sails. Curve your swipe to bend it around the keeper.</p>
+  <button class="btn" id="go">Start</button>
+</div>
+<div class="ov" id="end" hidden>
+  <div class="big" id="endScore">0<small>/5</small></div>
+  <h1 id="endTitle">Done</h1>
+  <p id="endLine"></p>
+  <button class="btn" id="done">Done</button>
+  <button class="btn ghost" id="again" hidden>Play again</button>
+</div>
+<script>
+// ---------------------------------------------------------------------------- LifeOS bridge (works standalone too)
+// The app sends {type:"lifeos:init", config}; the game answers with {type:"lifeos:minigame", event:"ready"|"finish"|"quit"}.
+const LifeOS = (() => {
+  const embedded = window.parent !== window;
+  const qs = new URLSearchParams(location.search);
+  const config = { skill: +(qs.get("skill") || 55), difficulty: +(qs.get("difficulty") || 50), mode: qs.get("mode") || "practice",
+                   me: qs.get("me") || "You", seed: +(qs.get("seed") || Date.now() % 100000) };
+  let started = false, cb = null;
+  const fire = () => { if (!started && cb) { started = true; cb(config); } };
+  window.addEventListener("message", (e) => {
+    if (e.data && e.data.type === "lifeos:init") { Object.assign(config, e.data.config || {}); fire(); }
+  });
+  const post = (event, data) => { if (embedded) parent.postMessage(Object.assign({ type: "lifeos:minigame", event }, data || {}), "*"); };
+  return {
+    embedded, config,
+    onStart(f) { cb = f; post("ready"); if (!embedded) setTimeout(fire, 0); else setTimeout(fire, 2500); },
+    finish(result) { post("finish", { result }); },
+    quit() { post("quit"); },
+  };
+})();
+
+// ---------------------------------------------------------------------------- setup
+const cv = document.getElementById("c"), g = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1, f = 600, cx = 0, hy = 0;
+const CAM = { y: 1.55, z: 14.2 }, SPOT = 11, GW = 3.66, GH = 2.44, BR = 0.11, KZ = 0.4;
+function resize() {
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  f = Math.min(1.62 * W, 1.05 * H);
+  cx = W / 2;
+  hy = 0.84 * H - f * (CAM.y - BR) / (CAM.z - SPOT);
+}
+addEventListener("resize", resize);
+resize();
+function P(x, y, z) { const d = CAM.z - z; return { x: cx + f * x / d, y: hy - f * (y - CAM.y) / d, s: f / d }; }
+
+let rng = Math.random;
+function seeded(s) { return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }; }
+
+// ---------------------------------------------------------------------------- state
+let cfg = LifeOS.config, diff = 50, skill = 55;
+const N = 5;
+let kicks = [], phase = "intro", t = 0, shot = null, msg = null, trail = [], stroke = null, crowdT = 0, netBulge = null;
+const keeper = { x: 0, y: 0, rot: 0, tx: 0, ty: 0, react: 0.25, speed: 5, reach: 0.9, mood: 0 };
+
+function resetKick() {
+  shot = null; msg = null; netBulge = null; trail = [];
+  keeper.x = 0; keeper.y = 0; keeper.rot = 0; keeper.tx = 0; keeper.ty = 0;
+  phase = kicks.length >= N ? "end" : "aim";
+  document.getElementById("hint").style.opacity = phase === "aim" && kicks.length === 0 ? 1 : 0;
+  if (phase === "end") showEnd();
+}
+
+// ---------------------------------------------------------------------------- input
+function ballScreen() { return P(0, BR, SPOT); }
+cv.addEventListener("pointerdown", (e) => {
+  if (phase !== "aim") return;
+  const b = ballScreen();
+  if (e.clientY < hy + (b.y - hy) * 0.45) return;  // start near the bottom half
+  stroke = { pts: [{ x: e.clientX, y: e.clientY, t: performance.now() }] };
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+});
+cv.addEventListener("pointermove", (e) => {
+  if (!stroke) return;
+  stroke.pts.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+  trail.push({ x: e.clientX, y: e.clientY, a: 1 });
+});
+cv.addEventListener("pointerup", (e) => {
+  if (!stroke) return;
+  const s = stroke; stroke = null;
+  const a = s.pts[0], z = s.pts[s.pts.length - 1];
+  if (a.y - z.y < 45) { flash("Swipe up toward the goal", "#ffd66b", 1.0); return; }
+  kick(s.pts);
+});
+
+function kick(pts) {
+  const S = pts[0], E = pts[pts.length - 1];
+  // speed over the last ~120ms of the swipe
+  let k = pts.length - 1;
+  while (k > 0 && E.t - pts[k - 1].t < 120) k--;
+  const A = pts[Math.max(0, k - 1)];
+  const dt = Math.max(16, E.t - A.t);
+  const v = Math.hypot(E.x - A.x, E.y - A.y) / dt * 1000 / H;      // screen heights per second
+  const p = Math.max(0.05, Math.min(1.45, (v - 0.6) / 3.4));
+  // aim: where the swipe line crosses the goal's middle height
+  const gy = P(0, 1.0, 0).y;
+  const sx = S.x + (E.x - S.x) * (gy - S.y) / Math.min(-1, E.y - S.y);
+  let xEnd = (sx - cx) * (CAM.z - 0) / f;
+  let yEnd = Math.max(0.05, Math.min(3.6, 0.1 + (p - 0.25) * 2.35));
+  // curve: how far the swipe bowed off the straight line
+  let dev = 0;
+  const L = Math.hypot(E.x - S.x, E.y - S.y) || 1;
+  for (const q of pts) { const d = ((E.x - S.x) * (S.y - q.y) - (S.x - q.x) * (E.y - S.y)) / L; if (Math.abs(d) > Math.abs(dev)) dev = d; }
+  const curve = Math.max(-1, Math.min(1, -dev / (0.12 * W)));
+  // your character's skill steadies the aim
+  const sd = 0.42 * (1 - skill / 115);
+  xEnd += gauss() * sd + curve * 0.35;
+  yEnd += gauss() * sd * 0.6;
+  const T = 0.4 + (1 - Math.min(1, p)) * 0.85;
+  shot = { p, xEnd, yEnd, curve, T, t: 0, x: 0, y: BR, z: SPOT, spin: 0, out: null, after: 0, vx: 0, vy: 0, vz: 0, checked: false };
+  // the keeper guesses
+  const read = Math.max(0.12, Math.min(0.72, 0.2 + diff * 0.0045 - (skill - 50) * 0.0015));
+  const side = Math.sign(xEnd) || 1;
+  if (rng() < read) { keeper.tx = Math.max(-2.2, Math.min(2.2, xEnd)); keeper.ty = Math.max(0, Math.min(0.7, yEnd - 1.0)); }
+  else { const r = rng(); keeper.tx = r < 0.25 ? 0 : -side * (1.8 + rng() * 0.8); keeper.ty = rng() * 0.6; }
+  keeper.react = Math.max(0.16, 0.31 - diff * 0.0016);
+  keeper.speed = 3.1 + diff * 0.022;
+  keeper.reach = 0.62 + diff * 0.003;
+  phase = "flight"; t = 0;
+  document.getElementById("hint").style.opacity = 0;
+  thump(p);
+}
+function gauss() { let u = 0, v = 0; while (!u) u = rng(); while (!v) v = rng(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+// ---------------------------------------------------------------------------- simulation
+function bez(a, c, b, u) { return (1 - u) * (1 - u) * a + 2 * (1 - u) * u * c + u * u * b; }
+function step(dt) {
+  crowdT += dt;
+  trail.forEach((q) => (q.a -= dt * 2.5)); trail = trail.filter((q) => q.a > 0);
+  if (msg) msg.life -= dt;
+  if (phase !== "flight" || !shot) return;
+  t += dt;
+  const s = shot;
+  // keeper moves after his reaction time
+  if (t > keeper.react) {
+    const mv = keeper.speed * dt;
+    keeper.x += Math.max(-mv, Math.min(mv, keeper.tx - keeper.x));
+    keeper.y += Math.max(-mv * 0.6, Math.min(mv * 0.6, keeper.ty - keeper.y));
+    keeper.rot = Math.max(-1.25, Math.min(1.25, keeper.x / 2.4 * 1.25));
+  }
+  if (!s.out) {
+    s.t += dt;
+    const u = Math.min(1, s.t / s.T);
+    const ctrlX = s.xEnd * 0.5 + s.curve * 1.4;  // the ball's path follows the shape of your swipe
+    const loft = 0.12 + (1 - Math.min(1, s.p)) * 0.7;
+    s.x = bez(0, ctrlX, s.xEnd, u);
+    s.y = bez(BR, (BR + s.yEnd) / 2 + loft, s.yEnd, u);
+    s.z = SPOT * (1 - u);
+    s.spin += dt * (8 + s.p * 14);
+    if (!s.checked && s.z <= KZ) { s.checked = true; judgeKeeper(); }
+    if (u >= 1 && !s.out) judgeGoal();
+  } else {
+    s.after += dt;
+    s.vy -= 9.8 * dt;
+    s.x += s.vx * dt; s.y += s.vy * dt; s.z += s.vz * dt;
+    if (s.y < BR) { s.y = BR; s.vy = -s.vy * 0.45; s.vx *= 0.8; s.vz *= 0.8; }
+    if (s.out === "goal" && s.z < -1.7) { s.z = -1.7; s.vz = 0; s.vx *= 0.5; }
+    if (s.after > 1.7) resetKick();
+  }
+}
+function onTarget(x, y) { return Math.abs(x) <= GW - BR && y >= 0 && y <= GH - BR; }
+function judgeKeeper() {
+  const s = shot;
+  const kyc = 1.0 + keeper.y;
+  const rx = keeper.reach, ry = 1.08;
+  const dx = (s.x - keeper.x) / rx, dy = (s.y - kyc) / ry;
+  const body = Math.abs(s.x - keeper.x) < 0.42 && s.y < 1.95 + keeper.y;
+  if ((dx * dx + dy * dy <= 1 || body) && Math.abs(s.x) < GW + 0.3 && s.y < GH + 0.4) {
+    s.out = "saved";
+    s.vz = 4 + rng() * 3; s.vx = (s.x - keeper.x) * 3 + (rng() - 0.5) * 4; s.vy = 2 + rng() * 2;
+    result("saved");
+  }
+}
+function judgeGoal() {
+  const s = shot;
+  const ax = Math.abs(s.x);
+  if (onTarget(s.x, s.y)) {
+    s.out = "goal"; s.vz = -9; s.vx = s.curve * 0.8; s.vy = -0.5;
+    netBulge = { x: s.x, y: s.y, a: 1 };
+    result(ax > 2.7 && s.y > 1.6 ? "top" : "goal");
+  } else if ((ax > GW - BR && ax < GW + BR + 0.05 && s.y < GH + 0.1) || (ax <= GW + 0.05 && s.y > GH - BR && s.y < GH + BR + 0.05)) {
+    if (rng() < 0.3 && s.y < GH && ax < GW + 0.02) { s.out = "goal"; s.vz = -7; s.vx = -Math.sign(s.x) * 1.5; s.vy = 0; netBulge = { x: s.x, y: s.y, a: 1 }; result("post_in"); }
+    else { s.out = "post"; s.vz = 6; s.vx = Math.sign(s.x) * 2.5; s.vy = s.y > GH - 0.2 ? 3 : 1; result("post"); }
+  } else {
+    s.out = s.y >= GH ? "over" : "wide"; s.vz = -12; s.vx = s.x * 0.4; s.vy = 0.5;
+    result(s.out);
+  }
+}
+const SAY = { goal: ["GOAL!", "#8ff0b9"], top: ["TOP CORNER!", "#c9f27a"], post_in: ["OFF THE POST AND IN!", "#8ff0b9"], saved: ["SAVED", "#ff9a8a"],
+              post: ["POST!", "#ffd66b"], wide: ["WIDE", "#ff9a8a"], over: ["OVER THE BAR", "#ff9a8a"] };
+function result(r) {
+  const goal = r === "goal" || r === "top" || r === "post_in";
+  kicks.push({ r, goal, p: shot.p });
+  keeper.mood = goal ? -1 : 1;
+  flash(SAY[r][0], SAY[r][1], 1.5);
+  if (goal && navigator.vibrate) navigator.vibrate(30);
+}
+function flash(text, color, life) { msg = { text, color, life, max: life }; }
+
+// ---------------------------------------------------------------------------- drawing
+function draw() {
+  g.clearRect(0, 0, W, H);
+  // sky + stands
+  const sky = g.createLinearGradient(0, 0, 0, hy + 40);
+  sky.addColorStop(0, "#1b2f4a"); sky.addColorStop(1, "#3b5d7d");
+  g.fillStyle = sky; g.fillRect(0, 0, W, hy + 40);
+  const standTop = P(0, 9, -12).y, standBot = P(0, 0, -6).y;
+  g.fillStyle = "#26364d"; g.fillRect(0, standTop, W, standBot - standTop);
+  for (let r = 0; r < 7; r++) {  // crowd dots
+    const yy = standTop + (r + 0.5) * (standBot - standTop) / 7.5;
+    for (let i = 0; i < 46; i++) {
+      const xx = (i + (r % 2) * 0.5) * W / 45;
+      const bob = Math.sin(crowdT * 3 + i * 1.7 + r) * (kicks.length && kicks[kicks.length - 1].goal && shot ? 2.4 : 0.6);
+      g.fillStyle = ["#f4d35e", "#ff8a6b", "#e8eef7", "#57d9c3", "#9ab0d6", "#ff6650"][(i * 7 + r * 3) % 6];
+      g.globalAlpha = 0.55; g.beginPath(); g.arc(xx, yy + bob, 2.3, 0, 7); g.fill();
+    }
+  }
+  g.globalAlpha = 1;
+  // floodlight glow
+  for (const lx of [0.12, 0.88]) {
+    const rg = g.createRadialGradient(W * lx, standTop - 10, 2, W * lx, standTop - 10, 90);
+    rg.addColorStop(0, "rgba(255,248,220,0.9)"); rg.addColorStop(1, "rgba(255,248,220,0)");
+    g.fillStyle = rg; g.fillRect(W * lx - 90, standTop - 100, 180, 180);
+  }
+  // pitch with mowing stripes
+  const far = P(0, 0, -6).y;
+  g.fillStyle = "#2f8a4a"; g.fillRect(0, far, W, H - far);
+  for (let z = -6, i = 0; z < CAM.z - 0.6; z += 1.5, i++) {
+    const a = P(0, 0, z).y, b = P(0, 0, Math.min(CAM.z - 0.6, z + 1.5)).y;
+    if (i % 2 === 0) { g.fillStyle = "#3a9a56"; g.fillRect(0, a, W, b - a); }
+  }
+  // lines: goal line, 6-yard box, penalty spot
+  g.strokeStyle = "rgba(255,255,255,0.85)"; g.lineWidth = 2;
+  line3([-30, 0, 0], [30, 0, 0]);
+  line3([-9.16, 0, 0], [-9.16, 0, 5.5]); line3([9.16, 0, 0], [9.16, 0, 5.5]); line3([-9.16, 0, 5.5], [9.16, 0, 5.5]);
+  line3([-20.16, 0, 0], [-20.16, 0, 13.5]); line3([20.16, 0, 0], [20.16, 0, 13.5]);
+  const sp = P(0, 0, SPOT); g.fillStyle = "#fff"; g.beginPath(); g.ellipse(sp.x, sp.y, 0.08 * sp.s, 0.03 * sp.s, 0, 0, 7); g.fill();
+  drawNet();
+  drawKeeper();
+  drawGoalFrame();
+  drawBall();
+  // swipe trail
+  if (trail.length > 1) {
+    g.lineCap = "round";
+    for (let i = 1; i < trail.length; i++) {
+      g.strokeStyle = `rgba(255,255,255,${Math.max(0, trail[i].a) * 0.7})`; g.lineWidth = 6 * Math.max(0.2, trail[i].a);
+      g.beginPath(); g.moveTo(trail[i - 1].x, trail[i - 1].y); g.lineTo(trail[i].x, trail[i].y); g.stroke();
+    }
+  }
+  drawHud();
+}
+function line3(a, b) { const p = P(...a), q = P(...b); g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke(); }
+function drawNet() {
+  const back = -2.0, topBack = 1.9;
+  const bulge = (x, y) => {
+    if (!netBulge) return 0;
+    const d = Math.hypot(x - netBulge.x, y - netBulge.y);
+    return -Math.max(0, 1 - d / 1.6) * 0.9 * netBulge.a;
+  };
+  if (netBulge) netBulge.a = Math.max(0, netBulge.a - 0.012);
+  g.strokeStyle = "rgba(240,246,255,0.42)"; g.lineWidth = 1;
+  // back panel
+  for (let x = -GW; x <= GW + 0.01; x += 0.4) {
+    g.beginPath();
+    for (let y = 0; y <= topBack + 0.01; y += 0.2) { const p = P(x, y, back + bulge(x, y)); y === 0 ? g.moveTo(p.x, p.y) : g.lineTo(p.x, p.y); }
+    g.stroke();
+  }
+  for (let y = 0; y <= topBack + 0.01; y += 0.35) {
+    g.beginPath();
+    for (let x = -GW; x <= GW + 0.01; x += 0.2) { const p = P(x, y, back + bulge(x, y)); x === -GW ? g.moveTo(p.x, p.y) : g.lineTo(p.x, p.y); }
+    g.stroke();
+  }
+  // roof and sides
+  for (let x = -GW; x <= GW + 0.01; x += 0.4) line3([x, GH, 0], [x, topBack, back]);
+  for (const sx of [-GW, GW]) for (let y = 0; y <= GH; y += 0.35) line3([sx, y, 0], [sx, Math.min(y, topBack), back]);
+}
+function drawGoalFrame() {
+  const post = (x0, y0, z0, x1, y1, z1) => {
+    const a = P(x0, y0, z0), b = P(x1, y1, z1);
+    g.strokeStyle = "#ffffff"; g.lineWidth = Math.max(3, 0.12 * a.s); g.lineCap = "round";
+    g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
+  };
+  post(-GW, 0, 0, -GW, GH, 0); post(GW, 0, 0, GW, GH, 0); post(-GW, GH, 0, GW, GH, 0);
+}
+function drawKeeper() {
+  const base = P(keeper.x, 1.0 + keeper.y, KZ);
+  const s = base.s;
+  g.save();
+  g.translate(base.x, base.y);
+  g.rotate(keeper.rot);
+  const jersey = "#ffd23f", shorts = "#1d2433", skin = "#e0a77a";
+  // legs
+  g.fillStyle = shorts; g.fillRect(-0.26 * s, 0.05 * s, 0.52 * s, 0.32 * s);
+  g.fillStyle = "#1d2433"; g.fillRect(-0.25 * s, 0.37 * s, 0.17 * s, 0.6 * s); g.fillRect(0.08 * s, 0.37 * s, 0.17 * s, 0.6 * s);
+  // torso
+  g.fillStyle = jersey; roundRect(-0.3 * s, -0.62 * s, 0.6 * s, 0.7 * s, 0.12 * s); g.fill();
+  g.fillStyle = "#1d2433"; g.font = `800 ${0.26 * s}px system-ui`; g.textAlign = "center"; g.fillText("1", 0, -0.18 * s);
+  // arms out, reaching wider when diving
+  const reach = Math.abs(keeper.rot) > 0.2 ? 0.95 : 0.7;
+  g.strokeStyle = jersey; g.lineWidth = 0.16 * s; g.lineCap = "round";
+  g.beginPath(); g.moveTo(-0.26 * s, -0.5 * s); g.lineTo(-reach * s, -0.95 * s); g.stroke();
+  g.beginPath(); g.moveTo(0.26 * s, -0.5 * s); g.lineTo(reach * s, -0.95 * s); g.stroke();
+  g.fillStyle = "#57d9c3";
+  g.beginPath(); g.arc(-reach * s, -0.97 * s, 0.11 * s, 0, 7); g.fill();
+  g.beginPath(); g.arc(reach * s, -0.97 * s, 0.11 * s, 0, 7); g.fill();
+  // head
+  g.fillStyle = skin; g.beginPath(); g.arc(0, -0.82 * s, 0.16 * s, 0, 7); g.fill();
+  g.fillStyle = "#3a2618"; g.beginPath(); g.arc(0, -0.88 * s, 0.16 * s, Math.PI, 0); g.fill();
+  g.restore();
+}
+function roundRect(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+function drawBall() {
+  const s = shot || { x: 0, y: BR, z: SPOT, spin: 0 };
+  if (s.z < -6) return;
+  const sh = P(s.x, 0, s.z), p = P(s.x, s.y, s.z), r = Math.max(2, BR * p.s);
+  g.fillStyle = "rgba(0,0,0,0.28)"; g.beginPath(); g.ellipse(sh.x, sh.y, r * 1.1, r * 0.4, 0, 0, 7); g.fill();
+  g.save(); g.translate(p.x, p.y); g.rotate(s.spin);
+  const grd = g.createRadialGradient(-r * 0.3, -r * 0.35, r * 0.1, 0, 0, r);
+  grd.addColorStop(0, "#ffffff"); grd.addColorStop(1, "#cfd6de");
+  g.fillStyle = grd; g.beginPath(); g.arc(0, 0, r, 0, 7); g.fill();
+  g.fillStyle = "#22272e";
+  for (let i = 0; i < 5; i++) { const a = i * 1.2566; pent(Math.cos(a) * r * 0.62, Math.sin(a) * r * 0.62, r * 0.24, a); }
+  pent(0, 0, r * 0.28, 0);
+  g.restore();
+}
+function pent(x, y, r, a) { g.beginPath(); for (let i = 0; i < 5; i++) { const t2 = a + i * 1.2566 - Math.PI / 2; g[i ? "lineTo" : "moveTo"](x + Math.cos(t2) * r, y + Math.sin(t2) * r); } g.closePath(); g.fill(); }
+function drawHud() {
+  const top = 14 + (window.visualViewport ? 0 : 0);
+  g.font = "800 13px system-ui"; g.textAlign = "left"; g.fillStyle = "rgba(255,255,255,0.85)";
+  g.fillText(`KICK ${Math.min(N, kicks.length + (phase === "end" ? 0 : 1))} OF ${N}`, 16, top + 12);
+  for (let i = 0; i < N; i++) {
+    const k = kicks[i];
+    g.beginPath(); g.arc(W - 16 - (N - 1 - i) * 22, top + 8, 7.5, 0, 7);
+    g.fillStyle = !k ? "rgba(255,255,255,0.22)" : k.goal ? "#3fd68a" : "#ff6a5a"; g.fill();
+  }
+  if (shot && kicks.length && phase === "flight" && shot.out) {
+    g.textAlign = "left"; g.font = "700 12px system-ui"; g.fillStyle = "rgba(255,255,255,0.75)";
+    g.fillText(`Power ${Math.round(Math.min(1.45, shot.p) * 100)}%${Math.abs(shot.curve) > 0.25 ? " · curled it" : ""}`, 16, top + 30);
+  }
+  if (msg && msg.life > 0) {
+    const a = Math.min(1, msg.life / 0.3), sc = 1 + Math.max(0, msg.life - msg.max + 0.25) * 1.2;
+    g.save(); g.globalAlpha = a; g.translate(W / 2, hy - 20); g.scale(sc, sc);
+    g.font = `900 ${Math.min(44, W / 9)}px system-ui`; g.textAlign = "center";
+    g.lineWidth = 6; g.strokeStyle = "rgba(0,0,0,0.35)"; g.strokeText(msg.text, 0, 0);
+    g.fillStyle = msg.color; g.fillText(msg.text, 0, 0); g.restore();
+  }
+}
+
+// ---------------------------------------------------------------------------- sound (a soft thump on contact)
+let actx = null;
+function thump(p) {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), v = actx.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(140 + p * 60, actx.currentTime); o.frequency.exponentialRampToValueAtTime(50, actx.currentTime + 0.12);
+    v.gain.setValueAtTime(0.4, actx.currentTime); v.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.15);
+    o.connect(v); v.connect(actx.destination); o.start(); o.stop(actx.currentTime + 0.16);
+  } catch (e) { /* no audio */ }
+}
+
+// ---------------------------------------------------------------------------- flow
+function showEnd() {
+  const goals = kicks.filter((k) => k.goal).length;
+  document.getElementById("endScore").innerHTML = `${goals}<small>/${N}</small>`;
+  document.getElementById("endTitle").textContent = goals >= 4 ? "Ice cold." : goals >= 3 ? "You'll take it." : goals >= 1 ? "Keeper had your number." : "Rough day at the spot.";
+  const tops = kicks.filter((k) => k.r === "top").length, saved = kicks.filter((k) => k.r === "saved").length;
+  document.getElementById("endLine").textContent = [tops ? `${tops} top corner${tops > 1 ? "s" : ""}` : "", saved ? `${saved} saved` : "",
+    kicks.filter((k) => k.r === "wide" || k.r === "over").length ? `${kicks.filter((k) => k.r === "wide" || k.r === "over").length} off target` : ""].filter(Boolean).join(" · ");
+  document.getElementById("end").hidden = false;
+  document.getElementById("again").hidden = LifeOS.embedded;
+  document.getElementById("done").hidden = !LifeOS.embedded;
+}
+document.getElementById("done").onclick = () => {
+  const goals = kicks.filter((k) => k.goal).length;
+  LifeOS.finish({ score: goals, max: N, summary: `${goals} of ${N}`, stats: { kicks: kicks.map((k) => k.r) } });
+};
+document.getElementById("again").onclick = () => { kicks = []; document.getElementById("end").hidden = true; resetKick(); };
+document.getElementById("go").onclick = () => { document.getElementById("intro").hidden = true; resetKick(); };
+
+LifeOS.onStart((c) => {
+  cfg = c;
+  diff = Math.max(20, Math.min(90, (+c.difficulty || 50) + (c.mode === "clutch" ? 6 : 0)));
+  skill = Math.max(0, Math.min(100, +c.skill || 50));
+  rng = seeded((+c.seed || 1) % 2147483647 || 1);
+  if (c.mode === "clutch") {
+    document.querySelector("#intro h1").textContent = "Game on the line";
+    document.querySelector("#intro p").textContent = "Five kicks to decide it. Swipe from the ball toward the corner.";
+  }
+});
+
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.033, (now - last) / 1000);
+  last = now;
+  step(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

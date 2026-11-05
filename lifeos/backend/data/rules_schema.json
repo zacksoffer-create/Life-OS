@@ -1,0 +1,852 @@
+{
+ "version": 1,
+ "sections": [
+  {
+   "id": "decision",
+   "label": "Decision making",
+   "description": "How characters weigh their options. Every choice is a weighted sum of named terms, then a softmax draw. These multiply whole families of terms.",
+   "params": [
+    {
+     "key": "decision.temperature",
+     "label": "Randomness (temperature)",
+     "type": "float",
+     "default": 6.0,
+     "min": 0.5,
+     "max": 40,
+     "step": 0.5,
+     "description": "Softmax temperature in utility points. Low = characters nearly always pick their top option. High = choices get noisy."
+    },
+    {
+     "key": "decision.impulsivity_noise",
+     "label": "Impulsive noise",
+     "type": "float",
+     "default": 0.8,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How much extra randomness impulsive characters get on top of the base temperature."
+    },
+    {
+     "key": "decision.need_weight",
+     "label": "Needs",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Weight of current needs (energy, social, fun, stress) in every choice."
+    },
+    {
+     "key": "decision.trait_weight",
+     "label": "Personality traits",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Weight of stable traits (discipline, sociability...) in choices."
+    },
+    {
+     "key": "decision.interest_weight",
+     "label": "Interests",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Weight of personal interests when choosing activities."
+    },
+    {
+     "key": "decision.goal_weight",
+     "label": "Goals",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Weight of active goals. At 0 characters ignore their goals entirely."
+    },
+    {
+     "key": "decision.relationship_weight",
+     "label": "Relationships",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Weight of feelings toward the target person (affection, attraction, rivalry)."
+    },
+    {
+     "key": "decision.memory_weight",
+     "label": "Memories",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Weight of remembered experiences with the target person."
+    },
+    {
+     "key": "decision.learning_weight",
+     "label": "Learned experience",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Weight of how this kind of action has gone for the character before."
+    },
+    {
+     "key": "decision.habit_weight",
+     "label": "Habit",
+     "type": "float",
+     "default": 0.6,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Pull toward doing what you usually do."
+    },
+    {
+     "key": "decision.conformity_weight",
+     "label": "Peer conformity",
+     "type": "float",
+     "default": 0.8,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Pull toward what your friends have been doing lately (scaled by the belonging motive)."
+    },
+    {
+     "key": "decision.risk_aversion",
+     "label": "Risk aversion",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Penalty on risky actions (pranks, sneaking out, asking someone out). Impulsive and confident characters feel it less."
+    },
+    {
+     "key": "decision.obligation_weight",
+     "label": "Commitment to obligations",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Pull of practices, shifts and scheduled events. Scaled by discipline and loyalty."
+    },
+    {
+     "key": "decision.shortlist_size",
+     "label": "People considered per action",
+     "type": "int",
+     "default": 4,
+     "min": 1,
+     "max": 10,
+     "step": 1,
+     "description": "How many people a character considers as targets for each social action (bounded attention)."
+    }
+   ]
+  },
+  {
+   "id": "motive",
+   "label": "Motivations",
+   "description": "Global multipliers on what characters want. Each character has their own motive profile; these scale everyone's.",
+   "params": [
+    {
+     "key": "motive.achievement",
+     "label": "Achievement",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Grades, making teams, winning, getting better."
+    },
+    {
+     "key": "motive.approval",
+     "label": "Social approval & status",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Being seen, liked by the popular crowd, status moves. Raise it to run the social-approval experiment."
+    },
+    {
+     "key": "motive.belonging",
+     "label": "Belonging",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Closeness, being part of a group, keeping friends."
+    },
+    {
+     "key": "motive.pleasure",
+     "label": "Short-term gratification",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Fun now over payoff later."
+    },
+    {
+     "key": "motive.altruism",
+     "label": "Altruism",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Helping people, apologizing, supporting friends."
+    },
+    {
+     "key": "motive.mastery",
+     "label": "Mastery & expression",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "Practicing a craft for its own sake."
+    }
+   ]
+  },
+  {
+   "id": "needs",
+   "label": "Needs & condition",
+   "description": "How fast temporary states drain and recover.",
+   "params": [
+    {
+     "key": "needs.energy_recovery",
+     "label": "Nightly energy recovery",
+     "type": "float",
+     "default": 55,
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "description": "Energy regained each night."
+    },
+    {
+     "key": "needs.social_decay",
+     "label": "Social need drain / day",
+     "type": "float",
+     "default": 12,
+     "min": 0,
+     "max": 30,
+     "step": 0.5,
+     "description": "How fast the need for company builds (more for sociable people)."
+    },
+    {
+     "key": "needs.fun_decay",
+     "label": "Fun drain / day",
+     "type": "float",
+     "default": 13,
+     "min": 0,
+     "max": 30,
+     "step": 0.5,
+     "description": "How fast boredom builds."
+    },
+    {
+     "key": "needs.stress_recovery",
+     "label": "Stress recovery / night (%)",
+     "type": "float",
+     "default": 15,
+     "min": 0,
+     "max": 50,
+     "step": 1,
+     "description": "Percent of the gap to a person's baseline stress recovered each night."
+    },
+    {
+     "key": "needs.school_stress",
+     "label": "Stress per school day",
+     "type": "float",
+     "default": 6,
+     "min": 0,
+     "max": 20,
+     "step": 0.5,
+     "description": "Baseline stress a school day adds."
+    },
+    {
+     "key": "needs.mood_inertia",
+     "label": "Mood inertia",
+     "type": "float",
+     "default": 0.7,
+     "min": 0,
+     "max": 0.95,
+     "step": 0.05,
+     "description": "How slowly mood follows needs. 0 = mood is just today's needs."
+    }
+   ]
+  },
+  {
+   "id": "rel",
+   "label": "Relationships",
+   "description": "Thresholds that turn feelings into labels, and how feelings move. Each person has their own view of every relationship.",
+   "params": [
+    {
+     "key": "rel.friend_threshold",
+     "label": "Friend threshold",
+     "type": "float",
+     "default": 32,
+     "min": 10,
+     "max": 80,
+     "step": 1,
+     "description": "Affection at which someone counts a person as a friend."
+    },
+    {
+     "key": "rel.close_threshold",
+     "label": "Close friend threshold",
+     "type": "float",
+     "default": 58,
+     "min": 30,
+     "max": 95,
+     "step": 1,
+     "description": "Affection for close friend."
+    },
+    {
+     "key": "rel.best_threshold",
+     "label": "Best friend threshold",
+     "type": "float",
+     "default": 80,
+     "min": 50,
+     "max": 100,
+     "step": 1,
+     "description": "Affection for best friend (also needs high trust)."
+    },
+    {
+     "key": "rel.enemy_threshold",
+     "label": "Dislike threshold",
+     "type": "float",
+     "default": -30,
+     "min": -90,
+     "max": -5,
+     "step": 1,
+     "description": "Affection below which someone is disliked."
+    },
+    {
+     "key": "rel.rival_threshold",
+     "label": "Rival threshold",
+     "type": "float",
+     "default": 45,
+     "min": 10,
+     "max": 95,
+     "step": 1,
+     "description": "Rivalry at which someone becomes a rival."
+    },
+    {
+     "key": "rel.crush_threshold",
+     "label": "Crush threshold",
+     "type": "float",
+     "default": 55,
+     "min": 20,
+     "max": 95,
+     "step": 1,
+     "description": "Attraction at which it becomes a crush."
+    },
+    {
+     "key": "rel.affection_gain",
+     "label": "Affection change scale",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "Multiplier on every affection change from interactions."
+    },
+    {
+     "key": "rel.affection_decay",
+     "label": "Weekly drift without contact (%)",
+     "type": "float",
+     "default": 4,
+     "min": 0,
+     "max": 25,
+     "step": 0.5,
+     "description": "Percent affection fades toward neutral per week of no contact."
+    },
+    {
+     "key": "rel.familiarity_decay",
+     "label": "Weekly familiarity fade",
+     "type": "float",
+     "default": 0.6,
+     "min": 0,
+     "max": 5,
+     "step": 0.1,
+     "description": "Familiarity lost per week of no contact."
+    },
+    {
+     "key": "rel.perception_noise",
+     "label": "Misreading people",
+     "type": "float",
+     "default": 0.35,
+     "min": 0,
+     "max": 1.5,
+     "step": 0.05,
+     "description": "How badly people misread how an interaction went for the other person (empathy reduces it)."
+    },
+    {
+     "key": "rel.interaction_noise",
+     "label": "Interaction luck",
+     "type": "float",
+     "default": 0.35,
+     "min": 0,
+     "max": 1.5,
+     "step": 0.05,
+     "description": "Randomness in how any one interaction goes."
+    },
+    {
+     "key": "rel.first_impression",
+     "label": "First impression strength",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How much the first meeting sets the tone."
+    },
+    {
+     "key": "rel.class_contacts",
+     "label": "Classroom contacts / day",
+     "type": "int",
+     "default": 2,
+     "min": 0,
+     "max": 8,
+     "step": 1,
+     "description": "Random classmates each student brushes up against per school day."
+    }
+   ]
+  },
+  {
+   "id": "social",
+   "label": "Social dynamics",
+   "description": "Groups, status, exclusion and information spread.",
+   "params": [
+    {
+     "key": "social.exclusion_tendency",
+     "label": "Exclusion tendency",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "How readily groups freeze out people they don't like at lunch."
+    },
+    {
+     "key": "social.gossip_spread",
+     "label": "Gossip appetite",
+     "type": "float",
+     "default": 0.5,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "description": "Base chance a listener takes a rumor seriously."
+    },
+    {
+     "key": "social.rumor_credibility",
+     "label": "Rumor impact",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How much a believed rumor shifts opinion of its subject."
+    },
+    {
+     "key": "social.rumor_distortion",
+     "label": "Rumor distortion",
+     "type": "float",
+     "default": 0.15,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "description": "Chance a retold rumor gets exaggerated."
+    },
+    {
+     "key": "social.rumor_discovery",
+     "label": "Source discovery",
+     "type": "float",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "description": "Chance a rumor's subject figures out who started it."
+    },
+    {
+     "key": "social.tease_status_gain",
+     "label": "Status from teasing",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "How much low-empathy onlookers respect someone who mocks others."
+    },
+    {
+     "key": "social.clique_threshold",
+     "label": "Clique bond threshold",
+     "type": "float",
+     "default": 30,
+     "min": 5,
+     "max": 90,
+     "step": 1,
+     "description": "Mutual affection needed for two people to count as linked when detecting cliques."
+    },
+    {
+     "key": "social.clique_min_size",
+     "label": "Minimum clique size",
+     "type": "int",
+     "default": 3,
+     "min": 2,
+     "max": 8,
+     "step": 1,
+     "description": "Smallest group that counts as a clique."
+    },
+    {
+     "key": "social.popularity_visibility",
+     "label": "Visibility vs likability",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How much simply being known (vs being liked) counts toward popularity."
+    },
+    {
+     "key": "social.party_frequency",
+     "label": "Party appetite",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "Multiplier on the appeal of throwing parties."
+    }
+   ]
+  },
+  {
+   "id": "romance",
+   "label": "Romance",
+   "description": "Attraction, dating and breakups among students.",
+   "params": [
+    {
+     "key": "romance.enabled",
+     "label": "Romance enabled",
+     "type": "bool",
+     "default": true,
+     "description": "Turn the whole romance system on or off."
+    },
+    {
+     "key": "romance.attraction_rate",
+     "label": "Attraction growth",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How fast attraction develops between compatible people who spend time together."
+    },
+    {
+     "key": "romance.chemistry_spread",
+     "label": "Chemistry spread",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 2,
+     "step": 0.1,
+     "description": "How much pair chemistry varies. 0 = attraction depends only on time together."
+    },
+    {
+     "key": "romance.breakup_threshold",
+     "label": "Breakup threshold",
+     "type": "float",
+     "default": 30,
+     "min": 0,
+     "max": 80,
+     "step": 1,
+     "description": "Relationship satisfaction below which someone considers ending it."
+    },
+    {
+     "key": "romance.jealousy",
+     "label": "Jealousy",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How strongly partners react to flirting they hear about."
+    },
+    {
+     "key": "romance.girl_asks_guy",
+     "label": "Girls asking guys out",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How much more it takes for a girl to ask a guy out (or to a dance) than the other way around. 0 = the same as a guy asking; 1 = she has to be a lot more into him and fairly sure he likes her back; 2-3 = only when she's crazy about him."
+    }
+   ]
+  },
+  {
+   "id": "dev",
+   "label": "Development & memory",
+   "description": "How people change: skills, confidence, interests, learning from experience.",
+   "params": [
+    {
+     "key": "dev.skill_rate",
+     "label": "Skill learning rate",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 5,
+     "step": 0.1,
+     "description": "Global multiplier on skill gains from practice."
+    },
+    {
+     "key": "dev.skill_decay",
+     "label": "Skill decay",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 5,
+     "step": 0.1,
+     "description": "How fast unpracticed skills fade each week."
+    },
+    {
+     "key": "dev.talent_cap_weight",
+     "label": "Talent ceiling",
+     "type": "float",
+     "default": 0.45,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "description": "How much natural aptitude raises the ceiling on a skill. 0 = anyone can reach the top with work."
+    },
+    {
+     "key": "dev.sport_ceiling_curve",
+     "label": "Sport skill curve",
+     "type": "float",
+     "default": 2.2,
+     "min": 0.5,
+     "max": 4,
+     "step": 0.1,
+     "description": "How sharply sport skill gains slow down near a player's ceiling. Higher means quick progress early and a slow climb at the top, so only real talents reach college level."
+    },
+    {
+     "key": "dev.discipline_focus",
+     "label": "Discipline focus",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How much discipline improves each practice session's quality."
+    },
+    {
+     "key": "dev.confidence_drift",
+     "label": "Confidence drift",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "How much successes and failures move confidence."
+    },
+    {
+     "key": "dev.interest_drift",
+     "label": "Interest drift",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 4,
+     "step": 0.1,
+     "description": "How much enjoyment and failure reshape interests."
+    },
+    {
+     "key": "dev.learning_rate",
+     "label": "Experience learning rate",
+     "type": "float",
+     "default": 0.2,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "description": "How fast a character's expectations about an action update after each try."
+    },
+    {
+     "key": "dev.memory_half_life",
+     "label": "Memory half-life (days)",
+     "type": "float",
+     "default": 90,
+     "min": 5,
+     "max": 720,
+     "step": 5,
+     "description": "How long it takes a memory's influence to halve. Intense memories last longer."
+    },
+    {
+     "key": "dev.max_goals",
+     "label": "Max active goals",
+     "type": "int",
+     "default": 4,
+     "min": 1,
+     "max": 8,
+     "step": 1,
+     "description": "How many goals a character holds at once."
+    }
+   ]
+  },
+  {
+   "id": "inst",
+   "label": "Institutions",
+   "description": "School, teams, families and jobs.",
+   "params": [
+    {
+     "key": "inst.coach_talent_weight",
+     "label": "Coaches value talent",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "Weight of tryout performance in selection (each coach's personality adjusts it)."
+    },
+    {
+     "key": "inst.coach_effort_weight",
+     "label": "Coaches value effort",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "Weight of discipline and recent practice in selection."
+    },
+    {
+     "key": "inst.coach_favoritism",
+     "label": "Coach favoritism",
+     "type": "float",
+     "default": 0.5,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "Weight of the coach's personal feelings about a candidate."
+    },
+    {
+     "key": "inst.absence_tolerance",
+     "label": "Misses allowed (of last 8)",
+     "type": "int",
+     "default": 4,
+     "min": 0,
+     "max": 8,
+     "step": 1,
+     "description": "A coach or director drops someone who misses more than this many of their last 8 sessions."
+    },
+    {
+     "key": "inst.exam_difficulty",
+     "label": "Exam difficulty",
+     "type": "float",
+     "default": 50,
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "description": "Higher = lower scores across the board."
+    },
+    {
+     "key": "inst.study_effect",
+     "label": "Study payoff",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "How much recent studying moves exam scores."
+    },
+    {
+     "key": "inst.parent_strictness",
+     "label": "Parental strictness",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "Multiplier on how hard guardians react to bad grades and trouble."
+    },
+    {
+     "key": "inst.allowance_scale",
+     "label": "Allowance",
+     "type": "float",
+     "default": 1.0,
+     "min": 0,
+     "max": 3,
+     "step": 0.1,
+     "description": "Weekly allowance multiplier (money gates outings)."
+    },
+    {
+     "key": "inst.catch_chance",
+     "label": "Chance of getting caught",
+     "type": "float",
+     "default": 0.3,
+     "min": 0,
+     "max": 1,
+     "step": 0.05,
+     "description": "Base chance pranks and sneaking out get caught."
+    }
+   ]
+  },
+  {
+   "id": "history",
+   "label": "History retention",
+   "description": "What the history keeps. Doesn't change behavior, only what you can inspect later.",
+   "params": [
+    {
+     "key": "history.trace_window_days",
+     "label": "Keep all decision traces for (days)",
+     "type": "int",
+     "default": 45,
+     "min": 7,
+     "max": 365,
+     "step": 1,
+     "description": "Every decision's full trace is kept this long."
+    },
+    {
+     "key": "history.trace_keep_importance",
+     "label": "Keep traces forever above importance",
+     "type": "float",
+     "default": 35,
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "description": "Decisions that led to events this important keep their trace permanently."
+    },
+    {
+     "key": "history.event_window_days",
+     "label": "Keep minor events for (days)",
+     "type": "int",
+     "default": 60,
+     "min": 7,
+     "max": 365,
+     "step": 1,
+     "description": "Routine events (studied, rested) are kept this long, then folded into counters."
+    },
+    {
+     "key": "history.event_keep_importance",
+     "label": "Keep events forever above importance",
+     "type": "float",
+     "default": 20,
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "description": "Events at or above this importance are never compacted."
+    },
+    {
+     "key": "history.trace_everyone",
+     "label": "Trace everyone's decisions",
+     "type": "bool",
+     "default": true,
+     "description": "Off: only you and the people around you keep full decision traces (much faster over a long story). Everyone's events are still recorded."
+    }
+   ]
+  }
+ ]
+}

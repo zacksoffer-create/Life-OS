@@ -1,0 +1,2576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b0f18">
+<style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Pong Night</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: one column of cards under a neon sign, like the wall of a basement bar. Single night theme on purpose: the game is a table under string lights. */
+:root {
+  --night: #120d18;
+  --panel: #1e1626;
+  --panel-2: #271d31;
+  --felt: #17463a;
+  --cup: #d8312d;
+  --rim: #fbf8f2;
+  --chalk: #f6efe4;
+  --muted: #a99db3;
+  --bulb: #ffcf6b;
+  --neon: #ff5fa2;
+  --ice: #7fe7ff;
+  --good: #7ee2a8;
+  --bad: #ff7a66;
+  --line: rgba(246, 239, 228, 0.14);
+  --display: "Bungee", Impact, "Arial Black", sans-serif;
+  --body: "Work Sans", system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+html, body { background: var(--night); color: var(--chalk); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+#app { max-width: 560px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 18px 40px; }
+button { font: inherit; color: inherit; }
+button:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 400; }
+.screen { display: flex; flex-direction: column; gap: 14px; }
+
+/* the sign */
+.mast { position: relative; padding: 22px 0 8px; overflow: hidden; }
+.lights { position: absolute; left: -10px; right: -10px; top: 0; height: 26px; pointer-events: none; }
+.eyebrow { font: 700 13px/1 var(--body); letter-spacing: 0.22em; text-transform: uppercase; color: var(--bulb); margin-top: 14px; }
+.mast h1 { font: 400 clamp(46px, 15vw, 88px)/0.92 var(--display); text-transform: uppercase; margin-top: 8px; color: #ffe6f1; text-shadow: 0 0 6px var(--neon), 0 0 18px rgba(255, 95, 162, 0.7), 0 0 42px rgba(255, 95, 162, 0.35); }
+.mast h1 span { display: block; color: #e6fbff; text-shadow: 0 0 6px var(--ice), 0 0 18px rgba(127, 231, 255, 0.6), 0 0 40px rgba(127, 231, 255, 0.3); }
+.mast p { margin: 12px 0 0; color: var(--muted); max-width: 38ch; }
+.quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.pill { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 6px 11px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.pill b { color: var(--bulb); font-weight: 700; }
+
+.modes { display: grid; gap: 10px; }
+.mode { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; text-align: left; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
+.mode:hover { background: var(--panel-2); }
+.mode .ico { width: 64px; height: 64px; }
+.mode h2 { font: 400 20px/1.05 var(--display); text-transform: uppercase; }
+.mode p { margin: 5px 0 0; color: var(--muted); font-size: 14px; line-height: 1.35; }
+.mode .rec { margin-top: 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--bulb); font-variant-numeric: tabular-nums; }
+.mode.feature { background: var(--felt); border-color: rgba(255,255,255,0.18); padding: 18px 16px; }
+.mode.feature:hover { background: #1c5244; }
+.mode.feature p { color: #d3e6de; }
+.mode.feature h2 { font-size: 25px; }
+.row-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.link { padding: 12px 8px; border-radius: 12px; border: 1px solid var(--line); background: transparent; cursor: pointer; font: 400 14px/1.1 var(--display); text-transform: uppercase; }
+.link:hover { background: var(--panel); }
+.moves { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+.moves summary { cursor: pointer; padding: 13px 14px; font: 400 16px/1 var(--display); text-transform: uppercase; list-style: none; display: flex; justify-content: space-between; }
+.moves summary::-webkit-details-marker { display: none; }
+.moves summary::after { content: "+"; color: var(--bulb); }
+.moves[open] summary::after { content: "\2212"; }
+.moves dl { display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: 8px 12px; margin: 0; padding: 0 14px 14px; font-size: 14px; }
+.moves dt { font-weight: 700; color: var(--bulb); }
+.moves dd { margin: 0; color: #d9cfdf; min-width: 0; }
+
+.bar { display: flex; align-items: center; gap: 10px; }
+.back { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); cursor: pointer; font-size: 18px; }
+.bar h2 { font: 400 28px/1 var(--display); text-transform: uppercase; }
+.lede { color: var(--muted); margin: 0; }
+.panel { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 14px; }
+.panel h3 { font: 400 15px/1.1 var(--display); text-transform: uppercase; margin-bottom: 8px; }
+.cta { border: 0; border-radius: 12px; padding: 14px 18px; background: var(--bulb); color: #1d1206; font: 400 17px/1 var(--display); text-transform: uppercase; cursor: pointer; }
+.cta.ghost { background: transparent; color: var(--chalk); border: 1px solid var(--line); }
+.ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+.ctas .cta { flex: 1 1 140px; }
+
+.opps { display: grid; gap: 8px; }
+.opp { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; text-align: left; }
+.opp:hover { background: var(--panel-2); }
+.face { width: 44px; height: 44px; border-radius: 50%; display: block; }
+.opp b { display: block; font: 400 16px/1.1 var(--display); text-transform: uppercase; }
+.opp small { color: var(--muted); font-size: 13px; }
+.opp .wl { font: 400 15px/1 var(--display); color: var(--bulb); font-variant-numeric: tabular-nums; }
+.meter { display: inline-flex; gap: 2px; vertical-align: middle; margin-left: 4px; }
+.meter i { width: 6px; height: 10px; border-radius: 2px; background: rgba(255,255,255,0.18); }
+.meter i.on { background: var(--bulb); }
+
+.big { font: 400 clamp(64px, 24vw, 118px)/0.85 var(--display); font-variant-numeric: tabular-nums; }
+.result-head { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.result-head .unit { font: 400 18px/1 var(--display); text-transform: uppercase; color: var(--muted); padding-bottom: 8px; }
+.badge { display: inline-block; padding: 5px 10px; border-radius: 8px; background: var(--bulb); color: #1d1206; font: 400 13px/1 var(--display); text-transform: uppercase; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { padding: 10px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); min-width: 0; }
+.stat b { display: block; font: 400 22px/1 var(--display); font-variant-numeric: tabular-nums; }
+.stat span { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.plist { display: grid; gap: 6px; }
+.prow { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; background: var(--panel-2); }
+.prow .g { width: 30px; height: 30px; border-radius: 7px; display: grid; place-items: center; font: 400 16px/1 var(--display); color: #120d18; background: var(--good); }
+.prow .g.B { background: #c5e27e; } .prow .g.C { background: #ffd166; } .prow .g.D { background: #ff9a66; } .prow .g.F { background: #ff5d4a; }
+.prow small { color: var(--muted); display: block; font-size: 12px; }
+.prow .pts { font: 400 16px/1 var(--display); font-variant-numeric: tabular-nums; }
+
+.book { display: grid; gap: 8px; }
+.subhead { font: 400 20px/1 var(--display); text-transform: uppercase; margin-top: 10px; }
+.scard { padding: 12px 14px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); }
+.scard header { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.scard b { font: 400 16px/1.1 var(--display); text-transform: uppercase; }
+.scard .tag { color: var(--bulb); font-size: 13px; font-weight: 700; }
+.scard p { margin: 6px 0 0; font-size: 14px; color: #d9cfdf; }
+.scard p.read { color: var(--chalk); }
+.scard .faced { margin-top: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
+.racks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rcard { display: grid; grid-template-columns: 48px 1fr; gap: 10px; align-items: center; padding: 10px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); min-width: 0; }
+.rcard svg { width: 48px; height: 48px; }
+.rcard b { display: block; font: 400 13px/1.1 var(--display); text-transform: uppercase; }
+.rcard small { display: block; font-size: 12px; line-height: 1.3; color: #cbbfd2; margin-top: 2px; }
+.drills { display: grid; gap: 8px; }
+.srow { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 12px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); }
+.srow b { font: 400 15px/1.1 var(--display); text-transform: uppercase; }
+.srow small { display: block; color: var(--muted); font-size: 13px; margin-top: 3px; }
+.mini { padding: 9px 13px; border-radius: 9px; border: 1px solid var(--bulb); background: var(--bulb); color: #1d1206; cursor: pointer; font: 400 13px/1 var(--display); text-transform: uppercase; }
+.mini.ghost { background: transparent; color: var(--chalk); border-color: var(--line); }
+.field { display: grid; gap: 6px; }
+.field > span { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; cursor: pointer; font-size: 14px; font-weight: 600; }
+.chip[aria-pressed="true"] { background: var(--bulb); border-color: var(--bulb); color: #1d1206; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+.confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+#game { position: fixed; inset: 0; z-index: 50; background: var(--night); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<main id="app">
+  <section class="screen" id="home">
+    <div class="mast">
+      <svg class="lights" viewBox="0 0 400 26" preserveAspectRatio="none" aria-hidden="true"><path d="M0 4 Q100 22 200 6 T400 6" fill="none" stroke="#2b2230" stroke-width="1.5"/><g id="bulbs"></g></svg>
+      <div class="eyebrow">Beer pong</div>
+      <h1>Pong<span>Night</span></h1>
+      <p>Flick to throw. Read the rack and the guy across the table, then pick your shot.</p>
+      <div class="quick">
+        <button class="pill" type="button" data-cycle="feel">Feel <b id="q-feel"></b></button>
+        <button class="pill" type="button" data-cycle="tags">Name tags <b id="q-tags"></b></button>
+      </div>
+    </div>
+    <div class="modes">
+      <button class="mode feature" type="button" data-go="opps">
+        <svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><g stroke="#fbf8f2" stroke-width="1.6"><circle cx="20" cy="44" r="7" fill="#d8312d"/><circle cx="34" cy="44" r="7" fill="#d8312d"/><circle cx="48" cy="44" r="7" fill="#d8312d"/><circle cx="27" cy="32" r="7" fill="#d8312d"/><circle cx="41" cy="32" r="7" fill="#d8312d"/><circle cx="34" cy="20" r="7" fill="#d8312d"/></g><path d="M8 58 Q20 6 34 14" fill="none" stroke="#ffcf6b" stroke-width="2" stroke-dasharray="3 4"/><circle cx="34" cy="14" r="3" fill="#fff"/></svg>
+        <div><h2>Play a game</h2><p>Ten cups a side against someone with a habit. Read him, call your re-racks, make your rebuttal.</p><div class="rec" id="rec-game"></div></div>
+      </button>
+      <button class="mode" type="button" data-go="attack">
+        <svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><g stroke="#fbf8f2" stroke-width="1.4"><circle cx="17" cy="26" r="6" fill="#d8312d"/><circle cx="29" cy="26" r="6" fill="#d8312d"/><circle cx="41" cy="26" r="6" fill="#d8312d"/><circle cx="53" cy="26" r="6" fill="#d8312d"/><circle cx="23" cy="37" r="6" fill="#d8312d"/><circle cx="35" cy="37" r="6" fill="#d8312d"/><circle cx="47" cy="37" r="6" fill="#d8312d"/><circle cx="29" cy="48" r="6" fill="#d8312d"/><circle cx="41" cy="48" r="6" fill="#d8312d"/><circle cx="35" cy="59" r="4" fill="#d8312d"/></g><text x="32" y="13" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="11" fill="#ffcf6b">10</text></svg>
+        <div><h2>Rack Attack</h2><p>Clear ten cups in as few throws as you can. Bounces count double.</p><div class="rec" id="rec-attack"></div></div>
+      </button>
+      <button class="mode" type="button" data-go="island">
+        <svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="8" width="44" height="50" rx="4" fill="#17463a"/><path d="M10 33 H54" stroke="#fbf8f2" stroke-opacity=".4"/><circle cx="32" cy="18" r="7" fill="#d8312d" stroke="#fbf8f2" stroke-width="1.6"/><path d="M30 56 L26 38 L32 20" fill="none" stroke="#ffcf6b" stroke-width="2" stroke-dasharray="3 3"/><circle cx="26" cy="38" r="2.4" fill="#fff"/></svg>
+        <div><h2>Island</h2><p>Six shot drills: the naked front cup, the back row, bouncing an island, the stoplight.</p><div class="rec" id="rec-island"></div></div>
+      </button>
+      <button class="mode" type="button" data-go="practice">
+        <svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><g stroke="#fbf8f2" stroke-width="1.6"><circle cx="24" cy="26" r="7" fill="#d8312d"/><circle cx="40" cy="26" r="7" fill="#d8312d"/><circle cx="32" cy="39" r="7" fill="#d8312d"/></g><g fill="#7ee2a8"><circle cx="14" cy="52" r="2.5"/><circle cx="24" cy="54" r="2.5"/></g><g stroke="#ff7a66" stroke-width="2" stroke-linecap="round"><path d="M40 50 l4 4 M44 50 l-4 4"/></g></svg>
+        <div><h2>Practice</h2><p>No score, no opponent. Change the rack whenever you want and work on a shot.</p><div class="rec" id="rec-practice"></div></div>
+      </button>
+    </div>
+    <details class="moves" id="moves">
+      <summary>Throws</summary>
+      <dl>
+        <dt>Flick up</dt><dd>Arc. A high lob that drops in steep. A harder flick goes deeper. Best for cups hiding behind other cups.</dd>
+        <dt>Short snap</dt><dd>Fastball. A quick, short flick throws it flat and hard into the back wall of the cup. Forgiving on depth, but it hits the first rim on its line, so save it for a naked front cup.</dd>
+        <dt>Dip, then flick</dt><dd>Bounce. Pull down a little, then flick up. It skips off the table and up into a cup. Counts for two, but some people swat it.</dd>
+        <dt>Curl</dt><dd>Spin. A little curl rides the rim and rolls in. Too much spins it out. Some house rules let them blow out a spinning ball.</dd>
+        <dt>Re-rack</dt><dd>At six cups and at three, you call the shape. Pick one that fits your best shot.</dd>
+        <dt>Balls back</dt><dd>Make both and you shoot two more.</dd>
+        <dt>On fire</dt><dd>Two in a row heats you up. Three and you're on fire: a bigger window, and you keep shooting until you miss.</dd>
+        <dt>Rebuttal</dt><dd>When your last cup goes, you shoot until you miss. Clear theirs and it's overtime.</dd>
+      </dl>
+    </details>
+    <div class="row-links">
+      <button class="link" type="button" data-go="book">The book</button>
+      <button class="link" type="button" data-go="settings">Settings</button>
+    </div>
+  </section>
+
+  <section class="screen" id="opps" hidden>
+    <div class="bar"><button class="back" type="button" data-go="home" aria-label="Back">&#x2190;</button><h2>Who's up</h2></div>
+    <p class="lede">Everyone at this table has a habit. Each one takes a shot off the menu.</p>
+    <div class="opps" id="opp-list"></div>
+  </section>
+
+  <section class="screen" id="island" hidden>
+    <div class="bar"><button class="back" type="button" data-go="home" aria-label="Back">&#x2190;</button><h2>Island</h2></div>
+    <p class="lede">Every ball is a fresh setup. The glowing cups are the ones that count.</p>
+    <div class="drills" id="drill-list"></div>
+  </section>
+
+  <section class="screen" id="results" hidden></section>
+
+  <section class="screen" id="book" hidden>
+    <div class="bar"><button class="back" type="button" data-go="home" aria-label="Back">&#x2190;</button><h2>The book</h2></div>
+    <p class="lede">Who does what, and what to throw at them.</p>
+    <div class="book" id="book-opps"></div>
+    <h3 class="subhead">Racks</h3>
+    <p class="lede">The shape decides the shot. Naked front cup: fastball. Buried cup: arc. Island with open table: bounce.</p>
+    <div class="racks" id="book-racks"></div>
+    <h3 class="subhead">Your throws</h3>
+    <div class="stats" id="book-shots"></div>
+  </section>
+
+  <section class="screen" id="settings" hidden>
+    <div class="bar"><button class="back" type="button" data-go="home" aria-label="Back">&#x2190;</button><h2>Settings</h2></div>
+    <div class="panel screen" id="settings-body"></div>
+  </section>
+</main>
+<div id="game" hidden></div>
+
+<script>
+/* Engine 1 · Gesture
+   One recognizer for every touch game: flicks, swipes, taps.
+   Speeds come out in screen-heights per second and lengths in screen-heights,
+   so a flick means the same thing on a small phone, a big phone, or a laptop. */
+const Gesture = (() => {
+  const TAP_PX = 12;
+  const FLICK_MIN_PX = 24;
+  const RELEASE_WINDOW_MS = 110;
+
+  function classify(start, samples) {
+    const last = samples[samples.length - 1];
+    const dx = last.x - start.x, dy = last.y - start.y;
+    const dist = Math.hypot(dx, dy);
+    const dur = Math.max(1, last.t - start.t);
+    const h = Math.max(320, window.innerHeight || 800);
+    if (dist < TAP_PX) return dur < 380 ? { type: 'tap', x: last.x, y: last.y } : { type: 'hold', dur };
+
+    // Release speed: displacement over the last ~110 ms, the part of a flick that throws.
+    let k = samples.length - 1;
+    while (k > 0 && last.t - samples[k - 1].t <= RELEASE_WINDOW_MS) k--;
+    const ref = k === samples.length - 1 ? start : samples[k];
+    const rdt = Math.max(8, last.t - ref.t) / 1000;
+    const release = Math.hypot(last.x - ref.x, last.y - ref.y) / h / rdt;
+    const avg = dist / h / (dur / 1000);
+    const speed = Math.max(release, avg * 0.85);
+    // Power blends how fast and how far the finger travelled. Length is easy to
+    // repeat; speed is what "flick harder" feels like. Together they jitter less
+    // than either alone.
+    const power = Math.sqrt(speed * 4 * (dist / h));
+    // Curl: how far the finger's path bows away from a straight line, as a
+    // share of its length. Positive bows to the right. A layup flick with a
+    // little curl puts spin on the ball.
+    let bow = 0;
+    for (const s of samples) {
+      const dev = (dx * (s.y - start.y) - dy * (s.x - start.x)) / dist;
+      if (Math.abs(dev) > Math.abs(bow)) bow = dev;
+    }
+    const curl = bow / dist;
+
+    const base = { dx, dy, dist, dur, speed, power, curl, startX: start.x, startY: start.y };
+    if (-dy > Math.abs(dx) * 0.7 && dist >= FLICK_MIN_PX) {
+      // Pulling the finger down first, then flicking up, is a fadeaway. The
+      // flick is measured from the bottom of the dip, where the shot starts.
+      let low = start;
+      for (const s of samples) if (s.y > low.y) low = s;
+      const dip = low.y - start.y;
+      if (dip > Math.max(36, h * 0.045)) {
+        const fx = last.x - low.x, fy = last.y - low.y, flen = Math.hypot(fx, fy);
+        return Object.assign(base, { type: 'flick', fade: true, dip: dip / h, angle: Math.atan2(fx, -fy), power: Math.sqrt(speed * 4 * (flen / h)) });
+      }
+      return Object.assign(base, { type: 'flick', angle: Math.atan2(dx, -dy) });
+    }
+    if (dy > 0) {
+      // straight down steps back; down and to the side is a side-step; flatter is a drive
+      const fromDown = Math.atan2(Math.abs(dx), dy) * 180 / Math.PI;
+      if (fromDown < 28) return Object.assign(base, { type: 'swipe', dir: 'down' });
+      if (fromDown <= 60) return Object.assign(base, { type: 'swipe', dir: dx < 0 ? 'downleft' : 'downright' });
+      return Object.assign(base, { type: 'swipe', dir: dx < 0 ? 'left' : 'right' });
+    }
+    if (Math.abs(dx) >= Math.abs(dy)) return Object.assign(base, { type: 'swipe', dir: dx < 0 ? 'left' : 'right' });
+    return Object.assign(base, { type: 'flick', angle: Math.atan2(dx, -dy) });
+  }
+
+  function attach(el, on) {
+    let id = null, start = null, samples = null;
+    const pt = e => ({ x: e.clientX, y: e.clientY, t: performance.now() });
+    function down(e) {
+      if (id !== null) return;
+      id = e.pointerId;
+      try { el.setPointerCapture(id); } catch (_) {}
+      start = pt(e); samples = [start];
+      on.down && on.down(start);
+      e.preventDefault();
+    }
+    function move(e) {
+      if (e.pointerId !== id) return;
+      const p = pt(e);
+      samples.push(p);
+      if (samples.length > 48) samples.splice(1, 1);
+      on.move && on.move(p, start);
+    }
+    function up(e) {
+      if (e.pointerId !== id) return;
+      samples.push(pt(e));
+      const g = classify(start, samples);
+      id = null;
+      on.gesture && on.gesture(g);
+    }
+    function cancel(e) { if (e.pointerId === id) { id = null; on.cancel && on.cancel(); } }
+    el.addEventListener('pointerdown', down);
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointercancel', cancel);
+    el.style.touchAction = 'none';
+    return () => {
+      el.removeEventListener('pointerdown', down);
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', up);
+      el.removeEventListener('pointercancel', cancel);
+    };
+  }
+
+  return { attach, classify };
+})();
+/* Save: progress lives in this browser right away, and also in the artifact's
+   private per-player store when the page runs on claude.ai, so a save made on
+   the phone shows up on the laptop. Either half can be missing; the game never waits on it. */
+const SaveStore = (() => {
+  function create(key, defaults) {
+    let state = null, remote = null, pending = false, writing = false, timer = null;
+    const listeners = [];
+
+    function readLocal() {
+      try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch (_) { return null; }
+    }
+    function writeLocal() {
+      try { localStorage.setItem(key, JSON.stringify(state)); } catch (_) {}
+    }
+    function merge(base, saved) {
+      if (!saved || typeof saved !== 'object') return base;
+      const out = Array.isArray(base) ? saved : Object.assign({}, base);
+      if (Array.isArray(base)) return out;
+      for (const k of Object.keys(saved)) {
+        const b = base[k], s = saved[k];
+        out[k] = (b && s && typeof b === 'object' && typeof s === 'object' && !Array.isArray(b)) ? merge(b, s) : s;
+      }
+      return out;
+    }
+
+    async function connectRemote() {
+      const c = window.claude;
+      if (!c || typeof c.use !== 'function') return;
+      try {
+        const [db, user] = await Promise.all([c.use('db'), c.use('user')]);
+        if (!db || !user) return;
+        const uid = await user.id();
+        if (!uid) return;
+        remote = db.doc('data/users/' + uid + '/save');
+        const snap = await remote.get();
+        if (snap.exists) {
+          const data = snap.data();
+          const blob = data && typeof data.json === 'string' ? JSON.parse(data.json) : null;
+          if (blob && (blob.savedAt || 0) > (state.savedAt || 0)) {
+            state = merge(defaults(), blob);
+            writeLocal();
+            listeners.forEach(fn => fn(state, 'remote'));
+          } else if ((state.savedAt || 0) > ((blob && blob.savedAt) || 0)) {
+            flush();
+          }
+        }
+      } catch (_) { remote = null; }
+    }
+
+    async function flush() {
+      if (!remote) return;
+      if (writing) { pending = true; return; }
+      writing = true; pending = false;
+      try { await remote.set({ json: JSON.stringify(state), savedAt: state.savedAt || 0 }); }
+      catch (e) { if (e && (e.code === 'invalid_argument' || e.code === 'revoked' || e.code === 'not_granted')) remote = null; }
+      writing = false;
+      if (pending) flush();
+    }
+
+    function load() {
+      state = merge(defaults(), readLocal());
+      connectRemote();
+      return state;
+    }
+    function save() {
+      if (!state) return;
+      state.savedAt = Date.now();
+      writeLocal();
+      clearTimeout(timer);
+      timer = setTimeout(flush, 1200);
+    }
+    function reset() { state = defaults(); save(); return state; }
+    function onRemote(fn) { listeners.push(fn); }
+    return { load, save, reset, onRemote, get state() { return state; }, set state(s) { state = s; } };
+  }
+  return { create };
+})();
+/* Synthesized sound for the pong table: the click of a ping pong ball on
+   wood, the hollow pop of a plastic cup, the plunk when it drops in. Same
+   approach as the shared sound module (oscillators and noise, no files),
+   tuned for a lighter ball. Starts after the first tap. */
+const PongSfx = (() => {
+  let ctx = null, master = null, noiseBuf = null, muted = false;
+  function ensure() {
+    if (ctx) return ctx;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+      master = ctx.createGain(); master.gain.value = 0.55; master.connect(ctx.destination);
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    } catch (_) { ctx = null; }
+    return ctx;
+  }
+  function unlock() { const c = ensure(); if (c && c.state === 'suspended') c.resume().catch(() => {}); }
+  function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+  function tone(freq, dur, type, vol, when, slideTo) {
+    const c = ensure(); if (!c || muted) return;
+    const t = c.currentTime + (when || 0);
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    env(g, t, 0.003, vol || 0.3, dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+  }
+  function noise(dur, type, freq, q, vol, when) {
+    const c = ensure(); if (!c || muted) return;
+    const t = c.currentTime + (when || 0);
+    const s = c.createBufferSource(); s.buffer = noiseBuf;
+    const f = c.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q || 1;
+    const g = c.createGain(); env(g, t, 0.002, vol || 0.3, dur);
+    s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
+  }
+  const sounds = {
+    tock(s) { const v = Math.min(0.5, 0.15 + (s || 0.5) * 0.4); tone(2600 + Math.random() * 300, 0.035, 'triangle', v * 0.6); noise(0.03, 'bandpass', 3800, 2.5, v); },
+    cup(s) { const v = Math.min(0.45, 0.12 + (s || 0.5) * 0.35); tone(520 + Math.random() * 80, 0.09, 'sine', v, 0, 380); noise(0.05, 'bandpass', 1500, 2, v * 0.6); },
+    sink() { tone(300, 0.16, 'sine', 0.35, 0, 140); noise(0.22, 'lowpass', 900, 0.8, 0.22, 0.03); tone(180, 0.2, 'sine', 0.18, 0.06, 90); },
+    release() { noise(0.06, 'bandpass', 1400, 1.4, 0.1); },
+    swat() { noise(0.1, 'lowpass', 1600, 1, 0.45); tone(160, 0.12, 'sine', 0.35, 0, 90); },
+    blow() { noise(0.45, 'bandpass', 700, 0.6, 0.3); },
+    cheer() { noise(1.3, 'bandpass', 1300, 0.6, 0.18); noise(0.9, 'bandpass', 2400, 0.8, 0.08, 0.15); },
+    groan() { noise(0.8, 'lowpass', 500, 0.7, 0.14); },
+    fire() { noise(0.6, 'bandpass', 600, 0.5, 0.25); tone(220, 0.5, 'sawtooth', 0.06, 0, 440); },
+    good() { tone(660, 0.1, 'sine', 0.2); tone(990, 0.16, 'sine', 0.2, 0.08); },
+    great() { tone(660, 0.1, 'triangle', 0.2); tone(880, 0.1, 'triangle', 0.2, 0.07); tone(1320, 0.22, 'triangle', 0.2, 0.14); },
+    bad() { tone(300, 0.2, 'sine', 0.18, 0, 200); },
+    ui() { tone(520, 0.05, 'sine', 0.12); },
+    rack() { for (let i = 0; i < 4; i++) tone(480 + i * 40, 0.05, 'sine', 0.12, i * 0.05, 300); }
+  };
+  function play(name, arg) { try { sounds[name] && sounds[name](arg); } catch (_) {} }
+  function buzz(ms) { try { navigator.vibrate && navigator.vibrate(ms); } catch (_) {} }
+  return { play, buzz, unlock, get muted() { return muted; }, set muted(v) { muted = !!v; } };
+})();
+/* Ball, table and cup physics, and the throw model.
+   World in feet: x across the table, y up from the tabletop, z down the table
+   from your end (0) to theirs (8). The flick decides intent (which cup, which
+   shot, how clean); the physics decides the outcome, so a ball that catches a
+   rim rides it, drops in, or pops into the cup next door. */
+const PongPhysics = (() => {
+  const G = 32.17;
+  const R = 0.0656;            // 40 mm ball
+  const DRAG = 0.042;          // a ping pong ball slows down fast: drag ~ k·v²
+  const TABLE = { x0: -1, x1: 1, z0: 0, z1: 8 };
+  const FLOOR = -2.3;
+  const CUP = { rTop: 0.154, rBot: 0.098, h: 0.39, lip: 0.012 };
+  const SPACING = 0.31;        // cups touching
+  const ROW = SPACING * Math.sqrt(3) / 2;
+  const E_TABLE = 0.8, E_RIM = 0.62, E_OUT = 0.5, E_IN = 0.22, RIM_FR = 0.12;
+  const STEP = 1 / 240;
+  const V = {
+    add: (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]],
+    sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]],
+    mul: (a, s) => [a[0] * s, a[1] * s, a[2] * s],
+    dot: (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2],
+    len: a => Math.hypot(a[0], a[1], a[2])
+  };
+  // where the ball leaves the hand: about chin height, elbow behind the table edge
+  const RELEASE = { near: [0.06, 2.3, -0.5], far: [-0.06, 2.3, 8.5] };
+
+  function newBall(p, v, opts) {
+    return Object.assign({
+      p: p.slice(), v: v.slice(), t: 0, rot: 0, touch: 0, spinOut: 0, spinDir: 1,
+      rimHits: 0, wallHits: 0, bounces: 0, cupHits: [], inCup: null, sunk: null, sunkAt: 0,
+      result: null, done: false, rollT: 0, events: []
+    }, opts || {});
+  }
+
+  function inTable(p) { return p[0] > TABLE.x0 && p[0] < TABLE.x1 && p[2] > TABLE.z0 && p[2] < TABLE.z1; }
+
+  function collideCup(b, c, prevY) {
+    const rx = b.p[0] - c.x, rz = b.p[2] - c.z;
+    const hd = Math.hypot(rx, rz);
+    // dropping through the opening puts it inside the cup
+    if (prevY >= CUP.h && b.p[1] < CUP.h && hd < CUP.rTop) b.inCup = c.id;
+    if (b.inCup === c.id && b.p[1] > CUP.h + R) b.inCup = null;
+    // the rolled lip: a thin ring, same as a rim
+    if (hd > 1e-5 && Math.abs(b.p[1] - CUP.h) < R + CUP.lip + 0.02) {
+      const qx = c.x + rx / hd * CUP.rTop, qz = c.z + rz / hd * CUP.rTop;
+      const dx = b.p[0] - qx, dy = b.p[1] - CUP.h, dz = b.p[2] - qz;
+      const dist = Math.hypot(dx, dy, dz), minD = R + CUP.lip;
+      if (dist < minD && dist > 1e-6) {
+        const n = [dx / dist, dy / dist, dz / dist];
+        b.p = [qx + n[0] * minD, CUP.h + n[1] * minD, qz + n[2] * minD];
+        const vn = V.dot(b.v, n);
+        if (vn < 0) {
+          const vt = V.sub(b.v, V.mul(n, vn));
+          // spin grabs the rim: less kick off it, and it rolls around and in
+          b.v = V.add(V.mul(vt, 1 - RIM_FR), V.mul(n, -vn * E_RIM * (1 - 0.55 * b.touch)));
+          const inw = [-rx / hd, 0, -rz / hd], tan = [-rz / hd * b.spinDir, 0, rx / hd * b.spinDir];
+          if (b.touch) b.v = V.add(b.v, V.add(V.mul(inw, 2.4 * b.touch), V.mul(tan, 0.9 * b.touch)));
+          if (b.spinOut) { b.v = V.add(b.v, V.add(V.mul(inw, -1.4 * b.spinOut), V.mul(tan, 1.1 * b.spinOut))); b.spinOut *= 0.5; }
+          b.rimHits++;
+          if (!b.cupHits.includes(c.id)) b.cupHits.push(c.id);
+          if (-vn > 1.2) b.events.push({ type: 'rim', s: Math.min(1, -vn / 12), cup: c.id });
+        }
+      }
+    }
+    // the wall, inside or out
+    if (b.p[1] < CUP.h && b.p[1] > -R) {
+      const rw = CUP.rBot + (CUP.rTop - CUP.rBot) * Math.max(0, Math.min(1, b.p[1] / CUP.h));
+      if (hd < 1e-5) return;
+      const nx = rx / hd, nz = rz / hd;
+      const vr = b.v[0] * nx + b.v[2] * nz;
+      if (b.inCup === c.id) {
+        if (hd > rw - R) {
+          b.p[0] = c.x + nx * (rw - R); b.p[2] = c.z + nz * (rw - R);
+          if (vr > 0) { b.v[0] -= nx * vr * (1 + E_IN); b.v[2] -= nz * vr * (1 + E_IN); b.v[1] *= 0.8; b.wallHits++; }
+        }
+      } else if (hd < rw + R) {
+        b.p[0] = c.x + nx * (rw + R); b.p[2] = c.z + nz * (rw + R);
+        if (vr < 0) {
+          b.v[0] -= nx * vr * (1 + E_OUT); b.v[2] -= nz * vr * (1 + E_OUT);
+          if (!b.cupHits.includes(c.id)) b.cupHits.push(c.id);
+          if (-vr > 1) b.events.push({ type: 'cup', s: Math.min(1, -vr / 10), cup: c.id });
+        }
+      }
+    }
+    // down in the cup: it's in
+    if (b.inCup === c.id && b.p[1] < CUP.h - R - 0.05 && !b.sunk) {
+      b.sunk = c.id; b.sunkAt = b.t;
+      b.events.push({ type: 'sink', cup: c.id });
+    }
+  }
+
+  function step(b, dt, cups) {
+    const prevY = b.p[1];
+    const sp = V.len(b.v);
+    b.v[0] -= DRAG * sp * b.v[0] * dt;
+    b.v[1] -= (G + DRAG * sp * b.v[1]) * dt;
+    b.v[2] -= DRAG * sp * b.v[2] * dt;
+    b.p[0] += b.v[0] * dt; b.p[1] += b.v[1] * dt; b.p[2] += b.v[2] * dt;
+    b.rot += dt * (8 + sp);
+    b.t += dt;
+    // tabletop
+    if (b.p[1] < R && prevY >= R - 0.02 && inTable(b.p) && !b.inCup) {
+      b.p[1] = R;
+      if (b.v[1] < 0) {
+        const s = -b.v[1];
+        b.v[1] = s > 0.6 ? s * E_TABLE : 0;
+        b.v[0] *= 0.92; b.v[2] *= 0.92;
+        if (s > 0.6) { b.bounces++; b.events.push({ type: 'bounce', s: Math.min(1, s / 14), at: b.p.slice() }); }
+      }
+    }
+    if (cups) for (const c of cups) {
+      if (!c.live) continue;
+      if (Math.abs(b.p[0] - c.x) > 0.3 || Math.abs(b.p[2] - c.z) > 0.3 || b.p[1] > CUP.h + 0.2) { if (b.inCup === c.id && b.p[1] > CUP.h + R) b.inCup = null; continue; }
+      collideCup(b, c, prevY);
+      if (b.sunk) break;
+    }
+    if (b.p[1] < FLOOR + R) { b.p[1] = FLOOR + R; b.v = [0, 0, 0]; }
+  }
+
+  function advance(b, dt, cups) {
+    if (b.sunk) {
+      // settle into the cup and float there
+      b.t += dt;
+      if (!b.result) b.result = 'made';
+      if (b.t - b.sunkAt > 1.2) b.done = true;
+      return;
+    }
+    let t = dt;
+    while (t > 1e-6 && !b.sunk) { const h = Math.min(STEP, t); step(b, h, cups); t -= h; }
+    if (b.sunk) { b.result = 'made'; return; }
+    if (!b.result) {
+      const onTable = b.p[1] <= R + 0.002 && inTable(b.p);
+      if (onTable && Math.abs(b.v[1]) < 0.2) b.rollT += dt; else b.rollT = 0;
+      if (b.p[1] < -0.6 || b.rollT > 0.35 || b.t > 4.5) b.result = 'miss';
+    }
+    if (b.result && !b.doneAt) b.doneAt = b.t;
+    if (b.doneAt && b.t - b.doneAt > 0.9) b.done = true;
+  }
+
+  // Run a ball to the end without drawing (tests, solvers).
+  function simulate(p, v, cups, opts) {
+    const b = newBall(p, v, opts);
+    let n = 0;
+    while (!b.result && n++ < 1200) advance(b, 1 / 120, cups);
+    return b;
+  }
+
+  // ---------- solvers: initial velocity for each kind of throw ----------
+  // Fly with drag only (no cups) until stop() says so.
+  function fly(p0, v0, stop, bounce) {
+    let p = p0.slice(), v = v0.slice(), t = 0, bounced = 0;
+    for (let i = 0; i < 1600; i++) {
+      const dt = 1 / 240, sp = V.len(v), py = p[1];
+      v[0] -= DRAG * sp * v[0] * dt; v[1] -= (G + DRAG * sp * v[1]) * dt; v[2] -= DRAG * sp * v[2] * dt;
+      p[0] += v[0] * dt; p[1] += v[1] * dt; p[2] += v[2] * dt; t += dt;
+      if (bounce && p[1] < R && py >= R && v[1] < 0) { p[1] = R; v[1] = -v[1] * E_TABLE; v[0] *= 0.92; v[2] *= 0.92; bounced++; }
+      const r = stop(p, v, bounced, py);
+      if (r) return { p, v, t, bounced };
+      if (p[1] < FLOOR) break;
+    }
+    return null;
+  }
+  function launchVec(from, to, speed, pitch) {
+    const dx = to[0] - from[0], dz = to[2] - from[2], d = Math.hypot(dx, dz) || 1;
+    const c = Math.cos(pitch);
+    return [dx / d * speed * c, speed * Math.sin(pitch), dz / d * speed * c];
+  }
+  // f rises with x; a null means "didn't get there" (counts as short)
+  function bisect(f, lo, hi, tol) {
+    let flo = f(lo), fhi = f(hi);
+    if (flo == null) flo = -1;
+    if (fhi == null || fhi < 0 || flo > 0) return null;
+    for (let i = 0; i < 40; i++) {
+      const mid = (lo + hi) / 2, fm = f(mid);
+      const v = fm == null ? -1 : fm;
+      if (Math.abs(v) < tol) return mid;
+      if (v < 0) lo = mid; else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+  const hdist = (a, b) => Math.hypot(b[0] - a[0], b[2] - a[2]);
+
+  // Arc: a lob at a fixed launch angle, coming down through the rim plane at the target.
+  const ARC_PITCH = 52 * Math.PI / 180;
+  function solveArc(from, to) {
+    const D = hdist(from, to);
+    const f = s => { const r = fly(from, launchVec(from, to, s, ARC_PITCH), (p, v) => v[1] < 0 && p[1] <= to[1]); return r ? hdist(from, r.p) - D : null; };
+    const s = bisect(f, 4, 45, 0.002);
+    return s ? launchVec(from, to, s, ARC_PITCH) : null;
+  }
+  // Fastball: thrown hard; solve the pitch that crosses the aim point's plane at its height.
+  const FAST_SPEED = 27;
+  function solveFast(from, aim) {
+    const D = hdist(from, aim);
+    const f = ph => { const r = fly(from, launchVec(from, aim, FAST_SPEED, ph), p => hdist(from, p) >= D); return r ? r.p[1] - aim[1] : null; };
+    const ph = bisect(f, -0.7, 0.7, 0.001);
+    return ph == null ? null : launchVec(from, aim, FAST_SPEED, ph);
+  }
+  // Bounce: thrown down at the table so it kicks up and drops into the target.
+  const BOUNCE_PITCH = -16 * Math.PI / 180;
+  function solveBounce(from, to) {
+    const D = hdist(from, to);
+    const f = s => { const r = fly(from, launchVec(from, to, s, BOUNCE_PITCH), (p, v, n) => n >= 1 && v[1] < 0 && p[1] <= to[1], true); return r ? hdist(from, r.p) - D : null; };
+    const s = bisect(f, 4, 45, 0.002);
+    return s ? launchVec(from, to, s, BOUNCE_PITCH) : null;
+  }
+
+  // ---------- the throw model ----------
+  function gauss(rand) { const r = rand || Math.random; let u = 0, v = 0; while (u === 0) u = r(); while (v === 0) v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+  /* Spin from the flick's curl, same idea as the layup in Basketball
+     Playground: a little curl rides the rim and rolls in, a big hook spins out. */
+  function spinFromCurl(curl) {
+    const c = Math.abs(curl || 0), sgn = Math.sign(curl || 0) || 1;
+    if (c < 0.04) return { touch: 0, out: 0, sgn, label: null };
+    if (c < 0.1) return { touch: (c - 0.04) / 0.06, out: 0, sgn, label: 'spin' };
+    if (c < 0.24) return { touch: 1, out: 0, sgn, label: 'spin' };
+    const over = Math.min(1, (c - 0.24) / 0.14);
+    return { touch: Math.max(0, 1 - over * 1.5), out: over, sgn, label: 'overspin' };
+  }
+
+  // The touch scale. Your calibration throws are arcs at the head cup of a
+  // full rack; that flick is 1.0. About 10% harder is one cup deeper.
+  const Z_REF = 8 - CUP.rTop - 0.02 - ROW * 3;   // head cup of a full rack
+  const DEPTH_PER = 2.4;                          // feet of depth per 1.0 of flick
+  const P0 = { arc: 1, bounce: 0.9 };
+  const FAST_IDEAL = 0.82;                        // a short snap carries less power than a full flick
+  const AIM_GAIN = 0.18;                          // flick angle to throw angle
+
+  /* q: { kind: arc|fast|bounce, side: 'near' (you throw) | 'far', cups (the
+          rack you're shooting at, live ones), p (power vs your touch),
+          angle (deg), curl, snap (ft), fastWindow, contest, rand } */
+  function throwBall(q) {
+    const rand = q.rand || Math.random;
+    const dir = q.side === 'far' ? -1 : 1;
+    const from = RELEASE[q.side === 'far' ? 'far' : 'near'];
+    const live = q.cups.filter(c => c.live);
+    const zRef = q.side === 'far' ? 8 - Z_REF : Z_REF;
+    const yaw = q.angle * AIM_GAIN * Math.PI / 180 * dir;
+    const contest = q.contest || 0;
+    const sig = 0.012 + contest * 0.06;
+    // only an arc carries spin; a fastball and a bounce come off the hand flat
+    const spin = q.kind !== 'arc' ? { touch: 0, out: 0, sgn: 1, label: null } : spinFromCurl(q.curl);
+    let target = null, intended, ratio, e, green, aim = null, vel = null, ideal;
+    const lineX = z => from[0] + (z - from[2]) * Math.tan(yaw) * dir;
+
+    if (q.kind === 'fast') {
+      // a flat ball hits the first cup on its line
+      const onLine = live.map(c => ({ c, off: c.x - lineX(c.z) })).filter(o => Math.abs(o.off) < SPACING * 0.85).sort((a, b) => dir * (a.c.z - b.c.z));
+      target = onLine.length ? onLine[0].c : null;
+      ideal = FAST_IDEAL;
+      ratio = q.p / ideal; e = ratio - 1;
+      const w = q.fastWindow;
+      const off = target ? onLine[0].off : 0;
+      // a hard throw is harder to keep on line: the lateral window is tighter
+      const fsnap = q.snap * 0.7;
+      const latOK = Math.abs(off) <= fsnap;
+      green = !!target && Math.abs(e) <= w && latOK;
+      // inside the window the height wanders a little; past it, the ball clips the front rim or sails
+      const hErr = Math.abs(e) <= w ? e / w * 0.045 : Math.sign(e) * (0.045 + (Math.abs(e) - w) * 0.6);
+      const lat = latOK ? off * 0.12 : Math.sign(off) * (fsnap * 0.12 + (Math.abs(off) - fsnap) * 1.5);
+      const zc = target ? target.z : (q.side === 'far' ? 0.6 : 7.4);
+      const xc = target ? target.x - lat : lineX(zc);
+      intended = [xc, zc];
+      aim = [xc + gauss(rand) * sig * 2, CUP.h + R + 0.02 + hErr + gauss(rand) * (0.008 + contest * 0.03), zc - dir * (CUP.rTop + 0.01)];
+      vel = solveFast(from, aim);
+    } else {
+      const zInt = zRef + dir * (q.p - P0[q.kind]) * DEPTH_PER;
+      const xInt = lineX(zInt);
+      intended = [xInt, zInt];
+      const snapR = q.snap;
+      let best = null, bd = 1e9;
+      live.forEach(c => { const d = Math.hypot(c.x - xInt, c.z - zInt); if (d < bd) { bd = d; best = c; } });
+      target = best;
+      let tx = xInt, tz = zInt;
+      if (best) {
+        const ox = xInt - best.x, oz = zInt - best.z, od = Math.hypot(ox, oz) || 1e-6;
+        // inside the window it snaps to the cup; outside, the miss grows fast
+        const k = od <= snapR ? 0.12 : (snapR * 0.12 + (od - snapR) * 1.5) / od;
+        tx = best.x + ox * k; tz = best.z + oz * k;
+        green = od <= snapR;
+        ideal = P0[q.kind] + dir * (best.z - zRef) / DEPTH_PER;
+      } else { green = false; ideal = P0[q.kind]; }
+      ratio = q.p / ideal; e = ratio - 1;
+      // a bounce off the table is never quite the same twice
+      const sb = sig + (q.kind === 'bounce' ? 0.012 : 0);
+      // a bounce comes in flatter than an arc, so it aims a touch past center to clear the front rim
+      const to = [tx + gauss(rand) * sb, CUP.h, tz + gauss(rand) * sb + (q.kind === 'bounce' ? dir * 0.035 : 0)];
+      vel = q.kind === 'bounce' ? solveBounce(from, to) : solveArc(from, to);
+      aim = to;
+    }
+    if (!vel) vel = launchVec(from, [intended[0], 0, intended[1]], 14, ARC_PITCH);
+    return {
+      vel, release: from.slice(), kind: q.kind, target: target ? target.id : null, intended, aim, ratio, error: e, green,
+      touch: spin.touch, spinOut: spin.out, spinDir: spin.sgn, spinLabel: spin.label, ideal,
+      feedback: describe(q.kind, e, green, target, intended, spin, q.snap, q.fastWindow)
+    };
+  }
+
+  function describe(kind, e, green, target, intended, spin, snap, fw) {
+    const parts = [];
+    const label = { arc: 'Arc', fast: 'Fastball', bounce: 'Bounce' }[kind];
+    if (green) parts.push(Math.abs(e) < (kind === 'fast' ? fw * 0.35 : 0.03) ? 'Pure' : 'Good touch');
+    else if (!target) parts.push('Nothing on that line');
+    else if (kind === 'fast') parts.push(Math.abs(e) <= fw ? 'Off line' : (e > 0 ? 'Too hot' : 'Too soft'));
+    else {
+      const dz = intended[1] - target.z, dx = intended[0] - target.x;
+      parts.push(Math.abs(dz) >= Math.abs(dx) ? (Math.abs(dz) > snap * 2.2 ? (dz * (target.z > 4 ? 1 : -1) > 0 ? 'Way long' : 'Way short') : (dz * (target.z > 4 ? 1 : -1) > 0 ? 'A bit long' : 'A bit short')) : (dx * (target.z > 4 ? 1 : -1) > 0 ? 'Pulled right' : 'Pulled left'));
+    }
+    if (spin && spin.label === 'overspin') parts.push('too much spin');
+    else if (spin && spin.touch > 0.5) parts.push('spun');
+    return label + ' · ' + parts.join(', ');
+  }
+
+  /* A computer thrower: picks the cup and the shot, then misses by an amount
+     that comes from skill. Physics still decides. */
+  function cpuThrow(side, cup, kind, skill, rand) {
+    const r = rand || Math.random;
+    const dir = side === 'far' ? -1 : 1;
+    const from = RELEASE[side];
+    const sd = 0.03 + (1 - skill) * 0.2, sl = 0.025 + (1 - skill) * 0.13;
+    let vel;
+    if (kind === 'fast') {
+      const aim = [cup.x + gauss(r) * sl, CUP.h + R + 0.02 + gauss(r) * (0.02 + (1 - skill) * 0.08), cup.z - dir * (CUP.rTop + 0.01)];
+      vel = solveFast(from, aim);
+    } else {
+      const to = [cup.x + gauss(r) * sl, CUP.h, cup.z + gauss(r) * sd];
+      vel = kind === 'bounce' ? solveBounce(from, to) : solveArc(from, to);
+    }
+    if (!vel) vel = launchVec(from, [cup.x, 0, cup.z], 14, ARC_PITCH);
+    return { vel, release: from.slice(), kind, target: cup.id, touch: 0, spinOut: 0, spinDir: 1 };
+  }
+
+  return { G, R, TABLE, FLOOR, CUP, SPACING, ROW, RELEASE, Z_REF, DEPTH_PER, P0, FAST_IDEAL, AIM_GAIN, V, newBall, advance, simulate, solveArc, solveFast, solveBounce, throwBall, cpuThrow, spinFromCurl, gauss };
+})();
+/* The read: racks and opponents as data, and what the right throw is.
+   A rack's shape decides the shot (naked front cup: fastball; buried cup:
+   arc; island with open table: bounce). The opponent decides what's off the
+   menu (he swats bounces, he blows out spinners, he waves you off). */
+const Pong = (() => {
+  const { SPACING: S, CUP } = PongPhysics;
+  const BACK = 8 - CUP.rTop - 0.02;  // back line of the far rack
+  const R3 = Math.sqrt(3) / 2;
+
+  // Formations: [x across, d forward from the back line], in cup widths.
+  const FORMATIONS = {
+    tri10: { name: 'Full rack', n: 10, cups: [[-1.5, 0], [-0.5, 0], [0.5, 0], [1.5, 0], [-1, R3], [0, R3], [1, R3], [-0.5, 2 * R3], [0.5, 2 * R3], [0, 3 * R3]] },
+    pyr6: { name: 'Pyramid', n: 6, read: 'Tight. Arcs into the middle forgive you; misses roll into neighbors.', cups: [[-1, 0], [0, 0], [1, 0], [-0.5, R3], [0.5, R3], [0, 2 * R3]] },
+    zip6: { name: 'Zipper', n: 6, read: 'Two staggered columns. A fastball that runs hot drops into the cup behind.', cups: [[-R3 / 2, 0], [R3 / 2, 0.5], [-R3 / 2, 1], [R3 / 2, 1.5], [-R3 / 2, 2], [R3 / 2, 2.5]] },
+    house5: { name: 'House', n: 5, read: 'Three in back, two in front. Arc at the middle.', cups: [[-1, 0], [0, 0], [1, 0], [-0.5, R3], [0.5, R3]] },
+    zip5: { name: 'Zipper', n: 5, read: 'Two staggered columns. A hot fastball drops into the cup behind.', cups: [[-R3 / 2, 0], [R3 / 2, 0.5], [-R3 / 2, 1], [R3 / 2, 1.5], [-R3 / 2, 2]] },
+    diamond4: { name: 'Diamond', n: 4, read: 'One cup up front for the fastball, one buried in the middle for the arc.', cups: [[0, 0], [-0.5, R3], [0.5, R3], [0, 2 * R3]] },
+    line4: { name: 'Stoplight', n: 4, read: 'Single file. Fastball the front; if it runs hot it finds the next one.', cups: [[0, 0], [0, 1], [0, 2], [0, 3]] },
+    tri3: { name: 'Triangle', n: 3, read: 'Small and tight. Arc it at the middle.', cups: [[-0.5, 0], [0.5, 0], [0, R3]] },
+    line3: { name: 'Stoplight', n: 3, read: 'Single file. Fastball the front; if it runs hot it finds the next one.', cups: [[0, 0], [0, 1], [0, 2]] },
+    wall2: { name: 'Side by side', n: 2, read: 'Both cups face you. Fastball either one.', cups: [[-0.5, 0], [0.5, 0]] },
+    stack2: { name: 'Stack', n: 2, read: 'One behind the other. Fastball the front; hot ones find the back.', cups: [[0, 0], [0, 1]] },
+    island1: { name: 'Island', n: 1, read: 'One cup, open table in front. Bounce it if he won\'t swat.', cups: [[0, 0]] }
+  };
+  // what you can call when the rack gets down to this many
+  const RERACKS = { 6: ['pyr6', 'zip6'], 5: ['house5', 'zip5'], 4: ['diamond4', 'line4'], 3: ['tri3', 'line3'], 2: ['wall2', 'stack2'] };
+
+  // Lay out cups on a side. 'far' is the rack you shoot at (point toward you).
+  let cupSeq = 0;
+  function layout(formId, side, opts) {
+    const F = FORMATIONS[formId];
+    const o = opts || {};
+    const dx = (o.x || 0);
+    return F.cups.map(([x, d]) => {
+      const z = side === 'far' ? BACK - (d + (o.d || 0)) * S : (8 - BACK) + (d + (o.d || 0)) * S;
+      return { id: 'c' + (++cupSeq), x: (side === 'far' ? x : -x) * S + dx, z, live: true, side };
+    });
+  }
+  // Re-lay an existing rack into a new formation, keeping the same number of cups.
+  function rerack(cups, formId, side) {
+    const fresh = layout(formId, side);
+    const live = cups.filter(c => c.live);
+    return fresh.slice(0, live.length);
+  }
+
+  // How a cup sits in the rack, from the shooter's side.
+  function exposure(cup, cups, side) {
+    const toward = side === 'far' ? -1 : 1;  // shooter is toward -z for the far rack
+    const live = cups.filter(c => c.live && c.id !== cup.id);
+    const blockers = live.filter(c => (c.z - cup.z) * toward > 0.05 && Math.abs(c.x - cup.x) < S * 0.85);
+    const neighbors = live.filter(c => Math.hypot(c.x - cup.x, c.z - cup.z) < S * 1.12);
+    if (!blockers.length && !neighbors.length) return 'island';
+    if (!blockers.length) return 'front';
+    return 'buried';
+  }
+
+  // Opponents. Each one takes something off the menu; the tell is visible.
+  const OPPONENTS = {
+    statue: {
+      id: 'statue', name: 'The Statue', tag: 'Never moves', skill: 0.58, shirt: '#3d7bd9', skin: '#e0ac69', hair: '#3a2a1c',
+      tell: 'Arms folded, feet planted. He will not reach across that table for anything.',
+      read: 'Bounce shots are free. Anything with open table in front of it is two cups.',
+      lines: ['I don\'t swat. Too much effort.', 'Go ahead, bounce it.', 'Just tell me when it\'s my turn.']
+    },
+    swatter: {
+      id: 'swatter', name: 'The Swatter', tag: 'Hands like a goalie', skill: 0.64, swat: true, shirt: '#e2552f', skin: '#8d5524', hair: '#1b1410',
+      tell: 'Hands hovering over the table, eyes on your wrist. Waiting for a bounce.',
+      read: 'He swats bounces. Keep it in the air: fastball the naked cups (islands too), arc the buried ones.',
+      lines: ['Bounce it. I dare you.', 'Got hands.', 'Table\'s mine.']
+    },
+    blower: {
+      id: 'blower', name: 'The Blower', tag: 'House rules guy', skill: 0.64, blow: true, shirt: '#2c9c6a', skin: '#f1c27d', hair: '#7a4a1e',
+      tell: 'Leans over his cups, cheeks ready. House rules: if it\'s spinning in the cup, he blows it out.',
+      read: 'No spin. Throw it straight so it drops dead; a fastball into the back wall is safe.',
+      lines: ['Spinners are mine.', 'House rules, buddy.', 'Is it spinning? It\'s spinning.']
+    },
+    waver: {
+      id: 'waver', name: 'The Waver', tag: 'Loud and distracting', skill: 0.62, wave: true, shirt: '#9a4fd6', skin: '#c68642', hair: '#2b1d14',
+      tell: 'Arms go up and down on a beat. Throw into his arms and your line goes with them.',
+      read: 'Wait for the arms to drop, then throw. He can\'t keep them up forever.',
+      lines: ['Woo! WOO!', 'Look at me, not the cups.', 'Can\'t hear you!']
+    },
+    sniper: {
+      id: 'sniper', name: 'The Sniper', tag: 'Never misses twice', skill: 0.86, hot: true, shirt: '#22252e', skin: '#5c3a1e', hair: '#0e0a08',
+      tell: 'Quiet. Lines it up, lets it go, sinks two out of three.',
+      read: 'You won\'t win a slow game. Take the high-percentage cup every time, get balls back, and use your re-racks to keep his cups tight.',
+      lines: ['…', 'Your shot.', 'Balls back.']
+    }
+  };
+  const OPP_IDS = Object.keys(OPPONENTS);
+
+  // The right throw for a cup, given the opponent.
+  function rightShot(exp, opp) {
+    // an island is a naked cup with open table: two cups off the bounce, unless he swats
+    if (exp === 'island') return opp && opp.swat ? 'fast' : 'bounce';
+    if (exp === 'front') return 'fast';
+    return 'arc';
+  }
+  const SHOT_NAMES = { arc: 'Arc', fast: 'Fastball', bounce: 'Bounce' };
+  const GP = { A: 4, B: 3, C: 2, D: 1, F: 0 };
+  const FROM = ['F', 'D', 'C', 'B', 'A'];
+
+  /* Grade one throw on the decision, not the result.
+     t: { kind, exposure, spun, armsUp, wild } */
+  function gradeThrow(t, opp) {
+    if (opp && opp.wave && t.armsUp) return { g: 'D', why: 'You threw into his arms. Wait for them to drop.' };
+    if (opp && opp.swat && t.kind === 'bounce') return { g: 'D', why: 'He swats bounces. Keep it in the air.' };
+    if (opp && opp.blow && t.spun) return { g: 'D', why: 'He blows out anything spinning. Throw it straight.' };
+    if (t.wild) return { g: 'C', why: 'That one wasn\'t near a cup. Settle your touch: your free flick is an arc at the head cup.' };
+    const right = rightShot(t.exposure, opp);
+    const e = t.exposure;
+    if (t.kind === right) {
+      if (right === 'fast') return { g: 'A', why: e === 'island' ? 'He swats bounces, so the naked island gets the fastball. Right call.' : 'Front cup was naked. A fastball doesn\'t need perfect depth.' };
+      if (right === 'bounce') return { g: 'A', why: 'Island cup, open table in front, and he won\'t swat. Bounce it: two cups.' };
+      return { g: 'A', why: 'Buried cup, so you went over the top. That\'s the shot.' };
+    }
+    if (t.kind === 'fast' && e === 'buried') return { g: 'C', why: 'A cup was in the way. A flat ball hits the first rim it meets; arc it over.' };
+    if (t.kind === 'bounce' && e !== 'island') return { g: 'C', why: 'Bounces need open table in front of the cup. Other cups were in the way.' };
+    if (t.kind === 'arc' && e === 'front') return { g: 'B', why: 'Arc works, but a naked front cup is a fastball. It forgives your depth.' };
+    if (t.kind === 'arc' && e === 'island') return { g: 'B', why: opp && opp.swat ? 'An island is a small target from the air. It\'s naked, so fastball it.' : 'An island is a small target from the air. With open table in front, bounce it for two.' };
+    if (t.kind === 'fast' && e === 'island') return { g: 'B', why: 'Fastball at an island works. A bounce is worth two.' };
+    return { g: 'B', why: 'Fine look.' };
+  }
+  function gradeTurn(throws) {
+    if (!throws.length) return { g: 'C', why: '' };
+    const avg = throws.reduce((s, t) => s + GP[t.g], 0) / throws.length;
+    const worst = throws.slice().sort((a, b) => GP[a.g] - GP[b.g])[0];
+    // one bad read caps the turn a grade above it
+    return { g: FROM[Math.min(Math.round(avg), GP[worst.g] + 1)], why: worst.why };
+  }
+
+  return { FORMATIONS, RERACKS, OPPONENTS, OPP_IDS, BACK, layout, rerack, exposure, rightShot, gradeThrow, gradeTurn, SHOT_NAMES, GP };
+})();
+/* Table3D: the basement, the table, the cups and the people, drawn with a
+   perspective camera on plain canvas 2D. Same idea as the court in
+   Basketball Playground: everything lives in feet and gets projected. */
+const Table3D = (() => {
+  const { V, CUP, R, TABLE, FLOOR } = PongPhysics;
+  const NEAR = 0.3;
+
+  // ---------- camera ----------
+  function norm(a) { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; }
+  // Looking down the table from your end, +x is screen right.
+  function makeCam(eye, look, W, H, focal) {
+    const f = norm(V.sub(look, eye));
+    const r = norm([f[2], 0, -f[0]]);
+    const u = [f[1] * r[2] - f[2] * r[1], f[2] * r[0] - f[0] * r[2], f[0] * r[1] - f[1] * r[0]];
+    return { eye, f, r, u, focal, W, H, cx: W / 2, cy: H / 2 };
+  }
+  // Where you stand to throw, and where you watch from when it's their turn.
+  const VIEWS = {
+    you: { eye: [0, 4.6, -0.4], look: [0, 0.2, 7.4], rackY: 0.66, zoom: [3.4, 1.6] },
+    them: { eye: [0, 4.4, -2.2], look: [0, -0.1, 3.6], rackY: 0.5, zoom: [1.55, 0.86] }
+  };
+  function viewCam(a, b, k, W, H, shake) {
+    const A = VIEWS[a], B = VIEWS[b || a];
+    const e = k == null ? 0 : k;
+    const eye = V.add(A.eye, V.mul(V.sub(B.eye, A.eye), e));
+    const look = V.add(A.look, V.mul(V.sub(B.look, A.look), e));
+    const fa = Math.min(W * A.zoom[0], H * A.zoom[1]), fb = Math.min(W * B.zoom[0], H * B.zoom[1]);
+    const focal = fa + (fb - fa) * e;
+    const ry = A.rackY + (B.rackY - A.rackY) * e;
+    // pitch the look so the target sits at rackY of the screen
+    const cam0 = makeCam(eye, look, W, H, focal);
+    const off = Math.atan((0.5 - ry) * H / focal);
+    const f = cam0.f;
+    const hz = Math.hypot(f[0], f[2]);
+    const pitch = Math.atan2(f[1], hz) - off;
+    const dir = [f[0] / hz * Math.cos(pitch), Math.sin(pitch), f[2] / hz * Math.cos(pitch)];
+    if (shake) { dir[0] += shake[0]; dir[1] += shake[1]; }
+    return makeCam(eye, V.add(eye, dir), W, H, focal);
+  }
+  function toCam(cam, p) { const v = V.sub(p, cam.eye); return [V.dot(v, cam.r), V.dot(v, cam.u), V.dot(v, cam.f)]; }
+  function projC(cam, c) { return { x: cam.cx + cam.focal * c[0] / c[2], y: cam.cy - cam.focal * c[1] / c[2], s: cam.focal / c[2], z: c[2] }; }
+  function project(cam, p) { const c = toCam(cam, p); return c[2] > NEAR ? projC(cam, c) : null; }
+  function clipPoly(cs) {
+    const out = [];
+    for (let i = 0; i < cs.length; i++) {
+      const a = cs[i], b = cs[(i + 1) % cs.length];
+      const ain = a[2] > NEAR, bin = b[2] > NEAR;
+      if (ain) out.push(a);
+      if (ain !== bin) { const t = (NEAR - a[2]) / (b[2] - a[2]); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, NEAR]); }
+    }
+    return out;
+  }
+  function pathPoly(ctx, cam, pts) {
+    const cs = clipPoly(pts.map(p => toCam(cam, p)));
+    if (cs.length < 3) return false;
+    ctx.beginPath();
+    cs.forEach((c, i) => { const q = projC(cam, c); i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); });
+    ctx.closePath();
+    return true;
+  }
+  function fillPoly(ctx, cam, pts, fill) { if (pathPoly(ctx, cam, pts)) { ctx.fillStyle = fill; ctx.fill(); } }
+  function seg(ctx, cam, a, b, widthFt, minW) {
+    let ca = toCam(cam, a), cb = toCam(cam, b);
+    const N = 0.8;
+    if (ca[2] <= N && cb[2] <= N) return;
+    if (ca[2] <= N) { const t = (N - ca[2]) / (cb[2] - ca[2]); ca = [ca[0] + (cb[0] - ca[0]) * t, ca[1] + (cb[1] - ca[1]) * t, N]; }
+    if (cb[2] <= N) { const t = (N - cb[2]) / (ca[2] - cb[2]); cb = [cb[0] + (ca[0] - cb[0]) * t, cb[1] + (ca[1] - cb[1]) * t, N]; }
+    const pa = projC(cam, ca), pb = projC(cam, cb);
+    ctx.lineWidth = Math.min(14, Math.max(minW || 1, widthFt * (pa.s + pb.s) / 2));
+    ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+  }
+
+  // ---------- the basement ----------
+  const ROOM = { x: 7, zBack: 12, zFront: -6, top: 5.4 };
+  function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+  const BULBS = (() => {
+    const out = [], r = rng(3);
+    // strands of lights draped across the ceiling, a few back to front
+    [[-6.5, 11.6, 6.5, 11.6, 0.9], [-6.5, 8.5, 6.5, 6.5, 1.2], [-6.5, 3.5, 6.5, 5.5, 1.1], [-6.6, 11.5, -6.6, -2, 0.7], [6.6, 11.5, 6.6, -2, 0.7]].forEach(([x0, z0, x1, z1, sag], si) => {
+      const n = Math.round(Math.hypot(x1 - x0, z1 - z0) / 0.9);
+      for (let i = 0; i <= n; i++) {
+        const t = i / n;
+        out.push({ p: [x0 + (x1 - x0) * t, ROOM.top - 0.25 - sag * 4 * t * (1 - t), z0 + (z1 - z0) * t], hue: ['#ffcf6b', '#ff8a5c', '#ffe7a3', '#7fd4ff', '#ff6fa8'][Math.floor(r() * 5)], ph: r() * 6, strand: si, t });
+      }
+    });
+    return out;
+  })();
+
+  function drawRoom(ctx, cam, t) {
+    const X = ROOM.x, Zb = ROOM.zBack, Zf = ROOM.zFront, T = ROOM.top, F = FLOOR;
+    ctx.fillStyle = '#0d0a12'; ctx.fillRect(0, 0, cam.W, cam.H);
+    // ceiling, walls, floor
+    fillPoly(ctx, cam, [[-X, T, Zf], [X, T, Zf], [X, T, Zb], [-X, T, Zb]], '#120e17');
+    fillPoly(ctx, cam, [[-X, F, Zb], [X, F, Zb], [X, T, Zb], [-X, T, Zb]], '#2a1d24');
+    fillPoly(ctx, cam, [[-X, F, Zf], [-X, F, Zb], [-X, T, Zb], [-X, T, Zf]], '#22181f');
+    fillPoly(ctx, cam, [[X, F, Zf], [X, F, Zb], [X, T, Zb], [X, T, Zf]], '#22181f');
+    fillPoly(ctx, cam, [[-X, F, Zf], [X, F, Zf], [X, F, Zb], [-X, F, Zb]], '#1b1820');
+    // wood paneling on the back wall
+    ctx.strokeStyle = 'rgba(0,0,0,0.28)';
+    for (let x = -X + 0.5; x < X; x += 0.5) seg(ctx, cam, [x, F, Zb - 0.01], [x, T, Zb - 0.01], 0.02, 0.6);
+    // a chair rail and a darker lower half
+    fillPoly(ctx, cam, [[-X, F, Zb - 0.02], [X, F, Zb - 0.02], [X, F + 2.9, Zb - 0.02], [-X, F + 2.9, Zb - 0.02]], 'rgba(10,6,10,0.35)');
+    ctx.strokeStyle = '#3a2830'; seg(ctx, cam, [-X, F + 2.9, Zb - 0.03], [X, F + 2.9, Zb - 0.03], 0.12, 1);
+    // posters and a neon sign
+    [[-5, 1.4, 2.0, 2.8, '#2f4f8a'], [3.6, 1.0, 1.6, 2.2, '#7c3a34'], [5.4, 0.2, 1.1, 1.5, '#2c5a46']].forEach(([x, y, w, h, c]) => {
+      fillPoly(ctx, cam, [[x, y, Zb - 0.04], [x + w, y, Zb - 0.04], [x + w, y + h, Zb - 0.04], [x, y + h, Zb - 0.04]], c);
+      fillPoly(ctx, cam, [[x + 0.15, y + 0.15, Zb - 0.05], [x + w - 0.15, y + 0.15, Zb - 0.05], [x + w - 0.15, y + h * 0.55, Zb - 0.05], [x + 0.15, y + h * 0.55, Zb - 0.05]], 'rgba(255,255,255,0.12)');
+    });
+    drawNeon(ctx, cam, t);
+    // floor rug under the table
+    fillPoly(ctx, cam, [[-2.6, F + 0.01, -1], [2.6, F + 0.01, -1], [2.6, F + 0.01, 9], [-2.6, F + 0.01, 9]], '#2b2030');
+    // string lights
+    const strands = {};
+    BULBS.forEach(b => { (strands[b.strand] = strands[b.strand] || []).push(b); });
+    ctx.strokeStyle = 'rgba(20,16,22,0.9)';
+    Object.values(strands).forEach(s => { for (let i = 0; i < s.length - 1; i++) seg(ctx, cam, s[i].p, s[i + 1].p, 0.02, 0.8); });
+    BULBS.forEach(b => {
+      const q = project(cam, b.p);
+      if (!q || q.x < -60 || q.x > cam.W + 60 || q.y < -60 || q.y > cam.H + 60) return;
+      const flick = 0.85 + 0.15 * Math.sin(t * 2.1 + b.ph);
+      const r = Math.max(1.6, Math.min(9, q.s * 0.07));
+      const g = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, r * 7);
+      g.addColorStop(0, hexA(b.hue, 0.55 * flick)); g.addColorStop(1, hexA(b.hue, 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q.x, q.y, r * 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = b.hue; ctx.beginPath(); ctx.arc(q.x, q.y, r, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+  function hexA(hex, a) {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a.toFixed(3)})`;
+  }
+  function drawNeon(ctx, cam, t) {
+    // a cup and a ball in neon tube, with the word PONG
+    const z = ROOM.zBack - 0.06, cx = -2.6, cy = 3.0;
+    const pts = (arr) => arr.map(([x, y]) => [cx + x, cy + y, z]);
+    const glow = (color, path, w) => {
+      ctx.save();
+      ctx.strokeStyle = color; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.shadowColor = color; ctx.shadowBlur = 14;
+      for (let i = 0; i < path.length - 1; i++) seg(ctx, cam, path[i], path[i + 1], w, 1.2);
+      ctx.restore();
+    };
+    const on = Math.sin(t * 0.7) > -0.97 ? 1 : 0.4;
+    ctx.globalAlpha = on;
+    glow('#ff5fa2', pts([[-1.0, 1.1], [-0.8, -0.1], [-0.2, -0.1], [0, 1.1], [-1.0, 1.1]]), 0.06);
+    const ring = []; for (let i = 0; i <= 16; i++) { const a = i / 16 * Math.PI * 2; ring.push([0.55 + 0.17 * Math.cos(a), 1.55 + 0.17 * Math.sin(a)]); }
+    glow('#7fe7ff', pts(ring), 0.05);
+    ctx.globalAlpha = 1;
+    const q = project(cam, [cx + 1.5, cy + 0.45, z]);
+    if (q && q.s > 3) {
+      ctx.save();
+      ctx.font = `400 ${Math.round(q.s * 0.85)}px "Bungee", Impact, sans-serif`;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.shadowColor = '#ffcf6b'; ctx.shadowBlur = 16; ctx.fillStyle = on ? '#ffe7a3' : '#8a7a50';
+      ctx.fillText('PONG', q.x, q.y);
+      ctx.restore();
+    }
+  }
+
+  // ---------- table ----------
+  function drawTable(ctx, cam) {
+    const { x0, x1, z0, z1 } = TABLE;
+    // legs and apron, then the top
+    ctx.strokeStyle = '#151217';
+    [[x0 + 0.1, z0 + 0.3], [x1 - 0.1, z0 + 0.3], [x0 + 0.1, z1 - 0.3], [x1 - 0.1, z1 - 0.3]].forEach(([x, z]) => seg(ctx, cam, [x, -0.1, z], [x, FLOOR, z], 0.12, 1));
+    fillPoly(ctx, cam, [[x0, 0, z0], [x1, 0, z0], [x1, -0.12, z0], [x0, -0.12, z0]], '#0e1f1a');
+    fillPoly(ctx, cam, [[x0, 0, z1], [x1, 0, z1], [x1, -0.12, z1], [x0, -0.12, z1]], '#0e1f1a');
+    fillPoly(ctx, cam, [[x0, 0, z0], [x0, 0, z1], [x0, -0.12, z1], [x0, -0.12, z0]], '#0b1916');
+    fillPoly(ctx, cam, [[x1, 0, z0], [x1, 0, z1], [x1, -0.12, z1], [x1, -0.12, z0]], '#0b1916');
+    // top: deep green with a soft sheen toward the middle
+    fillPoly(ctx, cam, [[x0, 0, z0], [x1, 0, z0], [x1, 0, z1], [x0, 0, z1]], '#17463a');
+    fillPoly(ctx, cam, [[x0 + 0.25, 0, 2], [x1 - 0.25, 0, 2], [x1 - 0.25, 0, 6], [x0 + 0.25, 0, 6]], 'rgba(255,240,200,0.035)');
+    ctx.strokeStyle = 'rgba(243,241,234,0.85)';
+    const m = 0.04;
+    [[[x0 + m, 0, z0 + m], [x0 + m, 0, z1 - m]], [[x1 - m, 0, z0 + m], [x1 - m, 0, z1 - m]], [[x0 + m, 0, z0 + m], [x1 - m, 0, z0 + m]], [[x0 + m, 0, z1 - m], [x1 - m, 0, z1 - m]]].forEach(([a, b]) => seg(ctx, cam, a, b, 0.035, 0.8));
+    ctx.strokeStyle = 'rgba(243,241,234,0.35)';
+    seg(ctx, cam, [x0 + m, 0, 4], [x1 - m, 0, 4], 0.025, 0.6);
+    seg(ctx, cam, [0, 0, z0 + m], [0, 0, z1 - m], 0.015, 0.5);
+  }
+
+  // ---------- cups ----------
+  const RING = 18;
+  function ringPts(c, y, r) { const out = []; for (let i = 0; i < RING; i++) { const a = i / RING * Math.PI * 2; out.push([c.x + r * Math.cos(a), y, c.z + r * Math.sin(a)]); } return out; }
+  function hull(pts) {
+    const p = pts.slice().sort((a, b) => a.x - b.x || a.y - b.y);
+    const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+    const lo = [], up = [];
+    for (const q of p) { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (let i = p.length - 1; i >= 0; i--) { const q = p[i]; while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+  /* c: { x, z, lift (ft), alpha, glow, dim }, ball: a sunk ball to draw inside */
+  function drawCup(ctx, cam, c, ball, t) {
+    const lift = c.lift || 0;
+    const top = ringPts(c, CUP.h + lift, CUP.rTop).map(p => project(cam, p));
+    const bot = ringPts(c, lift, CUP.rBot).map(p => project(cam, p));
+    if (top.some(q => !q) || bot.some(q => !q)) return;
+    ctx.save();
+    ctx.globalAlpha = c.alpha == null ? 1 : c.alpha;
+    // shadow on the table
+    if (!lift) {
+      const sh = project(cam, [c.x + 0.03, 0.002, c.z + 0.02]);
+      if (sh) { ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(sh.x, sh.y, CUP.rTop * sh.s * 1.15, CUP.rTop * sh.s * 0.5, 0, 0, Math.PI * 2); ctx.fill(); }
+    }
+    if (c.glow) {
+      const q = project(cam, [c.x, CUP.h + lift, c.z]);
+      const r = CUP.rTop * q.s * 2.4;
+      const g = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, r);
+      g.addColorStop(0, 'rgba(255,207,107,0.5)'); g.addColorStop(1, 'rgba(255,207,107,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q.x, q.y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    // body
+    const h = hull(top.concat(bot));
+    const xs = top.map(q => q.x), minX = Math.min(...xs), maxX = Math.max(...xs);
+    const gr = ctx.createLinearGradient(minX, 0, maxX, 0);
+    const base = c.dim ? ['#6e2a2a', '#8a3634', '#4a1c1d'] : ['#ff6a5c', '#d8312d', '#7d1416'];
+    gr.addColorStop(0, base[1]); gr.addColorStop(0.28, base[0]); gr.addColorStop(0.6, base[1]); gr.addColorStop(1, base[2]);
+    ctx.fillStyle = gr;
+    ctx.beginPath(); h.forEach((q, i) => i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)); ctx.closePath(); ctx.fill();
+    // the ridges a third of the way down
+    ctx.strokeStyle = 'rgba(0,0,0,0.18)'; ctx.lineWidth = Math.max(0.6, top[0].s * 0.006);
+    [0.62, 0.78].forEach(k => {
+      const rr = ringPts(c, CUP.h * k + lift, CUP.rBot + (CUP.rTop - CUP.rBot) * k).map(p => project(cam, p));
+      ctx.beginPath();
+      rr.forEach((q, i) => { const a = i / RING * Math.PI * 2; if (Math.sin(a) > 0.05) return; i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); });
+      ctx.stroke();
+    });
+    // opening: inner wall, the liquid, and a ball floating in it
+    ctx.beginPath(); top.forEach((q, i) => i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)); ctx.closePath();
+    ctx.fillStyle = c.dim ? '#bdb6ab' : '#f2ede4'; ctx.fill();
+    ctx.save(); ctx.clip();
+    const liq = ringPts(c, CUP.h * 0.42 + lift, CUP.rBot + (CUP.rTop - CUP.rBot) * 0.42).map(p => project(cam, p));
+    const lq = project(cam, [c.x, CUP.h * 0.42 + lift, c.z]);
+    ctx.fillStyle = 'rgba(190,204,218,0.55)';
+    ctx.beginPath(); liq.forEach((q, i) => i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)); ctx.closePath(); ctx.fill();
+    if (ball && lq) {
+      const bob = Math.sin((t || 0) * 5) * 0.004;
+      const p = project(cam, [ball.x, CUP.h * 0.42 + R * 0.6 + lift + bob, ball.z]);
+      if (p) drawBallAt(ctx, p.x, p.y, R * p.s, false);
+    }
+    ctx.restore();
+    // rolled white lip
+    ctx.strokeStyle = c.dim ? '#d8d2c8' : '#fbf8f2';
+    ctx.lineWidth = Math.max(1, top[0].s * CUP.lip * 1.8);
+    ctx.beginPath(); top.forEach((q, i) => i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)); ctx.closePath(); ctx.stroke();
+    ctx.restore();
+  }
+
+  // ---------- ball ----------
+  function drawBallAt(ctx, x, y, r, hot) {
+    r = Math.max(1.4, r);
+    const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
+    if (hot) { g.addColorStop(0, '#fff7e0'); g.addColorStop(0.55, '#ffb347'); g.addColorStop(1, '#d9531e'); }
+    else { g.addColorStop(0, '#ffffff'); g.addColorStop(0.6, '#f1eee8'); g.addColorStop(1, '#a9a49c'); }
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  function drawShadow(ctx, cam, p) {
+    // the ball's shadow on the table is how you read depth in flight
+    if (p[1] < -0.05 || p[0] < TABLE.x0 || p[0] > TABLE.x1 || p[2] < TABLE.z0 || p[2] > TABLE.z1) return;
+    const q = project(cam, [p[0], 0.003, p[2]]);
+    if (!q) return;
+    const k = Math.max(0.25, 1 - p[1] / 4);
+    ctx.fillStyle = `rgba(0,0,0,${(0.42 * k).toFixed(3)})`;
+    ctx.beginPath(); ctx.ellipse(q.x, q.y, R * q.s * 1.3, R * q.s * 0.55, 0, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // ---------- people ----------
+  /* A person standing at an end of the table. pose: 'idle' | 'wave' | 'ready'
+     (hands over the table) | 'swat' | 'blow' | 'throw' | 'cheer'. side: 'far' or 'near'. */
+  function drawPerson(ctx, cam, who, side, pose, k, t) {
+    const zf = side === 'far' ? 9.6 : -0.75;
+    const fwd = side === 'far' ? -1 : 1;
+    const x0 = who.x || 0;
+    // everyone leans over the table a little; blowing and swatting lean further
+    const lean = 1.1 + (pose === 'blow' ? 0.55 * k : pose === 'ready' || pose === 'swat' ? 0.25 : pose === 'throw' ? 0.2 * k : pose === 'fold' ? -0.2 : 0);
+    const drop = pose === 'blow' ? 0.45 * k : pose === 'fold' ? -0.1 : 0;
+    const P = (x, y, dz) => [x0 + x, y, zf + fwd * dz];
+    const J = {};
+    J.hipL = P(-0.33, 0.55, 0); J.hipR = P(0.33, 0.55, 0);
+    const shY = 1.7 - drop, shZ = lean;
+    J.shL = P(-0.5, shY, shZ); J.shR = P(0.5, shY, shZ);
+    J.neck = P(0, shY + 0.12, shZ + 0.08); J.head = P(0, shY + 0.5, shZ + 0.2);
+    const arm = (sd, el, ha) => { J['el' + sd] = el; J['ha' + sd] = ha; };
+    const s = Math.sin(t * 7.5);
+    if (pose === 'wave') {
+      const up = k; // 0 down .. 1 up
+      arm('L', P(-0.9, shY - 0.45 + up * 1.0, shZ + 0.1 - up * 0.1), P(-0.95 - up * 0.15 + s * 0.15 * up, shY - 0.95 + up * 2.25, shZ + 0.3 - up * 0.2));
+      arm('R', P(0.9, shY - 0.45 + up * 1.0, shZ + 0.1 - up * 0.1), P(0.95 + up * 0.15 - s * 0.15 * up, shY - 0.95 + up * 2.25, shZ + 0.3 - up * 0.2));
+    } else if (pose === 'ready') {
+      arm('L', P(-0.8, shY - 0.45, shZ + 0.45), P(-0.5, 0.95, shZ + 1.15));
+      arm('R', P(0.8, shY - 0.45, shZ + 0.45), P(0.5, 0.95, shZ + 1.15));
+    } else if (pose === 'swat') {
+      arm('L', P(-0.8, shY - 0.45, shZ + 0.45), P(-0.5, 0.95, shZ + 1.15));
+      arm('R', P(0.85, shY - 0.6, shZ + 0.55), P(0.35 - k * 1.25, 0.55, shZ + 1.6));
+    } else if (pose === 'throw') {
+      arm('L', P(-0.7, shY - 0.5, shZ + 0.1), P(-0.6, shY - 1.0, shZ + 0.3));
+      arm('R', P(0.7, shY + 0.15, shZ + 0.35 + k * 0.3), P(0.35, shY + 0.05, shZ + 0.75 + k * 0.5));
+    } else if (pose === 'cheer') {
+      arm('L', P(-0.85, shY + 0.45, shZ), P(-0.9 + s * 0.08, shY + 1.2, shZ));
+      arm('R', P(0.85, shY + 0.45, shZ), P(0.9 - s * 0.08, shY + 1.2, shZ));
+    } else if (pose === 'fold') {
+      arm('L', P(-0.7, shY - 0.65, shZ + 0.2), P(0.3, shY - 0.55, shZ + 0.4));
+      arm('R', P(0.7, shY - 0.65, shZ + 0.2), P(-0.3, shY - 0.45, shZ + 0.4));
+    } else {
+      // arms hanging easy at his sides
+      arm('L', P(-0.62, shY - 0.58, shZ + 0.1), P(-0.46, shY - 1.0, shZ + 0.38));
+      arm('R', P(0.62, shY - 0.58, shZ + 0.1), P(0.46, shY - 1.0, shZ + 0.38));
+    }
+    const Q = {};
+    for (const key in J) { const q = project(cam, J[key]); if (!q) return; Q[key] = q; }
+    ctx.save();
+    ctx.filter = 'brightness(0.78) saturate(0.85)';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const limb = (a, b, w, col) => { ctx.strokeStyle = col; ctx.lineWidth = Math.max(1, w * (Q[a].s + Q[b].s) / 2); ctx.beginPath(); ctx.moveTo(Q[a].x, Q[a].y); ctx.lineTo(Q[b].x, Q[b].y); ctx.stroke(); };
+    // torso
+    ctx.fillStyle = who.shirt;
+    ctx.beginPath();
+    const sw = Q.shL.s * 0.1;
+    ctx.moveTo(Q.shL.x - sw, Q.shL.y); ctx.lineTo(Q.shR.x + sw, Q.shR.y); ctx.lineTo(Q.hipR.x + sw, Q.hipR.y); ctx.lineTo(Q.hipL.x - sw, Q.hipL.y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.beginPath(); ctx.moveTo((Q.shL.x + Q.shR.x) / 2, Q.shL.y); ctx.lineTo(Q.shR.x + sw, Q.shR.y); ctx.lineTo(Q.hipR.x + sw, Q.hipR.y); ctx.lineTo((Q.hipL.x + Q.hipR.x) / 2, Q.hipR.y); ctx.closePath(); ctx.fill();
+    // arms
+    limb('shL', 'elL', 0.3, who.shirt); limb('elL', 'haL', 0.24, who.skin);
+    limb('shR', 'elR', 0.3, who.shirt); limb('elR', 'haR', 0.24, who.skin);
+    ctx.fillStyle = who.skin;
+    ['haL', 'haR'].forEach(j => { ctx.beginPath(); ctx.arc(Q[j].x, Q[j].y, Q[j].s * 0.15, 0, Math.PI * 2); ctx.fill(); });
+    // neck, head, hair
+    limb('neck', 'head', 0.26, who.skin);
+    const hr = Q.head.s * 0.34;
+    ctx.fillStyle = who.skin; ctx.beginPath(); ctx.ellipse(Q.head.x, Q.head.y, hr * 0.86, hr, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = who.hair; ctx.beginPath(); ctx.ellipse(Q.head.x, Q.head.y - hr * 0.42, hr * 0.9, hr * 0.62, 0, Math.PI, Math.PI * 2); ctx.fill();
+    if (side === 'far') {
+      // face: eyes, and puffed cheeks when blowing
+      ctx.fillStyle = '#16110f';
+      [-1, 1].forEach(d => { ctx.beginPath(); ctx.arc(Q.head.x + d * hr * 0.3, Q.head.y - hr * 0.05, Math.max(0.8, hr * 0.08), 0, Math.PI * 2); ctx.fill(); });
+      if (pose === 'blow' && k > 0.3) { ctx.beginPath(); ctx.arc(Q.head.x, Q.head.y + hr * 0.42, hr * 0.14, 0, Math.PI * 2); ctx.fill(); }
+      else { ctx.lineWidth = Math.max(0.8, hr * 0.06); ctx.strokeStyle = '#16110f'; ctx.beginPath(); ctx.arc(Q.head.x, Q.head.y + hr * 0.25, hr * 0.22, 0.2 * Math.PI, 0.8 * Math.PI); ctx.stroke(); }
+    }
+    ctx.restore();
+  }
+
+  return { VIEWS, viewCam, toCam, project, fillPoly, seg, drawRoom, drawTable, drawCup, drawBallAt, drawShadow, drawPerson, NEAR };
+})();
+/* PongEngine: runs any pong "spec" (a game described as data) inside a container.
+
+   spec.kind:
+     game       you vs a computer opponent: { opponent }
+     attack     clear a rack in as few throws as you can (Rack Attack)
+     shots      a drill: { form, targets, balls, opponent, island, bounceTwo } (Island mode)
+     practice   free throwing at a rack you can change
+     calibrate  three easy arcs at the head cup to find your touch */
+const PongEngine = (() => {
+  const { V, CUP, R } = PongPhysics;
+  const FEEL = {
+    arcade: { snap: 0.14, fast: 0.14, label: 'Arcade' },
+    normal: { snap: 0.1, fast: 0.1, label: 'Normal' },
+    pro: { snap: 0.07, fast: 0.07, label: 'Pro' }
+  };
+  const SHOT = { arc: 'Arc', fast: 'Fastball', bounce: 'Bounce' };
+
+  let cssDone = false;
+  function injectCss() {
+    if (cssDone) return; cssDone = true;
+    const st = document.createElement('style');
+    st.textContent = `
+.px{position:absolute;inset:0;overflow:hidden;background:#0d0a12;color:#f6efe4;font-family:"Work Sans",system-ui,sans-serif;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.px canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.px-top{position:absolute;left:0;right:0;top:0;display:flex;align-items:flex-start;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) 24px max(14px,env(safe-area-inset-left,0px));pointer-events:none;background:linear-gradient(rgba(8,5,12,.7),rgba(8,5,12,0))}
+.px-quit{pointer-events:auto;flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(14,9,18,.6);color:#f6efe4;font:600 18px/1 "Work Sans",sans-serif;cursor:pointer}
+.px-quit:focus-visible,.px-btn:focus-visible,.px-opt:focus-visible,.px-tool:focus-visible{outline:2px solid #ffcf6b;outline-offset:2px}
+.px-title{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.px-title b{font:400 17px/1.05 "Bungee",Impact,sans-serif;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.px-title span{font:500 13px/1.25 "Work Sans",sans-serif;opacity:.85}
+.px-score{text-align:right;text-shadow:0 1px 3px rgba(0,0,0,.6);flex:none}
+.px-score-n{display:block;font:400 36px/0.95 "Bungee",Impact,sans-serif;font-variant-numeric:tabular-nums;color:#ffcf6b}
+.px-score small{font:600 11px/1.2 "Work Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.px-cups{display:flex;gap:6px}
+.px-cups span{display:flex;flex-direction:column;align-items:center;min-width:44px;padding:5px 7px 4px;border-radius:9px;background:rgba(14,9,18,.72);border:1px solid rgba(255,255,255,.16)}
+.px-cups b{font:400 22px/1 "Bungee",Impact,sans-serif;font-variant-numeric:tabular-nums}
+.px-cups i{font:700 10px/1.2 "Work Sans",sans-serif;font-style:normal;letter-spacing:.08em;text-transform:uppercase;opacity:.8;margin-top:2px}
+.px-cups .him b{color:#ff9a7a} .px-cups .you b{color:#ffcf6b}
+.px-chips{position:absolute;left:max(14px,env(safe-area-inset-left,0px));right:40%;top:calc(98px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;align-items:flex-start;gap:6px;pointer-events:none}
+.px.modal .px-chips{display:none}
+.px-chip{padding:5px 10px;border-radius:999px;font:600 12px/1.1 "Work Sans",sans-serif;letter-spacing:.02em;background:rgba(14,9,18,.72);border:1px solid rgba(255,255,255,.18)}
+.px-chip b{font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.px-chip.open{color:#7ee2a8;border-color:rgba(126,226,168,.5)} .px-chip.hot{color:#ff8a5c;border-color:rgba(255,138,92,.6)} .px-chip.warm{color:#ffcf6b;border-color:rgba(255,207,107,.5)}
+.px-tool{pointer-events:auto;cursor:pointer;color:#f6efe4}
+.px-banner{position:absolute;left:0;right:0;top:17%;text-align:center;pointer-events:none;padding:0 18px}
+.px-banner .k{display:block;font:600 13px/1.2 "Work Sans",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#ffcf6b;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.px-banner .h{display:block;margin-top:4px;font:400 clamp(28px,8.5vw,46px)/1 "Bungee",Impact,sans-serif;text-transform:uppercase;text-shadow:0 2px 12px rgba(0,0,0,.8);text-wrap:balance}
+.px-banner .s{display:block;margin:8px auto 0;max-width:30ch;font:500 15px/1.35 "Work Sans",sans-serif;text-shadow:0 1px 4px rgba(0,0,0,.95)}
+.px-banner.pop{animation:pxpop .35s ease-out}
+@keyframes pxpop{from{transform:scale(.86);opacity:0}to{transform:scale(1);opacity:1}}
+.px-hint{position:absolute;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:max-content;max-width:calc(100% - 28px);padding:7px 12px;border-radius:10px;background:rgba(14,9,18,.72);font:500 13px/1.35 "Work Sans",sans-serif;text-align:center;pointer-events:none;color:#efe6d8}
+.px-card{position:absolute;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;padding:14px 16px 12px;border-radius:14px;background:rgba(22,15,26,.95);border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 30px rgba(0,0,0,.5);animation:pxup .25s ease-out}
+@keyframes pxup{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+.px-card .k{font:600 11px/1.2 "Work Sans",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#ffcf6b}
+.px-card .w{margin-top:5px;font:600 16px/1.35 "Work Sans",sans-serif}
+.px-card .r{display:flex;gap:10px;align-items:flex-start;margin-top:9px;font:400 14px/1.4 "Work Sans",sans-serif;color:#d9cfdf}
+.px-grade{flex:none;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font:400 20px/1 "Bungee",Impact,sans-serif;color:#120d18;background:#7ee2a8}
+.px-grade.B{background:#c5e27e}.px-grade.C{background:#ffd166}.px-grade.D{background:#ff9a66}.px-grade.F{background:#ff5d4a}
+.px-card .row{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+.px-btn{pointer-events:auto;cursor:pointer;border:0;border-radius:10px;padding:11px 18px;background:#ffcf6b;color:#1d1206;font:400 14px/1 "Bungee",Impact,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+.px-btn.ghost{background:transparent;color:#f6efe4;border:1px solid rgba(255,255,255,.3)}
+.px-pick{position:absolute;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;padding:14px 14px 12px;border-radius:14px;background:rgba(22,15,26,.96);border:1px solid rgba(255,207,107,.35);box-shadow:0 10px 30px rgba(0,0,0,.5);animation:pxup .25s ease-out}
+.px-pick h3{margin:0;font:400 20px/1 "Bungee",Impact,sans-serif;text-transform:uppercase;color:#ffcf6b}
+.px-pick p{margin:6px 0 10px;font:500 14px/1.35 "Work Sans",sans-serif;color:#d9cfdf}
+.px-opts{display:grid;gap:8px}
+.px-opt{pointer-events:auto;cursor:pointer;display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;text-align:left;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:#f6efe4;font:inherit}
+.px-opt:hover{background:rgba(255,255,255,.08)}
+.px-opt svg{width:56px;height:56px}
+.px-opt b{display:block;font:400 15px/1.1 "Bungee",Impact,sans-serif;text-transform:uppercase}
+.px-opt small{display:block;margin-top:3px;font:400 13px/1.3 "Work Sans",sans-serif;color:#cbbfd2}
+`;
+    document.head.appendChild(st);
+  }
+
+  function mulberry(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const ease = k => k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+
+  // a formation as a little diagram, for the re-rack picker
+  function formSvg(id) {
+    const F = Pong.FORMATIONS[id];
+    const xs = F.cups.map(c => c[0]), ds = F.cups.map(c => c[1]);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cd = (Math.min(...ds) + Math.max(...ds)) / 2;
+    const span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ds) - Math.min(...ds)) + 1;
+    const k = 44 / span;
+    return `<svg viewBox="0 0 56 56" aria-hidden="true"><rect x="2" y="2" width="52" height="52" rx="8" fill="#17463a"/>${F.cups.map(([x, d]) => `<circle cx="${(28 + (x - cx) * k).toFixed(1)}" cy="${(28 + (d - cd) * k).toFixed(1)}" r="${(k * 0.46).toFixed(1)}" fill="#d8312d" stroke="#fbf8f2" stroke-width="1.5"/>`).join('')}</svg>`;
+  }
+
+  function create(container, opts) {
+    injectCss();
+    const settings = Object.assign({ touchK: 1.5, L0: 0.3, S0: 2.2, feel: 'normal', showTags: true, hints: true, seen: {} }, opts || {});
+    const root = document.createElement('div');
+    root.className = 'px';
+    root.innerHTML = `
+      <canvas></canvas>
+      <div class="px-top"><button class="px-quit" type="button" aria-label="Leave this game">&#x2715;</button><div class="px-title"><b></b><span></span></div><div class="px-score"><span class="px-score-n"></span><small></small><div class="px-cups" hidden><span class="him"><b></b><i>Him</i></span><span class="you"><b></b><i>You</i></span></div></div></div>
+      <div class="px-chips"><button class="px-chip px-tool" type="button" hidden></button><div class="px-chip px-state" hidden></div><div class="px-chip px-arms" hidden></div></div>
+      <div class="px-banner" hidden></div>
+      <div class="px-hint" hidden></div>
+      <div class="px-card" hidden></div>
+      <div class="px-pick" hidden></div>`;
+    container.appendChild(root);
+    const $ = s => root.querySelector(s);
+    const canvas = $('canvas'), ctx = canvas.getContext('2d');
+    const ui = {
+      title: $('.px-title b'), sub: $('.px-title span'), score: $('.px-score-n'), scoreSub: $('.px-score small'), cups: $('.px-cups'), cupsHim: $('.px-cups .him b'), cupsYou: $('.px-cups .you b'),
+      tool: $('.px-tool'), state: $('.px-state'), arms: $('.px-arms'),
+      banner: $('.px-banner'), hint: $('.px-hint'), card: $('.px-card'), pick: $('.px-pick'), quit: $('.px-quit')
+    };
+    let W = 360, H = 640, DPR = 1;
+    const S = { running: false, t: 0, balls: [], popups: [], timers: [], far: [], near: [], phase: 'idle', camK: 0, camTo: 0 };
+
+    function resize() {
+      const r = root.getBoundingClientRect();
+      W = Math.max(200, r.width); H = Math.max(300, r.height);
+      DPR = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+    }
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(resize) : null;
+    if (ro) ro.observe(root); else window.addEventListener('resize', resize);
+    resize();
+
+    // ---------- helpers ----------
+    function after(sec, fn) { S.timers.push({ at: S.t + sec, fn }); }
+    function banner(k, h, s, dur) {
+      ui.banner.innerHTML = (k ? `<span class="k">${esc(k)}</span>` : '') + `<span class="h">${esc(h)}</span>` + (s ? `<span class="s">${esc(s)}</span>` : '');
+      ui.banner.hidden = false;
+      ui.banner.classList.remove('pop'); void ui.banner.offsetWidth; ui.banner.classList.add('pop');
+      clearTimeout(banner._t);
+      if (dur) banner._t = setTimeout(() => { ui.banner.hidden = true; }, dur * 1000);
+    }
+    function hideBanner() { clearTimeout(banner._t); ui.banner.hidden = true; }
+    function showCard(html, next) { ui.card.innerHTML = html; ui.card.hidden = false; root.classList.add('modal'); S.cardNext = next; }
+    function hint(text, dur) {
+      ui.hint.textContent = text || ''; ui.hint.hidden = !text;
+      clearTimeout(hint._t);
+      if (text && dur) hint._t = setTimeout(() => { ui.hint.hidden = true; }, dur * 1000);
+    }
+    function setTitle(a, b) { ui.title.textContent = a || ''; ui.sub.textContent = b || ''; }
+    function popup(text, color, size, world, life) { S.popups.push({ text, color: color || '#fff', size: size || 1, t: 0, life: life || 1.3, world }); }
+    const live = cups => cups.filter(c => c.live);
+    function oneTimeHint(key, text) {
+      if (!settings.hints || settings.seen[key]) return false;
+      settings.seen[key] = 1;
+      hint(text, 6);
+      return true;
+    }
+
+    // ---------- input ----------
+    const detach = Gesture.attach(canvas, {
+      down() { PongSfx.unlock(); },
+      gesture(g) {
+        if (!S.running) return;
+        if (g.type === 'flick') return onFlick(g);
+        if (g.type === 'swipe' && g.dir === 'down' && S.phase === 'aim') hint('Pull down, then flick up, to bounce it.', 3);
+      }
+    });
+    ui.quit.addEventListener('click', () => { PongSfx.play('ui'); const q = S.onQuit; stop(); q && q(summary(true)); });
+    ui.card.addEventListener('click', e => { if (e.target.closest('button') && S.cardNext) { const f = S.cardNext; S.cardNext = null; ui.card.hidden = true; root.classList.remove('modal'); PongSfx.play('ui'); f(); } });
+    ui.pick.addEventListener('click', e => {
+      const b = e.target.closest('[data-form]');
+      if (!b || !S.pickNext) return;
+      const f = S.pickNext; S.pickNext = null; ui.pick.hidden = true; root.classList.remove('modal'); PongSfx.play('ui');
+      f(b.dataset.form);
+    });
+    ui.tool.addEventListener('click', () => {
+      if (S.spec.kind !== 'practice' || S.phase !== 'aim') return;
+      PongSfx.play('rack');
+      const order = ['tri10', 'pyr6', 'zip6', 'diamond4', 'line4', 'tri3', 'line3', 'stack2', 'wall2', 'island1'];
+      S.practiceForm = order[(order.indexOf(S.practiceForm) + 1) % order.length];
+      S.far = Pong.layout(S.practiceForm, 'far');
+      updateTool();
+    });
+    function updateTool() { ui.tool.innerHTML = `Rack: <b>${esc(Pong.FORMATIONS[S.practiceForm].name)}</b> &#x25B8;`; }
+
+    // ---------- the throw ----------
+    function shotKind(g) {
+      if (g.fade) return 'bounce';
+      if (S.spec.kind === 'calibrate') return 'arc';
+      const h = Math.max(320, window.innerHeight || 800);
+      // a short, sharp flick is a fastball; a full flick is an arc
+      const len = g.dist / h;
+      if (len >= Math.max(0.07, settings.L0 * 0.6)) return 'arc';
+      return g.speed >= settings.S0 * 0.6 ? 'fast' : 'softsnap';
+    }
+    function armsUp() { return S.opp && S.opp.wave ? Math.sin(S.t * Math.PI * 2 / 1.9 + 0.4) > 0.12 : false; }
+    function onFlick(g) {
+      if (S.phase !== 'aim') return;
+      // short but not quick: it goes as a weak arc, and the meter says why
+      const softSnap = shotKind(g) === 'softsnap';
+      const kind = softSnap ? 'arc' : shotKind(g);
+      const feel = FEEL[settings.feel] || FEEL.normal;
+      const calibrating = S.spec.kind === 'calibrate';
+      const up = armsUp();
+      const contest = up ? 1 : 0;
+      const heat = S.fire ? 1.25 : S.streak === 2 ? 1.1 : 1;
+      const mult = heat * (1 - 0.5 * contest);
+      const h = Math.max(320, window.innerHeight || 800);
+      let p = g.power / settings.touchK;
+      if (calibrating) {
+        S.calib.push({ power: g.power, len: g.dist / h, speed: g.speed });
+        p = 1;
+      }
+      const cups = live(S.far);
+      const shot = PongPhysics.throwBall({ kind, side: 'near', cups, p, angle: calibrating ? 0 : g.angle * 180 / Math.PI, curl: calibrating ? 0 : g.curl, snap: feel.snap * mult, fastWindow: feel.fast * mult, contest, rand: S.rand });
+      const tcup = cups.find(c => c.id === shot.target) || null;
+      const exp = tcup ? Pong.exposure(tcup, S.far, 'far') : null;
+      const wild = !tcup || Math.hypot(shot.intended[0] - tcup.x, shot.intended[1] - tcup.z) > 0.55;
+      const spun = shot.touch >= 0.3 || shot.spinOut > 0;
+      const info = { kind, target: shot.target, exposure: exp, spun, armsUp: up, wild, green: shot.green, row: tcup ? cupLabel(tcup, S.far) : null };
+      const held = heldBallScreen();
+      const b = PongPhysics.newBall(shot.release, shot.vel, { touch: shot.touch, spinOut: shot.spinOut, spinDir: shot.spinDir, by: 'you', info, appear: 0.12, sx: held.x, sy: held.y, sr: held.r, trail: [] });
+      S.balls.push(b);
+      if (softSnap) shot.feedback = 'Arc · Too soft for a fastball';
+      S.meter = { shot, t: 0, calibrating, kind };
+      S.phase = 'flight';
+      S.hasBall = false; S.follow = 0;
+      S.throwsUsed++;
+      PongSfx.play('release');
+      hint('');
+      if (up) popup('Into his arms', '#ff9a66', 0.8, [0, 1.6, 7.6], 1.1);
+    }
+    function cupLabel(c, cups) {
+      const L = live(cups);
+      if (L.length === 1) return 'the last cup';
+      const exp = Pong.exposure(c, cups, c.side);
+      const zs = L.map(x => x.z);
+      const front = c.side === 'far' ? Math.min(...zs) : Math.max(...zs), back = c.side === 'far' ? Math.max(...zs) : Math.min(...zs);
+      if (exp === 'island') return 'the island';
+      if (Math.abs(c.z - front) < 0.05) return exp === 'front' ? 'the front cup' : 'a front cup';
+      if (Math.abs(c.z - back) < 0.05) return 'a back cup';
+      return exp === 'front' ? 'a naked cup' : 'a buried cup';
+    }
+
+    // ---------- balls ----------
+    function cupsFor(b) { return b.cupsOff ? [] : (b.by === 'cpu' ? S.near : S.far); }
+    function updateBalls(dt) {
+      S.balls.forEach(b => {
+        if (b.swatAt && S.t >= b.swatAt && !b.swatted) {
+          b.swatted = true; b.cupsOff = true; b.inCup = null;
+          b.v = [(S.rand() - 0.5) * 7, 4.5, -8];
+          popup('Swatted', '#ff7a66', 1.2, V.add(b.p, [0, 0.8, 0]));
+          PongSfx.play('swat'); PongSfx.buzz(30);
+        }
+        if (b.hold && S.t >= b.hold && !b.blown) {
+          // house rules: it was spinning, so he blows it out
+          b.blown = true; b.hold = null; b.cupsOff = true;
+          const c = S.far.find(x => x.id === b.sunk);
+          if (c) { c.ballIn = null; c.live = true; }
+          b.sunk = null; b.inCup = null; b.result = null; b.doneAt = null;
+          b.p[1] = CUP.h + 0.06; b.v = [(S.rand() - 0.5) * 2.5, 6.5, -3];
+          popup('Blown out', '#ff7a66', 1.15, V.add(b.p, [0, 0.7, 0]));
+          PongSfx.play('blow');
+        }
+        PongPhysics.advance(b, dt, cupsFor(b));
+        b.events.forEach(ev => {
+          if (ev.type === 'bounce') {
+            PongSfx.play('tock', ev.s);
+            if (b.by === 'you' && b.bounces === 1 && S.opp && S.opp.swat && !b.swatDecided && !b.cupsOff) {
+              b.swatDecided = true;
+              // he gets almost all of them; a pure bounce sometimes beats his hands
+              if (S.rand() < (b.info.green ? 0.7 : 0.92)) { b.swatAt = S.t + 0.1; pose('swat', 0.6); }
+              else b.beatSwat = true;
+            }
+          } else if (ev.type === 'rim' || ev.type === 'cup') PongSfx.play('cup', ev.s);
+          else if (ev.type === 'sink') {
+            const blowable = b.by === 'you' && S.opp && S.opp.blow && b.info && b.info.spun && !b.blown;
+            if (blowable) { b.hold = S.t + 0.55; pose('blow', 1.0); }
+            const c = cupsFor(b).find(x => x.id === ev.cup);
+            if (c) c.ballIn = { x: b.p[0], z: b.p[2] };
+            PongSfx.play('sink');
+          }
+        });
+        b.events.length = 0;
+        if (b.trail) { b.trail.push(b.p.slice()); if (b.trail.length > 8) b.trail.shift(); }
+        if (b.result && !b.handled && !(b.hold && S.t < b.hold)) { b.handled = true; onBallResult(b); }
+      });
+      S.balls = S.balls.filter(b => !b.done);
+    }
+
+    function removeCup(c, delay) {
+      c.live = false;
+      c.removeAt = S.t + (delay == null ? 0.55 : delay);
+    }
+    // a bounce is two cups: they pull the stray one (farthest from the rest)
+    function pullExtra(cups) {
+      const L = live(cups);
+      if (!L.length) return null;
+      const cx = L.reduce((s, c) => s + c.x, 0) / L.length, cz = L.reduce((s, c) => s + c.z, 0) / L.length;
+      const c = L.slice().sort((a, b) => Math.hypot(b.x - cx, b.z - cz) - Math.hypot(a.x - cx, a.z - cz))[0];
+      removeCup(c, 0.9);
+      return c;
+    }
+
+    function onBallResult(b) {
+      const yours = b.by === 'you';
+      const cups = yours ? S.far : S.near;
+      let made = b.result === 'made' && !b.blown;
+      let sunkCup = made ? cups.find(c => c.id === b.sunk) : null;
+      if (made && !sunkCup) made = false;
+      const bounce = made && b.bounces > 0;
+      let cupsTaken = 0, note = null;
+      if (S.spec.kind === 'calibrate') {
+        if (sunkCup) { sunkCup.live = true; sunkCup.ballIn = null; }
+        popup('Touch recorded', '#7ee2a8', 0.85, [0, 1.2, 7.2], 1.2);
+        S.resolved++;
+        return calibAfter();
+      }
+      if (made) {
+        const target = S.spec.kind === 'shots' ? isTarget(sunkCup) : true;
+        removeCup(sunkCup);
+        cupsTaken = 1;
+        const countsTwo = bounce && (S.spec.kind !== 'shots' || S.spec.bounceTwo);
+        if (countsTwo && target) {
+          const extra = S.spec.kind === 'shots' ? null : pullExtra(cups);
+          cupsTaken = extra || S.spec.kind === 'shots' ? 2 : 1;
+          if (extra) popup('+1 cup', '#ffcf6b', 0.9, [extra.x, 1.0, extra.z]);
+        }
+        const at = [sunkCup.x, 0.9, sunkCup.z];
+        if (S.spec.kind === 'shots' && !target) { popup('Wrong cup', '#ff9a66', 1.0, at); cupsTaken = 0; note = 'wrong'; }
+        else if (bounce) popup(countsTwo ? 'Bounce · two cups' : 'Bounce', '#ffcf6b', 1.1, at);
+        else if (b.info && b.info.kind === 'fast') popup('Laser', '#ffffff', 1.1, at);
+        else if (b.rimHits >= 2) popup('Rim roll', '#ffd166', 1.0, at);
+        else if (b.rimHits === 0 && b.wallHits === 0) popup('Splash', '#ffffff', 1.15, at);
+        else popup('Sunk', '#ffffff', 1.05, at);
+        if (yours && b.info && b.info.target && b.info.target !== sunkCup.id && note !== 'wrong') note = 'neighbor';
+        PongSfx.buzz(16);
+      } else {
+        const at = b.p[1] > -0.3 ? [b.p[0], 0.8, Math.min(8, Math.max(0, b.p[2]))] : (yours ? [0, 0.8, 7.4] : [0, 0.8, 0.6]);
+        if (!b.swatted && !b.blown) popup(b.rimHits ? 'Rimmed out' : 'Miss', '#ff9a66', 0.95, at, 1.0);
+      }
+      if (yours) {
+        const st = S.stats[b.info.kind];
+        st[1]++; if (made && note !== 'wrong') st[0]++;
+        if (made && note !== 'wrong') S.makes++;
+        S.cupsMade += cupsTaken;
+        const g = Pong.gradeThrow(b.info, S.opp);
+        S.lastYou = Object.assign({}, b.info, { made: made && note !== 'wrong', bounce, swatted: !!b.swatted, blown: !!b.blown, rim: b.rimHits > 0, note, cupsTaken, g: g.g, why: g.why, short: b.result === 'miss' ? missWord(b) : null });
+        S.turn.throws.push(S.lastYou);
+        S.resolved++;
+        if (S.spec.kind !== 'game' && g.g !== 'A' && settings.hints) hint(g.why, 3.2);
+        afterBall('you', made && note !== 'wrong');
+      } else {
+        afterBall('cpu', made);
+      }
+      updateScore();
+    }
+    function missWord(b) {
+      if (b.swatted) return 'swatted';
+      if (b.blown) return 'blown out';
+      if (b.rimHits) return 'rimmed out';
+      return 'missed';
+    }
+
+    // ---------- turns ----------
+    function streakAfter(side, made) {
+      if (side === 'you') {
+        if (made) {
+          S.streak++;
+          if (S.streak === 2) { popup('Heating up', '#ffb347', 1.0, [0, 1.8, 7.3]); }
+          if (S.streak === 3) { S.fire = true; popup('On fire', '#ff6a2a', 1.3, [0, 2.2, 7.3]); PongSfx.play('fire'); }
+        } else { if (S.fire) popup('Fire\'s out', '#cbbfd2', 0.8, [0, 1.8, 7.3]); S.streak = 0; S.fire = false; }
+      } else {
+        if (made) { S.cpuStreak++; if (S.cpuStreak === 3) { S.cpuFire = true; popup('He\'s on fire', '#ff6a2a', 1.1, [0, 1.6, 1.4]); } }
+        else { S.cpuStreak = 0; S.cpuFire = false; }
+      }
+      updateChips();
+    }
+    function afterBall(side, made) {
+      const T = S.turn;
+      T.thrown++; T.pair++; T.left--;
+      if (made) { T.made++; T.pairMade++; }
+      streakAfter(side, made);
+      const kind = S.spec.kind;
+      // cleared the rack?
+      const target = side === 'you' ? S.far : S.near;
+      if (made && !live(target).length) return after(1.1, () => rackCleared(side));
+      if (kind === 'shots') return after(0.9, nextDrillBall);
+      if (kind === 'practice') return after(0.7, () => { S.phase = 'aim'; S.hasBall = true; S.catchT = 0; });
+      // Rack Attack is one long turn; the re-rack calls come up as the rack shrinks
+      if (kind === 'attack') return after(0.75, () => offerRerack(nextYourBall));
+      if (T.rebuttal) {
+        if (!made) return after(1.0, () => rebuttalFailed(side));
+        T.left = Math.max(T.left, 1);
+      } else {
+        if (T.pair >= 2) {
+          if (T.pairMade >= 2) { T.left += 2; popup('Balls back', '#7ee2a8', 1.1, side === 'you' ? [0, 1.5, 7.2] : [0, 1.4, 1.2]); }
+          T.pair = 0; T.pairMade = 0;
+        }
+        const fire = side === 'you' ? S.fire : S.cpuFire;
+        if (made && fire) T.left = Math.max(T.left, 1);
+      }
+      if (T.left > 0) return after(side === 'you' ? 0.75 : 0.55, () => side === 'you' ? nextYourBall() : cpuNext());
+      after(side === 'you' ? 0.9 : 0.6, () => side === 'you' ? endYourTurn() : endCpuTurn());
+    }
+
+    function newTurn(by, rebuttal) { S.turn = { by, left: rebuttal ? 1 : (S.spec.kind === 'attack' ? 1 : 2), pair: 0, pairMade: 0, made: 0, thrown: 0, throws: [], rebuttal: !!rebuttal }; }
+
+    function startYourTurn(rebuttal) {
+      newTurn('you', rebuttal);
+      S.camTo = 0; S.turnNo++;
+      updateScore();
+      const go = () => {
+        if (rebuttal) banner('Rebuttal', 'Make them all', `${live(S.far).length} cup${live(S.far).length > 1 ? 's' : ''} left. Shoot until you miss.`, 2.2);
+        nextYourBall();
+      };
+      if (!rebuttal && S.spec.kind !== 'practice' && S.spec.kind !== 'shots') offerRerack(go); else go();
+    }
+    function nextYourBall() {
+      S.phase = 'aim'; S.hasBall = true; S.catchT = 0;
+      S.pose = null;
+      updateChips();
+      const L = live(S.far);
+      if (S.spec.kind === 'calibrate') return;
+      if (oneTimeHint('arc', 'Flick up to throw an arc. A harder flick goes deeper.')) return;
+      if (S.throwsUsed < 2) return;
+      const exps = L.map(c => Pong.exposure(c, S.far, 'far'));
+      if (exps.includes('island') && !(S.opp && S.opp.swat) && oneTimeHint('bounce', 'Open table in front of a lone cup? Pull down, then flick up: a bounce shot is two cups.')) return;
+      if (exps.includes('front') && oneTimeHint('fast', 'Short, sharp flick: fastball. It flies flat and hard, made for a naked front cup.')) return;
+      if (S.throwsUsed >= 6) oneTimeHint('spin', 'Curl your flick a little to put spin on it. Spin rides the rim and rolls in.');
+    }
+    function closeTurn() {
+      const T = S.turn;
+      if (!T || T.by !== 'you' || !T.throws.length || T.logged) return null;
+      T.logged = true;
+      const g = Pong.gradeTurn(T.throws);
+      S.log.push({ turn: S.turnNo, throws: T.throws.map(t => ({ kind: t.kind, made: t.made, g: t.g })), made: T.made, grade: g.g, why: g.why });
+      return g;
+    }
+    function endYourTurn() {
+      S.phase = 'card';
+      const T = S.turn;
+      const g = closeTurn() || { g: 'C', why: '' };
+      if (S.spec.kind !== 'game') return nextYourBall();
+      const narr = T.throws.map(t => `${SHOT[t.kind]}${t.row ? ' at ' + t.row : ''}: ${t.made ? (t.cupsTaken === 2 ? 'in, two cups' : t.note === 'neighbor' ? 'sank the one next to it' : 'sank it') : t.short}.`).join(' ');
+      showCard(`<div class="k">Turn ${S.turnNo} · vs ${esc(S.opp.name)}</div><div class="w">${esc(narr)} ${T.made} of ${T.thrown}.</div>
+        <div class="r"><span class="px-grade ${g.g}">${g.g}</span><span>${esc(g.why)}</span></div>
+        <div class="row"><button class="px-btn" type="button">Their turn</button></div>`, () => startCpuTurn());
+      if (g.g === 'A') PongSfx.play('great'); else if (g.g === 'B') PongSfx.play('good');
+    }
+
+    // ---------- the computer's turn ----------
+    function startCpuTurn(rebuttal) {
+      newTurn('cpu', rebuttal);
+      S.phase = 'cpu'; S.camTo = 1;
+      ui.arms.hidden = true;
+      updateChips();
+      hint('');
+      const go = () => {
+        banner(rebuttal ? 'Rebuttal' : 'Their turn', S.opp.name, rebuttal ? 'He shoots until he misses.' : (S.opp.lines[S.turnNo % S.opp.lines.length]), 1.3);
+        after(0.9, cpuNext);
+      };
+      if (!rebuttal) cpuRerack(go); else after(0.4, go);
+    }
+    function cpuChoose() {
+      const L = live(S.near);
+      const scored = L.map(c => ({ c, e: Pong.exposure(c, S.near, 'near') }));
+      const o = S.opp, r = S.rand;
+      let pick;
+      if (o.hot) {
+        // the sniper takes the best percentage look on the table
+        pick = scored.find(x => x.e === 'front') || scored.find(x => x.e === 'island') || scored[Math.floor(r() * scored.length)];
+        return { cup: pick.c, kind: pick.e === 'front' ? 'fast' : 'arc' };
+      }
+      pick = scored[Math.floor(r() * scored.length)];
+      let kind = 'arc';
+      if (pick.e === 'front' && r() < 0.45) kind = 'fast';
+      if (pick.e === 'island' && o.id === 'statue' && r() < 0.3) kind = 'bounce';
+      return { cup: pick.c, kind };
+    }
+    function cpuNext() {
+      if (!S.running) return;
+      S.phase = 'cpu';
+      const { cup, kind } = cpuChoose();
+      pose('throw', 0.6);
+      after(0.32, () => {
+        const skill = Math.min(0.95, S.opp.skill + (S.cpuFire ? 0.07 : 0) + (S.turn.rebuttal ? 0.04 : 0));
+        const shot = PongPhysics.cpuThrow('far', cup, kind, skill, S.rand);
+        const b = PongPhysics.newBall(shot.release, shot.vel, { by: 'cpu', info: { kind, target: cup.id }, trail: [] });
+        S.balls.push(b);
+        PongSfx.play('release');
+      });
+    }
+    function endCpuTurn() {
+      const T = S.turn;
+      banner('', T.made ? `He sank ${T.made}` : 'He missed', T.made > 1 ? 'Got the balls back.' : '', 1.1);
+      after(1.15, () => { hideBanner(); startYourTurn(); });
+    }
+
+    // ---------- racks ----------
+    function thresholdFor(n, side) {
+      const used = S.rr[side];
+      if (n <= 6 && n > 3 && !used.six && Pong.RERACKS[n]) return 'six';
+      if (n <= 3 && n >= 2 && !used.three && Pong.RERACKS[n]) return 'three';
+      return null;
+    }
+    function offerRerack(then) {
+      const n = live(S.far).length;
+      const th = thresholdFor(n, 'far');
+      if (!th || S.overtime) return then();
+      S.rr.far[th] = true;
+      S.phase = 'pick';
+      const opts = Pong.RERACKS[n];
+      ui.pick.innerHTML = `<h3>Re-rack?</h3><p>${n} cups left. House rules: you call the shape.</p><div class="px-opts">${opts.map(id => `<button class="px-opt" type="button" data-form="${id}">${formSvg(id)}<span><b>${esc(Pong.FORMATIONS[id].name)}</b><small>${esc(Pong.FORMATIONS[id].read)}</small></span></button>`).join('')}
+        <button class="px-opt" type="button" data-form="keep"><svg viewBox="0 0 56 56" aria-hidden="true"><rect x="2" y="2" width="52" height="52" rx="8" fill="none" stroke="rgba(255,255,255,.3)" stroke-dasharray="4 4"/><path d="M18 28h20M30 20l8 8-8 8" stroke="#f6efe4" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg><span><b>Keep it</b><small>Shoot at the rack the way it is.</small></span></button></div>`;
+      ui.pick.hidden = false; root.classList.add('modal');
+      S.pickNext = id => {
+        if (id !== 'keep') { applyRerack('far', id); S.rerackCalls.push(id); banner('Re-rack', Pong.FORMATIONS[id].name, '', 1.0); }
+        after(id !== 'keep' ? 0.8 : 0.1, then);
+      };
+    }
+    function cpuRerack(then) {
+      const n = live(S.near).length;
+      const th = thresholdFor(n, 'near');
+      if (!th || S.overtime) return then();
+      S.rr.near[th] = true;
+      const opts = Pong.RERACKS[n];
+      const id = S.opp.hot ? opts[0] : opts[Math.floor(S.rand() * opts.length)];
+      applyRerack('near', id);
+      banner('He calls a re-rack', Pong.FORMATIONS[id].name, '', 1.2);
+      after(1.3, then);
+    }
+    function applyRerack(side, id) {
+      const cur = live(side === 'far' ? S.far : S.near);
+      const fresh = Pong.layout(id, side);
+      // slide the cups that are left into the new shape
+      cur.sort((a, b) => a.z - b.z || a.x - b.x);
+      fresh.forEach((f, i) => { const c = cur[i]; if (!c) return; f.from = [c.x, c.z]; f.moveT = S.t; });
+      if (side === 'far') S.far = fresh.slice(0, cur.length); else S.near = fresh.slice(0, cur.length);
+      PongSfx.play('rack');
+    }
+
+    // ---------- endings ----------
+    function rackCleared(side) {
+      const kind = S.spec.kind;
+      if (side === 'you' && kind !== 'practice') closeTurn();
+      if (kind === 'attack') return finishSession({ title: 'Rack cleared', text: `${S.throwsUsed} throws.` });
+      if (kind === 'practice') { banner('', 'Rack cleared', 'Fresh rack.', 1.2); S.far = Pong.layout(S.practiceForm, 'far'); return after(0.6, () => { S.phase = 'aim'; S.hasBall = true; S.catchT = 0; }); }
+      if (kind === 'shots') return nextDrillBall();
+      const T = S.turn;
+      if (side === 'you') {
+        if (T.rebuttal) return startOvertime();
+        banner('Last cup', 'Rebuttal', 'He shoots until he misses. If he clears yours, it goes to overtime.', 2.2);
+        return after(2.3, () => { hideBanner(); startCpuTurn(true); });
+      }
+      if (T.rebuttal) return startOvertime();
+      PongSfx.play('groan');
+      after(0.2, () => startYourTurn(true));
+    }
+    function rebuttalFailed(side) {
+      if (side === 'you') return gameOver(false);
+      return gameOver(true);
+    }
+    function startOvertime() {
+      S.overtime++;
+      S.far = Pong.layout('tri3', 'far'); S.near = Pong.layout('tri3', 'near');
+      S.fire = false; S.cpuFire = false; S.streak = 0; S.cpuStreak = 0;
+      banner('Overtime', 'Three cups each', 'Same rules. You shoot first.', 2.2);
+      after(2.3, () => { hideBanner(); startYourTurn(); });
+    }
+    function gameOver(won) {
+      closeTurn();
+      S.won = won;
+      S.phase = 'card';
+      S.camTo = 0;
+      pose(won ? (S.opp.id === 'statue' ? 'fold' : 'idle') : 'cheer', 3);
+      if (won) PongSfx.play('cheer'); else PongSfx.play('groan');
+      const left = live(S.near).length;
+      showCard(`<div class="k">${won ? 'You win' : 'You lose'} · vs ${esc(S.opp.name)}</div><div class="w">${won ? `He missed the rebuttal. You finished with ${left} cup${left === 1 ? '' : 's'} standing.` : 'Missed the rebuttal. He takes it.'}</div>
+        <div class="r"><span>${esc(S.opp.read)}</span></div>
+        <div class="row"><button class="px-btn" type="button">See results</button></div>`, endSession);
+    }
+    function finishSession(msg) {
+      S.phase = 'card';
+      closeTurn();
+      showCard(`<div class="k">${esc(S.spec.title || '')}</div><div class="w">${esc(msg.title)}. ${esc(msg.text)}</div><div class="row"><button class="px-btn" type="button">See results</button></div>`, endSession);
+      PongSfx.play('great');
+    }
+
+    // ---------- drills (Island mode) ----------
+    function isTarget(c) { return !S.targets || S.targets.includes(c.id); }
+    function setupDrill() {
+      const sp = S.spec;
+      const isl = sp.island ? { x: (S.rand() - 0.5) * 0.9, d: S.rand() * 4 } : {};
+      S.far = Pong.layout(sp.form, 'far', isl);
+      const F = S.far;
+      let t = null;
+      if (sp.targets === 'front') { const zmin = Math.min(...F.map(c => c.z)); t = F.filter(c => Math.abs(c.z - zmin) < 0.05); }
+      else if (sp.targets === 'back') { const zmax = Math.max(...F.map(c => c.z)); t = F.filter(c => Math.abs(c.z - zmax) < 0.05); }
+      S.targets = t ? t.map(c => c.id) : null;
+      F.forEach(c => { c.glow = !!S.targets && S.targets.includes(c.id); c.dim = !!S.targets && !c.glow; });
+    }
+    function nextDrillBall() {
+      if (S.ballsLeft <= 0) return finishSession({ title: `${S.cupsMade} cups`, text: `Out of a possible ${S.spec.balls * (S.spec.bounceTwo ? 2 : 1)}.` });
+      S.ballsLeft--;
+      closeTurn();
+      setupDrill();
+      setTitle(S.spec.title, `Ball ${S.spec.balls - S.ballsLeft} of ${S.spec.balls}`);
+      S.turn = { by: 'you', left: 1, pair: 0, pairMade: 0, made: 0, thrown: 0, throws: [] };
+      S.phase = 'aim'; S.hasBall = true; S.catchT = 0;
+      updateScore();
+    }
+
+    // ---------- calibration ----------
+    function calibAfter() {
+      if (S.calib.length >= 3) return after(0.9, endSession);
+      setTitle('Find your touch', `Throw ${S.calib.length + 1} of 3`);
+      after(0.8, () => { S.phase = 'aim'; S.hasBall = true; S.catchT = 0; });
+    }
+
+    // ---------- HUD ----------
+    function updateScore() {
+      const k = S.spec && S.spec.kind;
+      const far = live(S.far).length, near = live(S.near).length;
+      ui.cups.hidden = k !== 'game';
+      if (k === 'game') { ui.score.textContent = ''; ui.scoreSub.textContent = ''; ui.cupsHim.textContent = far; ui.cupsYou.textContent = near; }
+      else if (k === 'attack') { ui.score.textContent = S.throwsUsed; ui.scoreSub.textContent = `throws · ${far} left`; }
+      else if (k === 'shots') { ui.score.textContent = S.cupsMade; ui.scoreSub.textContent = 'cups'; }
+      else if (k === 'practice') { ui.score.textContent = S.makes; ui.scoreSub.textContent = `made · ${S.throwsUsed} thrown`; }
+      else { ui.score.textContent = ''; ui.scoreSub.textContent = ''; }
+    }
+    function updateChips() {
+      const his = S.turn && S.turn.by === 'cpu';
+      const fire = his ? S.cpuFire : S.fire, warm = his ? S.cpuStreak === 2 : S.streak === 2;
+      const who = his ? 'He\'s' : 'You\'re';
+      if (fire) { ui.state.className = 'px-chip px-state hot'; ui.state.innerHTML = `<b>${who} on fire</b>` + (his ? '' : S.spec.kind === 'game' ? ' · shoot till you miss' : ' · bigger window'); ui.state.hidden = false; }
+      else if (warm) { ui.state.className = 'px-chip px-state warm'; ui.state.innerHTML = `<b>${who} heating up</b>`; ui.state.hidden = false; }
+      else ui.state.hidden = true;
+    }
+    let lastArms = null;
+    function updateArms() {
+      if (!S.opp || !S.opp.wave || S.phase !== 'aim' || !settings.showTags) { ui.arms.hidden = true; lastArms = null; return; }
+      const up = armsUp();
+      if (up !== lastArms) {
+        lastArms = up;
+        ui.arms.className = 'px-chip px-arms ' + (up ? 'hot' : 'open');
+        ui.arms.innerHTML = up ? '<b>Arms up</b> · wait' : '<b>Arms down</b> · clean look';
+      }
+      ui.arms.hidden = false;
+    }
+    function pose(name, dur) { S.pose = { name, t0: S.t, dur }; }
+
+    // ---------- session ----------
+    function run(spec, handlers) {
+      stop(true);
+      S.spec = Object.assign({}, spec);
+      S.onEnd = handlers && handlers.onEnd; S.onQuit = handlers && handlers.onQuit;
+      S.rand = spec.seed != null ? mulberry(spec.seed) : Math.random;
+      Object.assign(S, {
+        t: 0, balls: [], popups: [], timers: [], meter: null, phase: 'intro', camK: 0, camTo: 0, turn: null, turnNo: 0,
+        streak: 0, cpuStreak: 0, fire: false, cpuFire: false, rr: { far: {}, near: {} }, overtime: 0, won: null,
+        log: [], stats: { arc: [0, 0], fast: [0, 0], bounce: [0, 0] }, makes: 0, cupsMade: 0, throwsUsed: 0, calib: [], rerackCalls: [], resolved: 0, lastYou: null,
+        hasBall: false, follow: 9, catchT: 9, pose: null, cardNext: null, pickNext: null, ended: false, targets: null, ballsLeft: 0,
+        opp: spec.opponent ? Pong.OPPONENTS[spec.opponent] : null
+      });
+      ['banner', 'hint', 'card', 'pick', 'tool', 'state', 'arms'].forEach(k => { ui[k].hidden = true; });
+      root.classList.remove('modal');
+      S.far = Pong.layout(spec.rack || 'tri10', 'far');
+      S.near = spec.kind === 'game' ? Pong.layout(spec.rack || 'tri10', 'near') : [];
+      S.running = true;
+      S.last = performance.now();
+      S.raf = requestAnimationFrame(frame);
+      const k = spec.kind;
+      if (k === 'game') {
+        setTitle(S.opp.name, S.opp.tag);
+        banner(S.opp.tag, S.opp.name, S.opp.tell, 2.6);
+        pose(S.opp.wave ? 'wave' : 'idle', 2.6);
+        after(2.7, () => { hideBanner(); startYourTurn(); });
+      } else if (k === 'attack') {
+        setTitle(spec.title || 'Rack Attack', 'Clear ten cups');
+        banner('Rack Attack', 'Ten cups', 'As few throws as you can. Re-racks at six and three.', 2.0);
+        after(2.0, () => { hideBanner(); startYourTurn(); });
+      } else if (k === 'shots') {
+        S.ballsLeft = spec.balls;
+        setTitle(spec.title, spec.note || '');
+        banner('Island', spec.title, spec.note, 1.6);
+        after(1.6, () => { hideBanner(); nextDrillBall(); });
+        setupDrill();
+      } else if (k === 'practice') {
+        S.practiceForm = 'tri10';
+        setTitle(spec.title || 'Practice', 'Tap the rack chip to change the shape');
+        updateTool(); ui.tool.hidden = false;
+        S.turn = { by: 'you', left: 99, pair: 0, pairMade: 0, made: 0, thrown: 0, throws: [] };
+        S.phase = 'aim'; S.hasBall = true; S.catchT = 0;
+        if (settings.hints) hint('Flick up: arc · Short snap: fastball · Pull down, then flick: bounce', 5);
+      } else if (k === 'calibrate') {
+        setTitle('Find your touch', 'Throw 1 of 3');
+        banner('Find your touch', 'Three easy throws', 'Flick up at the front cup the way that feels natural. These set your touch.', 2.6);
+        S.turn = { by: 'you', left: 3, pair: 0, pairMade: 0, made: 0, thrown: 0, throws: [] };
+        after(1.2, () => { S.phase = 'aim'; S.hasBall = true; S.catchT = 0; hint('Flick up toward the front cup'); });
+      }
+      updateScore(); updateChips();
+    }
+    function summary(quit) {
+      const k = S.spec ? S.spec.kind : null;
+      const out = { kind: k, quit: !!quit, won: S.won, cupsMade: S.cupsMade, makes: S.makes, throws: S.throwsUsed, stats: S.stats, log: S.log, overtime: S.overtime, opponent: S.opp ? S.opp.id : null, theirsLeft: live(S.far).length, yoursLeft: live(S.near).length, rerackCalls: S.rerackCalls };
+      if (S.log.length) {
+        out.readIQ = Math.round(S.log.reduce((s, l) => s + Pong.GP[l.grade], 0) / S.log.length * 25);
+      }
+      if (k === 'calibrate' && S.calib.length) {
+        const med = key => { const a = S.calib.map(c => c[key]).sort((x, y) => x - y); return a[Math.floor(a.length / 2)]; };
+        out.touchK = Math.max(0.5, Math.min(5, med('power')));
+        out.L0 = Math.max(0.06, Math.min(0.8, med('len')));
+        out.S0 = Math.max(0.4, Math.min(12, med('speed')));
+      }
+      return out;
+    }
+    function endSession() {
+      if (S.ended) return;
+      S.ended = true;
+      const res = summary(false);
+      const f = S.onEnd;
+      stop();
+      f && f(res);
+    }
+    function stop() {
+      S.running = false;
+      cancelAnimationFrame(S.raf);
+      S.timers = [];
+      hideBanner(); hint('');
+      ui.pick.hidden = true;
+    }
+    function destroy() { stop(); detach(); if (ro) ro.disconnect(); root.remove(); }
+
+    // ---------- loop ----------
+    function update(dt) {
+      S.t += dt;
+      const due = S.timers.filter(x => x.at <= S.t);
+      if (due.length) { S.timers = S.timers.filter(x => x.at > S.t); due.forEach(x => x.fn()); }
+      S.camK += (S.camTo - S.camK) * Math.min(1, dt * 3.2);
+      S.follow += dt; S.catchT += dt;
+      updateBalls(dt);
+      S.popups.forEach(p => { p.t += dt; });
+      S.popups = S.popups.filter(p => p.t < p.life);
+      if (S.meter) { S.meter.t += dt; if (S.meter.t > 1.9) S.meter = null; }
+      [S.far, S.near].forEach(arr => arr.forEach(c => {
+        if (c.removeAt && S.t >= c.removeAt) { const k = (S.t - c.removeAt) / 0.6; c.lift = ease(Math.min(1, k)) * 1.4; c.alpha = Math.max(0, 1 - k); }
+      }));
+      S.far = S.far.filter(c => !(c.removeAt && S.t - c.removeAt > 0.6));
+      S.near = S.near.filter(c => !(c.removeAt && S.t - c.removeAt > 0.6));
+      updateArms();
+    }
+    function frame(now) {
+      if (!S.running) return;
+      const dt = Math.min(0.05, Math.max(0, (now - S.last) / 1000));
+      S.last = now;
+      update(dt);
+      if (S.running) render();
+      if (S.running) S.raf = requestAnimationFrame(frame);
+    }
+
+    // ---------- render ----------
+    function heldBallScreen() {
+      const r = Math.max(9, Math.min(W, H) * 0.036);
+      let x = W * 0.54, y = H - r * 5.2;
+      if (S.catchT < 0.3) { const k = S.catchT / 0.3; y += (1 - ease(k)) * r * 6; }
+      return { x, y, r };
+    }
+    function drawHand(held, alpha, empty) {
+      const r = held.r, skin = settings.skin || '#c68642', edge = 'rgba(60,30,15,0.55)';
+      const { x, y } = held;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      const stroke = (pts, w, col) => {
+        [[w + Math.max(2, r * 0.16), edge], [w, col]].forEach(([lw, c]) => {
+          ctx.strokeStyle = c; ctx.lineWidth = lw; ctx.beginPath();
+          pts.forEach(([px, py], i) => i ? ctx.lineTo(x + px * r, y + py * r) : ctx.moveTo(x + px * r, y + py * r));
+          ctx.stroke();
+        });
+      };
+      // sleeve and the back of the hand, coming up from the bottom right
+      stroke([[3.2, 9], [2.1, 4.4]], r * 3.0, '#2a2140');
+      stroke([[2.0, 4.2], [1.25, 2.1]], r * 2.3, skin);
+      // curled fingers behind the ball
+      stroke([[1.9, 2.6], [1.7, 1.5], [1.15, 1.25]], r * 0.7, skin);
+      if (!empty) Table3D.drawBallAt(ctx, x, y, r, S.fire);
+      // thumb on the lower left of the ball, index finger over the top right
+      stroke([[1.0, 2.5], [0.05, 1.55], [-0.62, 0.62]], r * 0.78, skin);
+      stroke([[1.55, 1.6], [1.25, 0.2], empty ? [0.9, -0.2] : [0.62, -0.62]], r * 0.66, skin);
+      ctx.restore();
+    }
+    function render() {
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      const cam = Table3D.viewCam('you', 'them', ease(Math.max(0, Math.min(1, S.camK))), W, H);
+      Table3D.drawRoom(ctx, cam, S.t);
+      Table3D.drawTable(ctx, cam);
+      S.balls.forEach(b => { if (b.t > (b.appear || 0)) Table3D.drawShadow(ctx, cam, b.p); });
+      const items = [];
+      const depth = p => Table3D.toCam(cam, p)[2];
+      // the opponent stands behind his cups
+      if (S.opp && S.spec.kind !== 'calibrate') {
+        let pname = S.opp.wave ? 'wave' : S.opp.swat ? 'ready' : S.opp.id === 'statue' ? 'fold' : 'idle', pk = 1;
+        if (S.opp.wave) { const a = Math.sin(S.t * Math.PI * 2 / 1.9 + 0.4); pk = Math.max(0, Math.min(1, (a + 0.25) / 0.6)); }
+        if (S.pose && S.t - S.pose.t0 < S.pose.dur) { pname = S.pose.name; pk = Math.min(1, (S.t - S.pose.t0) / 0.25); }
+        items.push({ d: depth([0, 1.5, 8.75]) + 0.5, f: () => Table3D.drawPerson(ctx, cam, S.opp, 'far', pname, pk, S.t) });
+      }
+      const inCupBalls = {};
+      S.balls.forEach(b => { if ((b.inCup || b.sunk) && b.p[1] < CUP.h && !b.cupsOff) inCupBalls[b.sunk || b.inCup] = b; });
+      [S.far, S.near].forEach(arr => arr.forEach(c => {
+        let c2 = c;
+        if (c.from && c.moveT != null) {
+          const k = Math.min(1, (S.t - c.moveT) / 0.55);
+          if (k < 1) { const e = ease(k); c2 = Object.assign({}, c, { x: c.from[0] + (c.x - c.from[0]) * e, z: c.from[1] + (c.z - c.from[1]) * e, lift: Math.sin(Math.PI * k) * 0.25 }); }
+        }
+        const b = inCupBalls[c.id];
+        const inside = b ? { x: b.p[0], z: b.p[2] } : c.ballIn;
+        items.push({ d: depth([c2.x, CUP.h / 2, c2.z]), f: () => Table3D.drawCup(ctx, cam, c2, inside, S.t) });
+      }));
+      S.balls.forEach(b => {
+        if ((b.inCup || b.sunk) && b.p[1] < CUP.h && !b.cupsOff) return;
+        items.push({ d: depth(b.p), f: () => drawFlightBall(cam, b) });
+      });
+      items.sort((a, b) => b.d - a.d).forEach(it => it.f());
+      drawPopups(cam);
+      if (S.hasBall && (S.phase === 'aim' || S.phase === 'intro' || S.phase === 'pick') && S.camK < 0.3) {
+        drawHand(heldBallScreen(), 1);
+      } else if (S.follow < 0.35 && S.camK < 0.3) {
+        const held = heldBallScreen();
+        held.y -= S.follow / 0.35 * H * 0.12;
+        drawHand(held, 1 - S.follow / 0.35, true);
+      }
+      if (S.meter) drawMeter();
+      drawBallsLeft();
+    }
+    function drawFlightBall(cam, b) {
+      const hot = b.by === 'you' && S.fire;
+      const p = Table3D.project(cam, b.p);
+      if (!p) return;
+      if (b.appear && b.t < b.appear) {
+        const k = b.t / b.appear;
+        Table3D.drawBallAt(ctx, b.sx + (p.x - b.sx) * k, b.sy + (p.y - b.sy) * k, b.sr + (R * p.s - b.sr) * k, hot);
+        return;
+      }
+      if (b.trail) for (let i = 0; i < b.trail.length - 1; i++) {
+        const q = Table3D.project(cam, b.trail[i]);
+        if (!q) continue;
+        const a = (i + 1) / b.trail.length * (hot ? 0.55 : 0.2);
+        ctx.fillStyle = hot ? `rgba(255,120,40,${a})` : `rgba(255,255,255,${a})`;
+        ctx.beginPath(); ctx.arc(q.x, q.y, Math.max(1, R * q.s * (0.5 + i / b.trail.length * 0.5)), 0, Math.PI * 2); ctx.fill();
+      }
+      Table3D.drawBallAt(ctx, p.x, p.y, R * p.s, hot);
+    }
+    function drawPopups(cam) {
+      S.popups.forEach(p => {
+        const q = Table3D.project(cam, p.world);
+        if (!q) return;
+        const k = p.t / p.life;
+        const y = q.y - k * 28;
+        const a = k < 0.15 ? k / 0.15 : (k > 0.7 ? (1 - k) / 0.3 : 1);
+        const sz = Math.round(Math.min(W, H) * 0.062 * p.size);
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, a);
+        ctx.font = `400 ${sz}px "Bungee", Impact, sans-serif`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.lineWidth = Math.max(3, sz * 0.14); ctx.strokeStyle = 'rgba(10,6,14,0.75)';
+        const text = p.text.toUpperCase();
+        const x = Math.max(sz * 2, Math.min(W - sz * 2, q.x));
+        ctx.strokeText(text, x, y); ctx.fillStyle = p.color; ctx.fillText(text, x, y);
+        ctx.restore();
+      });
+    }
+    function drawMeter() {
+      const m = S.meter, shot = m.shot;
+      const k = m.t;
+      const a = k < 0.15 ? k / 0.15 : (k > 1.5 ? Math.max(0, (1.9 - k) / 0.4) : 1);
+      const bw = Math.min(W * 0.7, 300), bh = 10;
+      const x0 = (W - bw) / 2, y0 = H - Math.max(9, Math.min(W, H) * 0.034) * 8.4;
+      const lo = 0.7, hi = 1.3;
+      const X = v => x0 + (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * bw;
+      const feel = FEEL[settings.feel] || FEEL.normal;
+      const w = m.kind === 'fast' ? feel.fast : feel.snap / PongPhysics.DEPTH_PER / Math.max(0.5, shot.ideal || 1) * (m.kind === 'bounce' ? 0.9 : 1);
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.fillStyle = 'rgba(14,9,18,0.78)';
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x0 - 10, y0 - 34, bw + 20, 58, 10) : ctx.rect(x0 - 10, y0 - 34, bw + 20, 58); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.14)'; ctx.fillRect(x0, y0, bw, bh);
+      if (!m.calibrating) { ctx.fillStyle = 'rgba(126,226,168,0.75)'; ctx.fillRect(X(1 - w), y0, X(1 + w) - X(1 - w), bh); }
+      ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillRect(X(1) - 1, y0 - 3, 2, bh + 6);
+      const mx = m.calibrating ? X(1) : X(shot.ratio);
+      ctx.fillStyle = shot.green || m.calibrating ? '#7ee2a8' : '#ffcf6b';
+      ctx.beginPath(); ctx.moveTo(mx, y0 - 2); ctx.lineTo(mx - 6, y0 - 11); ctx.lineTo(mx + 6, y0 - 11); ctx.closePath(); ctx.fill();
+      ctx.fillRect(mx - 1.5, y0, 3, bh);
+      ctx.font = '600 11px "Work Sans", sans-serif'; ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = 'rgba(246,239,228,0.7)';
+      ctx.textAlign = 'left'; ctx.fillText(m.kind === 'fast' ? 'LOW' : 'SHORT', x0, y0 + bh + 13);
+      ctx.textAlign = 'right'; ctx.fillText(m.kind === 'fast' ? 'HIGH' : 'LONG', x0 + bw, y0 + bh + 13);
+      ctx.textAlign = 'center';
+      ctx.font = '700 13px "Work Sans", sans-serif'; ctx.fillStyle = '#f6efe4';
+      ctx.fillText(m.calibrating ? 'Touch recorded' : shot.feedback, W / 2, y0 - 17);
+      ctx.restore();
+    }
+    function drawBallsLeft() {
+      const T = S.turn;
+      if (!T || T.by !== 'you' || S.camK > 0.3 || !['game', 'attack'].includes(S.spec.kind) || T.rebuttal) return;
+      const n = Math.min(6, Math.max(0, T.left));
+      const r = 5, gap = 15, y = H - Math.max(9, Math.min(W, H) * 0.034) * 1.6;
+      const x0 = W * 0.2;
+      for (let i = 0; i < n; i++) { ctx.beginPath(); ctx.arc(x0 + i * gap, y, r, 0, Math.PI * 2); ctx.fillStyle = S.fire ? '#ffb347' : '#f6efe4'; ctx.fill(); }
+    }
+
+    function setSettings(o) { Object.assign(settings, o || {}); }
+    return { run, stop, destroy, setSettings, summary, get settings() { return settings; }, _S: S };
+  }
+
+  return { create, FEEL };
+})();
+// LIFE OS bridge: lets a game run inside the LIFE OS phone app and hand its score back to the story.
+// Opened on its own (a file, an artifact, Google Drive), the game behaves exactly as before: LifeOS.embedded is false.
+//
+//   LifeOS.embedded                 true when running inside LIFE OS (in an iframe, with ?embed=1)
+//   LifeOS.onStart(cfg => ...)      called once with the round's config (see below)
+//   LifeOS.finish({score, max, summary, stats})   the round is over: score out of max (any units), a short summary
+//   LifeOS.quit()                   the player backed out
+//
+// config: { play: what to launch ("menu" = let the player pick a mode, "clutch" = a short pressure round, or a game-specific
+//           mode name), skill 0-100 (the character's skill), difficulty 0-100, mode ("free" | "clutch"), seed, me, them,
+//           college (true in college), opponent, label }
+const LifeOS = (() => {
+  const qs = new URLSearchParams(location.search);
+  const embedded = window.parent !== window && qs.get('embed') === '1';
+  const config = { play: qs.get('play') || 'menu', skill: +(qs.get('skill') || 55), difficulty: +(qs.get('difficulty') || 50),
+                   mode: qs.get('mode') || 'free', me: qs.get('me') || 'You', seed: +(qs.get('seed') || 0), college: qs.get('college') === '1' };
+  let started = false, cb = null, done = false;
+  const fire = () => { if (!started && cb) { started = true; cb(config); } };
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'lifeos:init') { Object.assign(config, e.data.config || {}); fire(); }
+  });
+  const post = (event, data) => { if (embedded) parent.postMessage(Object.assign({ type: 'lifeos:minigame', event }, data || {}), '*'); };
+  return {
+    embedded, config,
+    onStart(f) { cb = f; if (!embedded) return; post('ready'); setTimeout(fire, 2500); },
+    finish(result) { if (done) return; done = true; post('finish', { result }); },
+    quit() { post('quit'); },
+  };
+})();
+/* PongEmbed: Pong Night inside LIFE OS (see shared/lifeos.js). Labels, the opponent for a launched game, and what a
+   finished session is worth. Pure: it reads LIFE OS's config and the engine's own summary of the session; it never
+   touches the game. LIFE OS reads score / max as great (80% or more), good (50% or more) or a miss.
+
+   Labels: before college (cfg.college !== true) the page is Cup Pong, water in the cups: the sign reads Cup Pong and the
+   line above it ("Beer pong") reads Ten cups a side. In college it reads as written.
+   Opponent by difficulty: under 40 the Statue; 40-59 the Waver or the Blower (the seed picks); 60-75 the Swatter; over 75 the Sniper.
+   Score:
+     game      cups you made out of 10. A win is 10/10; a loss caps at 9 (an overtime loss is 9).
+     attack    throws to clear the rack: 10 or fewer is 20/20, one point off for each throw over 10, 30 or more is 0.
+               14 throws is great (80%), 20 is good (50%). Fixed, so the same rack scores the same every time.
+     shots     an Island drill: makes out of throws (a bounce in is one make).
+     practice  makes out of throws, out of at least 10, so one lucky throw and quitting isn't great. */
+const PongEmbed = (() => {
+  const CUP_PONG = { doc: 'Cup Pong', eyebrow: 'Ten cups a side', sign: ['Cup', 'Pong'], game: 'Cup Pong' };
+  function labels(cfg) { return cfg && cfg.college === true ? null : CUP_PONG; }
+
+  function opponent(cfg) {
+    cfg = cfg || {};
+    const ask = String(cfg.opponent || '').toLowerCase().replace(/^the\s+/, '').trim();
+    if (Pong.OPPONENTS[ask]) return ask;
+    const n = Number(cfg.difficulty), d = isFinite(n) ? n : 50;
+    if (d < 40) return 'statue';
+    if (d < 60) { const s = Math.abs(Math.floor(Number(cfg.seed) || 0)); return (s ? s % 2 === 1 : d >= 50) ? 'blower' : 'waver'; }
+    if (d <= 75) return 'swatter';
+    return 'sniper';
+  }
+  // "the Swatter" mid-sentence, or the friend's name
+  const who = (o, them) => them || o.name.replace(/^The /, 'the ');
+  const ots = n => n > 1 ? `${n} overtimes` : 'overtime';
+
+  // res: the engine's summary. ctx: { title, them, drill, newBest, best }
+  function result(res, ctx) {
+    res = res || {}; ctx = ctx || {};
+    const k = res.kind, st = res.stats || {};
+    const makes = res.makes || 0, throws = res.throws || 0;
+    const stats = { kind: k, title: ctx.title || '', makes, throws, cupsMade: res.cupsMade || 0, readIQ: res.readIQ || 0,
+                    arcs: st.arc, fastballs: st.fast, bounces: st.bounce };
+    let score = 0, max = 1, summary = '';
+    if (k === 'game') {
+      const o = Pong.OPPONENTS[res.opponent] || { name: 'The other side' };
+      const won = !!res.won, ot = res.overtime || 0;
+      const mine = won ? 10 : Math.min(9, res.cupsMade || 0);
+      const theirs = ot ? 10 : 10 - (res.yoursLeft || 0);
+      max = 10; score = mine;
+      Object.assign(stats, { opponent: res.opponent, them: ctx.them || null, won, overtime: ot, theirs });
+      const vs = who(o, ctx.them);
+      summary = won ? (ot ? `You beat ${vs} in ${ots(ot)}` : `You beat ${vs} 10-${theirs}`)
+                    : (ot ? `You lost to ${vs} in ${ots(ot)}` : `You lost 10-${mine} to ${vs}`);
+    } else if (k === 'attack') {
+      max = 20; score = Math.max(0, Math.min(20, 30 - throws));
+      Object.assign(stats, { best: ctx.best || throws, newBest: !!ctx.newBest });
+      summary = `Cleared ten cups in ${throws} throws${ctx.newBest ? ', a new best' : ''}`;
+    } else if (k === 'shots') {
+      max = Math.max(1, throws); score = makes;
+      stats.drill = ctx.drill || null;
+      summary = `${ctx.title ? ctx.title + ': ' : ''}${makes} of ${throws}${res.cupsMade !== makes ? ` (${res.cupsMade} cups)` : ''}`;
+    } else if (k === 'practice') {
+      max = Math.max(10, throws); score = makes;
+      summary = `${makes} of ${throws} in practice${throws < 10 ? ', counted out of 10 throws' : ''}`;
+    }
+    return { score: Math.max(0, Math.min(max, score)), max, summary, stats };
+  }
+
+  return { labels, opponent, result };
+})();
+</script>
+<script>
+(() => {
+  const FEEL_ORDER = ['arcade', 'normal', 'pro'];
+  // Island: one fresh setup per ball; the glowing cups count.
+  const DRILLS = [
+    { id: 'naked', name: 'Naked Front Cup', note: 'A diamond. Only the front cup counts.', read: 'Short, sharp flick. A fastball doesn\'t need perfect depth.', spec: { form: 'diamond4', targets: 'front', balls: 6 } },
+    { id: 'backrow', name: 'Back Row', note: 'A full rack. Only the back four count.', read: 'Arc it over the front cups. Harder flick, same line.', spec: { form: 'tri10', targets: 'back', balls: 6 } },
+    { id: 'hop', name: 'Island Hopping', note: 'One cup, somewhere new each ball. Bounces count double.', read: 'Open table in front of it: dip, then flick, for two.', spec: { form: 'island1', island: true, balls: 6, bounceTwo: true, opponent: 'statue' } },
+    { id: 'stoplight', name: 'Stoplight', note: 'Three in a line, pointing at you.', read: 'Fastball the front. If it runs hot it finds the next one.', spec: { form: 'line3', balls: 6 } },
+    { id: 'lastcup', name: 'Last Cup', note: 'One cup at the back, and the Swatter is waiting.', read: 'He swats bounces. Keep it in the air.', spec: { form: 'island1', balls: 6, opponent: 'swatter' } },
+    { id: 'straight', name: 'Straight Up', note: 'A pyramid against the Blower.', read: 'No curl. A spinning ball gets blown out.', spec: { form: 'pyr6', balls: 6, opponent: 'blower' } }
+  ];
+
+  const store = SaveStore.create('pong-night-v1', () => ({
+    v: 1, touchK: null, L0: null, S0: null,
+    settings: { feel: 'normal', tags: true, sound: true },
+    seen: {},
+    records: { game: {}, attack: { best: 0, plays: 0 }, island: {}, practice: { makes: 0, attempts: 0 } },
+    book: {}, shots: { arc: [0, 0], fast: [0, 0], bounce: [0, 0] }
+  }));
+  let D = store.load();
+  store.onRemote(s => { D = s; applySettings(); if (EMBED && current === 'results') return; go(current === 'results' ? 'home' : current); });
+
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let engine = null, lastSpec = null, lastCtx = null, current = 'home';
+  // LIFE OS: inside the phone app (shared/lifeos.js, pong/embed.js) the first results screen hands its score back.
+  // embedPlay is what LIFE OS asked for: 'game' launches one game with no home screen, 'menu' is free play from home.
+  // On its own EMBED is false and none of this runs; gameTitle stays 'Pong Night'.
+  const EMBED = LifeOS.embedded;
+  let embedPlay = null, embedThem = null, gameTitle = 'Pong Night';
+  const embedDirect = () => EMBED && embedPlay === 'game';
+
+  function engineSettings() { return { touchK: D.touchK || 1.5, L0: D.L0 || 0.3, S0: D.S0 || 2.2, feel: D.settings.feel, showTags: D.settings.tags, seen: D.seen }; }
+  function applySettings() { PongSfx.muted = !D.settings.sound; if (engine) engine.setSettings(engineSettings()); }
+  function go(id) {
+    if (id === 'home' && embedDirect()) return LifeOS.quit(); // a launched game has no home screen: leaving it backs out
+    document.querySelectorAll('#app > .screen').forEach(s => { s.hidden = s.id !== id; });
+    current = id;
+    if (id === 'home') renderHome();
+    if (id === 'opps') renderOpps();
+    if (id === 'island') renderDrills();
+    if (id === 'book') renderBook();
+    if (id === 'settings') renderSettings();
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- home ----------
+  (() => {
+    const g = $('#bulbs'), cols = ['#ffcf6b', '#ff8a5c', '#7fe7ff', '#ff6fa8', '#ffe7a3'];
+    let html = '';
+    for (let i = 0; i <= 16; i++) { const x = i * 25, y = 4 + 18 * Math.sin(Math.PI * Math.min(1, x / 200)) * (x <= 200 ? 1 : 0) * 0.55 + (x > 200 ? 2 + 8 * Math.sin(Math.PI * (x - 200) / 200) * 0.5 : 0); html += `<circle cx="${x}" cy="${y.toFixed(1)}" r="3.2" fill="${cols[i % 5]}"/><circle cx="${x}" cy="${y.toFixed(1)}" r="7" fill="${cols[i % 5]}" opacity=".18"/>`; }
+    g.innerHTML = html;
+  })();
+  function renderHome() {
+    $('#q-feel').textContent = PongEngine.FEEL[D.settings.feel].label;
+    $('#q-tags').textContent = D.settings.tags ? 'On' : 'Off';
+    const r = D.records;
+    const wl = Object.values(r.game).reduce((a, x) => [a[0] + x.w, a[1] + x.l], [0, 0]);
+    $('#rec-game').textContent = wl[0] + wl[1] ? `${wl[0]} wins · ${wl[1]} losses` : 'Start here';
+    $('#rec-attack').textContent = r.attack.plays ? `Best ${r.attack.best} throws` : 'Not played yet';
+    const done = DRILLS.filter(d => r.island[d.id]).length;
+    $('#rec-island').textContent = done ? `${done} of ${DRILLS.length} played` : 'Not played yet';
+    $('#rec-practice').textContent = r.practice.attempts ? `${Math.round(r.practice.makes / r.practice.attempts * 100)}% on ${r.practice.attempts} throws` : 'Not played yet';
+  }
+  document.addEventListener('click', e => {
+    const g = e.target.closest('[data-go]');
+    if (g) {
+      PongSfx.unlock(); PongSfx.play('ui');
+      const id = g.dataset.go;
+      if (id === 'attack') return play({ kind: 'attack', title: 'Rack Attack' }, { rec: 'attack' });
+      if (id === 'practice') return play({ kind: 'practice', title: 'Practice' }, { rec: 'practice' });
+      return go(id);
+    }
+    const c = e.target.closest('[data-cycle]');
+    if (c) {
+      PongSfx.unlock(); PongSfx.play('ui');
+      if (c.dataset.cycle === 'feel') D.settings.feel = FEEL_ORDER[(FEEL_ORDER.indexOf(D.settings.feel) + 1) % FEEL_ORDER.length];
+      if (c.dataset.cycle === 'tags') D.settings.tags = !D.settings.tags;
+      store.save(); applySettings(); renderHome();
+    }
+  });
+
+  // ---------- play ----------
+  function ensureEngine() {
+    if (!engine) engine = PongEngine.create($('#game'), engineSettings());
+    applySettings();
+    return engine;
+  }
+  function open() { $('#game').hidden = false; document.body.style.overflow = 'hidden'; }
+  function closeGame() { $('#game').hidden = true; document.body.style.overflow = ''; }
+  function play(spec, ctx) {
+    if (!D.touchK) return calibrate(() => play(spec, ctx));
+    lastSpec = spec; lastCtx = ctx || {};
+    open();
+    ensureEngine().run(spec, { onEnd: res => finish(res, false), onQuit: res => finish(res, true) });
+    if (embedThem && spec.kind === 'game') nameOpponent(spec.opponent);
+  }
+  // a game LIFE OS launched against a friend: the friend's name on the scoreboard, the habit under it
+  function nameOpponent(id) {
+    const o = Pong.OPPONENTS[id], b = $('#game .px-title b'), s = $('#game .px-title span');
+    if (o && b && s) { b.textContent = embedThem; s.textContent = `${o.name} · ${o.tag}`; }
+  }
+  function calibrate(then) {
+    open();
+    ensureEngine().run({ kind: 'calibrate', title: 'Find your touch' }, {
+      onEnd: res => {
+        closeGame();
+        if (res.touchK) { D.touchK = res.touchK; D.L0 = res.L0; D.S0 = res.S0; store.save(); applySettings(); }
+        if (then) then(); else go('home');
+      },
+      onQuit: () => { closeGame(); go(current); }
+    });
+  }
+
+  function finish(res, quit) {
+    closeGame();
+    const ctx = lastCtx || {};
+    ['arc', 'fast', 'bounce'].forEach(k => { D.shots[k][0] += res.stats[k][0]; D.shots[k][1] += res.stats[k][1]; });
+    if (res.kind === 'practice') {
+      D.records.practice.makes += res.makes; D.records.practice.attempts += res.throws; store.save();
+      if (EMBED && res.throws) { renderResults(res, false, ctx); return go('results'); } // inside LIFE OS a practice session counts
+      return go('home');
+    }
+    if (quit && !(res.log && res.log.length) && res.kind !== 'game') { store.save(); return go(ctx.back || 'home'); }
+    let newBest = false;
+    if (res.kind === 'game' && res.opponent) {
+      const b = D.book[res.opponent] = D.book[res.opponent] || { games: 0, turns: 0, a: 0, cups: 0 };
+      b.turns += res.log.length; b.a += res.log.filter(l => l.grade === 'A').length; b.cups += res.cupsMade;
+      if (!quit) {
+        b.games++;
+        const r = D.records.game[res.opponent] = D.records.game[res.opponent] || { w: 0, l: 0 };
+        if (res.won) r.w++; else r.l++;
+      }
+    }
+    if (!quit && res.kind === 'attack') { const r = D.records.attack; r.plays++; if (!r.best || res.throws < r.best) { r.best = res.throws; newBest = true; } }
+    if (!quit && res.kind === 'shots' && ctx.drill) { const r = D.records.island[ctx.drill] = D.records.island[ctx.drill] || { best: 0, plays: 0 }; r.plays++; if (res.cupsMade > r.best) { r.best = res.cupsMade; newBest = r.plays > 1 || res.cupsMade > 0; } }
+    store.save();
+    if (quit) return go(ctx.back || 'home');
+    renderResults(res, newBest, ctx);
+    go('results');
+  }
+
+  function shotStats(st) {
+    return ['arc', 'fast', 'bounce'].map(k => `<div class="stat"><b>${st[k][0]}/${st[k][1]}</b><span>${{ arc: 'Arcs', fast: 'Fastballs', bounce: 'Bounces' }[k]}</span></div>`).join('');
+  }
+  function renderResults(res, newBest, ctx) {
+    const el = $('#results');
+    let head = '', body = '';
+    if (res.kind === 'game') {
+      const o = Pong.OPPONENTS[res.opponent];
+      const r = D.records.game[o.id] || { w: 0, l: 0 };
+      head = `<div class="result-head"><div class="big">${res.won ? 'Win' : 'Loss'}</div><div class="unit">vs ${esc(ctx.them ? `${ctx.them} (${o.name.replace(/^The /, 'the ')})` : o.name)}${res.overtime ? ` · ${res.overtime > 1 ? res.overtime + ' overtimes' : 'overtime'}` : ''}</div></div>`;
+      body = `<div class="stats"><div class="stat"><b>${res.cupsMade}</b><span>Cups made</span></div><div class="stat"><b>${res.readIQ || 0}</b><span>Read IQ</span></div><div class="stat"><b>${r.w}-${r.l}</b><span>All-time</span></div></div>
+        <div class="stats">${shotStats(res.stats)}</div>
+        <div class="panel"><h3>Turn by turn</h3><div class="plist">${res.log.map(l => `<div class="prow"><span class="g ${l.grade}">${l.grade}</span><div><b>${l.throws.map(t => ({ arc: 'Arc', fast: 'Fastball', bounce: 'Bounce' })[t.kind] + (t.made ? ' ✓' : ' ✗')).join(' · ')}</b><small>${esc(l.why)}</small></div><span class="pts">${l.made}</span></div>`).join('')}</div></div>`;
+      const miss = res.log.filter(l => ['C', 'D', 'F'].includes(l.grade));
+      body += `<div class="panel"><h3>${miss.length ? 'One to work on' : 'The read'}</h3><p class="lede"><b>${esc(o.name)}.</b> ${esc(miss.length ? miss[0].why : o.read)}</p></div>`;
+    } else if (res.kind === 'attack') {
+      head = `<div class="result-head"><div class="big">${res.throws}</div><div class="unit">throws</div>${newBest ? '<span class="badge">New best</span>' : ''}</div>`;
+      const pct = res.throws ? Math.round(res.makes / res.throws * 100) : 0;
+      body = `<div class="stats"><div class="stat"><b>${pct}%</b><span>Made</span></div><div class="stat"><b>${res.rerackCalls.length}</b><span>Re-racks</span></div><div class="stat"><b>${D.records.attack.best}</b><span>Best</span></div></div><div class="stats">${shotStats(res.stats)}</div>`;
+    } else if (res.kind === 'shots') {
+      const d = DRILLS.find(x => x.id === ctx.drill);
+      head = `<div class="result-head"><div class="big">${res.cupsMade}</div><div class="unit">cups</div>${newBest ? '<span class="badge">New best</span>' : ''}</div>`;
+      body = `<div class="stats">${shotStats(res.stats)}</div>${d ? `<div class="panel"><h3>The read</h3><p class="lede">${esc(d.read)}</p></div>` : ''}`;
+    } else if (res.kind === 'practice') { // only inside LIFE OS; on its own, practice goes straight home
+      head = `<div class="result-head"><div class="big">${res.makes}</div><div class="unit">made of ${res.throws}</div></div>`;
+      body = `<div class="stats">${shotStats(res.stats)}</div>`;
+    }
+    const title = ctx.title || (lastSpec && lastSpec.title) || 'Results';
+    if (EMBED) return renderEmbedResults(el, res, ctx, newBest, title, head, body);
+    el.innerHTML = `<div class="bar"><button class="back" type="button" data-go="${esc(ctx.back || 'home')}" aria-label="Back">&#x2190;</button><h2>${esc(title)}</h2></div>${head}${body}
+      <div class="ctas"><button class="cta" type="button" id="again">Run it back</button><button class="cta ghost" type="button" data-go="${esc(ctx.back || 'home')}">Done</button></div>`;
+    $('#again').addEventListener('click', () => { PongSfx.play('ui'); play(lastSpec, lastCtx); });
+  }
+  // inside LIFE OS the results screen is the end: Done hands the score back, the back arrow backs out, nothing starts another session
+  function renderEmbedResults(el, res, ctx, newBest, title, head, body) {
+    const out = PongEmbed.result(res, { title, them: ctx.them, drill: ctx.drill, newBest, best: D.records.attack.best });
+    el.innerHTML = `<div class="bar"><button class="back" type="button" id="lifeos-back" aria-label="Back">&#x2190;</button><h2>${esc(title)}</h2></div>${head}${body}
+      <p class="note">${esc(out.summary)}</p><div class="ctas"><button class="cta" type="button" id="lifeos-done">Done</button></div>`;
+    $('#lifeos-back').addEventListener('click', () => { PongSfx.play('ui'); LifeOS.quit(); });
+    $('#lifeos-done').addEventListener('click', e => { PongSfx.play('ui'); e.currentTarget.disabled = true; LifeOS.finish(out); });
+  }
+
+  // ---------- opponents ----------
+  function avatar(o) {
+    return `<svg class="face" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="22" fill="${o.shirt}"/><path d="M6 44 Q8 30 22 30 Q36 30 38 44 Z" fill="rgba(0,0,0,0.22)"/><circle cx="22" cy="19" r="9" fill="${o.skin}"/><path d="M13 18 A9 9 0 0 1 31 18 Q27 13 22 13 Q17 13 13 18 Z" fill="${o.hair}"/></svg>`;
+  }
+  function renderOpps() {
+    $('#opp-list').innerHTML = Pong.OPP_IDS.map(id => {
+      const o = Pong.OPPONENTS[id], r = D.records.game[id] || { w: 0, l: 0 };
+      const bars = Math.max(1, Math.round((o.skill - 0.45) / 0.4 * 5));
+      return `<button class="opp" type="button" data-opp="${id}">${avatar(o)}
+        <span><b>${esc(o.name)}</b><small>${esc(o.tag)}</small><br><small>Shooting <span class="meter">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= bars ? 'on' : ''}"></i>`).join('')}</span></small></span>
+        <span class="wl">${r.w}-${r.l}</span></button>`;
+    }).join('');
+  }
+  $('#opp-list').addEventListener('click', e => {
+    const b = e.target.closest('[data-opp]'); if (!b) return;
+    PongSfx.unlock(); PongSfx.play('ui');
+    play({ kind: 'game', opponent: b.dataset.opp, title: gameTitle }, { back: 'opps', title: 'Game' });
+  });
+
+  // ---------- island ----------
+  function renderDrills() {
+    $('#drill-list').innerHTML = DRILLS.map(d => {
+      const r = D.records.island[d.id];
+      const max = d.spec.balls * (d.spec.bounceTwo ? 2 : 1);
+      return `<div class="srow"><div><b>${esc(d.name)}</b><small>${esc(d.note)}${r ? ` · best ${r.best} of ${max}` : ''}</small></div><button class="mini" type="button" data-drill="${d.id}">Play</button></div>`;
+    }).join('');
+  }
+  $('#drill-list').addEventListener('click', e => {
+    const b = e.target.closest('[data-drill]'); if (!b) return;
+    const d = DRILLS.find(x => x.id === b.dataset.drill);
+    PongSfx.unlock(); PongSfx.play('ui');
+    play(Object.assign({ kind: 'shots', title: d.name, note: d.note }, d.spec), { drill: d.id, back: 'island', title: d.name });
+  });
+
+  // ---------- book ----------
+  function formSvg(id) {
+    const F = Pong.FORMATIONS[id];
+    const xs = F.cups.map(c => c[0]), ds = F.cups.map(c => c[1]);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cd = (Math.min(...ds) + Math.max(...ds)) / 2;
+    const k = 40 / (Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ds) - Math.min(...ds)) + 1);
+    return `<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="1" y="1" width="46" height="46" rx="7" fill="#17463a"/>${F.cups.map(([x, d]) => `<circle cx="${(24 + (x - cx) * k).toFixed(1)}" cy="${(24 + (d - cd) * k).toFixed(1)}" r="${(k * 0.45).toFixed(1)}" fill="#d8312d" stroke="#fbf8f2" stroke-width="1.3"/>`).join('')}</svg>`;
+  }
+  function renderBook() {
+    $('#book-opps').innerHTML = Pong.OPP_IDS.map(id => {
+      const o = Pong.OPPONENTS[id], b = D.book[id], r = D.records.game[id];
+      const faced = b && b.turns ? `${b.games} game${b.games === 1 ? '' : 's'} · ${r ? r.w + '-' + r.l : '0-0'} · ${Math.round(b.a / b.turns * 100)}% A turns` : 'Not faced yet';
+      return `<article class="scard"><header><b>${esc(o.name)}</b><span class="tag">${esc(o.tag)}</span></header><p>${esc(o.tell)}</p><p class="read"><b>The answer:</b> ${esc(o.read)}</p><div class="faced">${faced}</div></article>`;
+    }).join('');
+    const show = ['pyr6', 'zip6', 'diamond4', 'line4', 'tri3', 'line3', 'stack2', 'island1'];
+    $('#book-racks').innerHTML = show.map(id => `<div class="rcard">${formSvg(id)}<div><b>${esc(Pong.FORMATIONS[id].name)}</b><small>${esc(Pong.FORMATIONS[id].read)}</small></div></div>`).join('');
+    $('#book-shots').innerHTML = shotStats(D.shots).replace(/<b>(\d+)\/(\d+)<\/b>/g, (m, a, b) => `<b>${+b ? Math.round(a / b * 100) + '%' : '–'}</b>`);
+  }
+
+  // ---------- settings ----------
+  function renderSettings() {
+    const seg = (key, opts) => `<div class="chips" data-set="${key}">${opts.map(([v, l]) => `<button class="chip" type="button" data-v="${v}" aria-pressed="${String(D.settings[key]) === String(v)}">${l}</button>`).join('')}</div>`;
+    $('#settings-body').innerHTML = `
+      <div class="field"><span>Feel</span>${seg('feel', [['arcade', 'Arcade'], ['normal', 'Normal'], ['pro', 'Pro']])}<p class="note">How big the green window is. Arcade forgives a lot; Pro wants your exact touch.</p></div>
+      <div class="field"><span>Name tags</span>${seg('tags', [['true', 'Show who you\'re playing'], ['false', 'Read him yourself']])}</div>
+      <div class="field"><span>Sound</span>${seg('sound', [['true', 'On'], ['false', 'Off']])}</div>
+      <div class="field"><span>Touch</span><p class="note">Your three calibration throws set the scale for every throw, and how short a flick has to be to count as a fastball. ${D.touchK ? 'Yours is set.' : 'Not set yet.'}</p><div><button class="mini" type="button" id="recal">Find my touch again</button></div></div>
+      <div class="field"><span>Records</span><div class="confirm"><button class="mini ghost" type="button" id="wipe">Erase records</button><span class="note" id="wipe-note"></span></div></div>`;
+  }
+  $('#settings-body').addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (chip) {
+      const key = chip.parentElement.dataset.set; let v = chip.dataset.v;
+      if (v === 'true' || v === 'false') v = v === 'true';
+      D.settings[key] = v; store.save(); applySettings(); renderSettings(); PongSfx.play('ui');
+      return;
+    }
+    if (e.target.id === 'recal') { PongSfx.unlock(); calibrate(() => go('settings')); return; }
+    if (e.target.id === 'wipe') {
+      const b = e.target;
+      if (b.dataset.confirm) {
+        const keep = { touchK: D.touchK, L0: D.L0, S0: D.S0, settings: D.settings, seen: D.seen };
+        D = store.reset(); Object.assign(D, keep); store.save(); renderSettings();
+        $('#wipe-note').textContent = 'Records erased. Your touch and settings are kept.';
+      } else { b.dataset.confirm = '1'; b.textContent = 'Tap again to erase'; }
+    }
+  });
+
+  if (window.claude && window.claude.hot && typeof window.claude.hot.snapshot === 'function') {
+    try { window.claude.hot.snapshot(() => ({ screen: current })); } catch (_) {}
+  }
+  const boot = data => { applySettings(); go(data && data.screen && document.getElementById(data.screen) && data.screen !== 'results' ? data.screen : 'home'); };
+  // LIFE OS launches: 'game' starts a game at once against an opponent picked by difficulty (PongEmbed.opponent);
+  // anything else ('menu') is the home screen. Before college the sign reads Cup Pong (PongEmbed.labels).
+  function startEmbedded(cfg) {
+    const L = PongEmbed.labels(cfg);
+    if (L) {
+      document.title = L.doc; gameTitle = L.game;
+      $('#home .eyebrow').textContent = L.eyebrow;
+      $('#home .mast h1').innerHTML = `${esc(L.sign[0])}<span>${esc(L.sign[1])}</span>`;
+    }
+    embedPlay = String(cfg.play || 'menu').toLowerCase() === 'game' ? 'game' : 'menu';
+    if (embedPlay === 'menu') return go('home');
+    embedThem = typeof cfg.them === 'string' && cfg.them.trim() ? cfg.them.trim() : null;
+    play({ kind: 'game', opponent: PongEmbed.opponent(cfg), title: gameTitle }, { back: 'home', title: 'Game', them: embedThem });
+  }
+  if (EMBED) { applySettings(); document.querySelectorAll('#app > .screen').forEach(s => { s.hidden = true; }); LifeOS.onStart(startEmbedded); }
+  else if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot); else boot((window.claude && window.claude.hot && window.claude.hot.data) || {});
+})();
+</script>
+
+</body>
+</html>

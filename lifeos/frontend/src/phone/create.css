@@ -1,0 +1,183 @@
+/* Making your story on the phone. Same warm look as the rest of the phone app; everything is cs- and scoped under .ph-root. */
+.cs-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; animation: ph-fade 0.25s ease backwards; }
+.cs-top {
+  display: flex; align-items: center; gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 14px 8px;
+  background: rgba(255, 244, 230, 0.98);
+  border-bottom: 1px solid rgba(213, 186, 152, 0.3); z-index: 4;
+}
+.ph-root .cs-back { --btn-bg: #fff; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; box-shadow: var(--ph-shadow); color: var(--ph-ink); flex-shrink: 0; }
+.cs-top-m { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.cs-kicker { font-size: 11.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ph-coral); }
+.cs-dots { display: flex; gap: 5px; }
+.ph-root .cs-dots button { --btn-bg: #eadccb; flex: 1; height: 6px; border-radius: 999px; transition: background 0.2s; }
+.ph-root .cs-dots button.done { --btn-bg: #ffb59f; }
+.ph-root .cs-dots button.on { --btn-bg: var(--ph-coral); }
+.cs-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding-bottom: 24px; scrollbar-width: none; }
+.cs-scroll::-webkit-scrollbar { display: none; }
+.cs-head { padding: 16px 18px 6px; }
+.cs-head h2 { font-size: 27px; }
+.cs-head p { color: var(--ph-ink-2); font-weight: 600; margin-top: 4px; font-size: 14.5px; }
+.cs-body { animation: ph-rise 0.3s ease backwards; padding-top: 8px; }
+.cs-foot {
+  padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, rgba(255, 244, 230, 0), var(--ph-bg) 30%);
+  position: relative; z-index: 4; margin-top: -18px;
+}
+.ph-root .cs-foot .ph-btn { margin: 0; }
+
+/* fields */
+.cs-field { margin-bottom: 16px; }
+.cs-field-l { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 800; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ph-dim); margin: 0 2px 8px; }
+.cs-hint { color: var(--ph-dim); font-size: 13px; font-weight: 600; margin: 7px 2px 0; line-height: 1.4; }
+.cs-hint.warn { color: #c2551e; }
+.cs-center { text-align: center; margin: 14px 8px; }
+.cs-auto, .cs-slider-v em { font-style: normal; font-size: 10.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #b4a98f; background: #f3e9db; padding: 2px 7px; border-radius: 999px; }
+.cs-names { display: grid; grid-template-columns: 1fr 1fr 46px; gap: 8px; }
+.ph-root .cs-dice { --btn-bg: #fff; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--ph-line); font-size: 20px; }
+.cs-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ph-root select.ph-input { appearance: none; -webkit-appearance: none; padding-right: 34px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238f87a6' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center; }
+.ph-root select.ph-input:disabled { opacity: 0.55; }
+.ph-root .cs-num { width: 120px; }
+.cs-seg.wrap { flex-wrap: wrap; }
+.ph-root .cs-seg button { flex: 1 1 auto; padding: 10px 12px; font-size: 14px; }
+.cs-quiet { display: flex; justify-content: space-between; gap: 10px; margin-top: 6px; }
+.ph-root .cs-quiet .ph-link { display: inline-flex; align-items: center; gap: 6px; }
+.ph-root .ph-link.cs-remove { color: #c23b2a; }
+.ph-root .cs-mini-link { --btn-bg: transparent; color: var(--ph-coral); font-weight: 800; font-size: 12px; padding: 0 2px; }
+.cs-empty { background: #fffaf3; border: 2px dashed #ecdcc6; border-radius: 18px; padding: 14px; color: var(--ph-dim); font-weight: 700; font-size: 14px; text-align: center; }
+
+/* cards */
+.cs-card { background: #fff; border-radius: 22px; padding: 14px; box-shadow: var(--ph-shadow); margin-bottom: 12px; }
+.cs-card.flat { box-shadow: inset 0 0 0 2px var(--ph-line); margin-bottom: 16px; }
+
+/* you */
+.cs-me { display: flex; gap: 14px; align-items: center; background: #fff; border-radius: 24px; padding: 12px 14px; box-shadow: var(--ph-shadow); margin-bottom: 16px; }
+.cs-me-n { font-family: var(--ph-head); font-weight: 600; font-size: 22px; line-height: 1.15; }
+.cs-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.cs-chips span { background: #fff0e6; color: #c24a2c; font-weight: 800; font-size: 12px; padding: 3px 9px; border-radius: 999px; }
+.cs-colors { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.ph-root .cs-colors button { aspect-ratio: 1; border-radius: 50%; box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.55), 0 4px 10px -6px rgba(0, 0, 0, 0.5); }
+.ph-root .cs-colors button.on { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ph-ink); }
+
+/* sliders */
+.cs-slider { margin: 4px 0 14px; }
+.cs-slider:last-child { margin-bottom: 4px; }
+.cs-slider-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
+.cs-slider-h b { font-size: 14.5px; }
+.cs-slider-v { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px; color: var(--ph-ink); }
+.cs-slider-v small { font-size: 12px; color: var(--ph-dim); font-weight: 700; }
+.cs-slider.auto .cs-range { opacity: 0.55; }
+.cs-slider-ends { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: var(--ph-dim); margin-top: 1px; }
+.cs-range { -webkit-appearance: none; appearance: none; width: 100%; height: 30px; background: transparent; margin: 0; touch-action: pan-y; }
+.cs-range::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; background: linear-gradient(90deg, #ffd2c2, #ffb08f); }
+.cs-range::-moz-range-track { height: 8px; border-radius: 999px; background: linear-gradient(90deg, #ffd2c2, #ffb08f); }
+.cs-range::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -9px; border-radius: 50%; background: #fff; border: 3px solid var(--ph-coral); box-shadow: 0 4px 10px -4px rgba(160, 50, 20, 0.6); }
+.cs-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--ph-coral); }
+
+/* folds */
+.cs-fold { background: #fff; border-radius: 20px; box-shadow: var(--ph-shadow); margin-bottom: 10px; overflow: hidden; }
+.ph-root .cs-fold-h { --btn-bg: #fff; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px; text-align: left; color: var(--ph-ink); }
+.ph-root .cs-fold-h:active:not(:disabled) { transform: none; }
+.cs-fold-h b { display: block; font-size: 15.5px; }
+.cs-fold-h span { display: block; font-size: 12.5px; color: var(--ph-dim); font-weight: 700; }
+.cs-fold-h svg { transition: transform 0.2s; color: var(--ph-dim); flex-shrink: 0; }
+.cs-fold.open .cs-fold-h svg { transform: rotate(90deg); }
+.cs-fold-b { padding: 0 14px 12px; }
+
+/* type */
+.cs-arch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.ph-root .cs-arch button { --btn-bg: #fff; text-align: left; padding: 11px 12px; border-radius: 18px; box-shadow: var(--ph-shadow); color: var(--ph-ink); display: flex; flex-direction: column; gap: 2px; }
+.cs-arch b { font-size: 15px; }
+.cs-arch span { font-size: 12.3px; color: var(--ph-dim); font-weight: 700; line-height: 1.3; }
+.ph-root .cs-arch button.on { --btn-bg: #fff0ea; box-shadow: inset 0 0 0 2.5px var(--ph-coral), var(--ph-shadow); }
+.cs-arch button.on b { color: #d4432c; }
+.cs-sum { background: linear-gradient(135deg, #2a2140, #43336a); color: #fff; border-radius: 22px; padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--ph-shadow); }
+.cs-sum-t { font-size: 11.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #ffb59f; margin-bottom: 4px; }
+.cs-sum p { font-weight: 700; font-size: 15px; line-height: 1.4; }
+.cs-sum-a { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.ph-root .cs-sum-a .ph-btn { padding: 10px 14px; font-size: 14px; }
+.ph-root .cs-sum .ph-link { color: #ffcab9; }
+
+/* sports */
+.cs-builds { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ph-root .cs-builds button { --btn-bg: var(--ph-bg); text-align: left; padding: 10px 11px; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--ph-line); color: var(--ph-ink); display: flex; flex-direction: column; gap: 2px; }
+.cs-builds b { font-size: 14.5px; }
+.cs-builds span { font-size: 11.8px; color: var(--ph-dim); font-weight: 700; line-height: 1.3; }
+.ph-root .cs-builds button.on { --btn-bg: #fff0ea; box-shadow: inset 0 0 0 2.5px var(--ph-coral); }
+.cs-sport.on { box-shadow: inset 0 0 0 2.5px #ffcbb9, var(--ph-shadow); }
+.cs-sport-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.cs-sport-h b { font-family: var(--ph-head); font-weight: 600; font-size: 19px; margin-right: 8px; }
+.cs-sport-h span { font-size: 12.5px; font-weight: 800; color: var(--ph-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+.cs-pos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 12px; }
+.ph-root .cs-pos button { --btn-bg: var(--ph-bg); padding: 8px 6px 7px; border-radius: 15px; box-shadow: inset 0 0 0 2px var(--ph-line); color: var(--ph-ink); display: flex; flex-direction: column; align-items: center; gap: 1px; text-align: center; }
+.cs-pos b { font-size: 16px; font-family: var(--ph-head); font-weight: 600; }
+.cs-pos span { font-size: 11px; color: var(--ph-dim); font-weight: 700; line-height: 1.2; }
+.cs-pos i { font-style: normal; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 999px; margin-top: 2px; }
+.cs-pos i.good { background: #d8f5e9; color: #11845f; }
+.cs-pos i.bad { background: #ffe3de; color: #c23b2a; }
+.ph-root .cs-pos button.on { --btn-bg: var(--ph-coral); box-shadow: 0 8px 16px -10px rgba(255, 90, 60, 0.9); }
+.cs-pos button.on b, .cs-pos button.on span { color: #fff; }
+
+/* family */
+.cs-styles { display: flex; flex-direction: column; gap: 7px; }
+.ph-root .cs-styles button { --btn-bg: var(--ph-bg); display: flex; align-items: baseline; gap: 10px; padding: 11px 13px; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--ph-line); color: var(--ph-ink); text-align: left; }
+.cs-styles b { font-size: 14.5px; min-width: 88px; }
+.cs-styles span { font-size: 13px; color: var(--ph-dim); font-weight: 700; }
+.ph-root .cs-styles button.on { --btn-bg: #fff0ea; box-shadow: inset 0 0 0 2.5px var(--ph-coral); }
+.cs-pet { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.cs-pet-art { display: flex; justify-content: center; background: radial-gradient(circle at 50% 70%, #ffe9d2, transparent 70%); border-radius: 20px; }
+.cs-coats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+.ph-root .cs-coats button { --btn-bg: var(--ph-bg); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px 7px; border-radius: 15px; box-shadow: inset 0 0 0 2px var(--ph-line); color: var(--ph-ink-2); font-size: 11.5px; font-weight: 800; }
+.ph-root .cs-coats button.on { --btn-bg: #fff0ea; box-shadow: inset 0 0 0 2.5px var(--ph-coral); color: #d4432c; }
+.cs-adds { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.ph-root .cs-adds button { --btn-bg: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 800; font-size: 14px; color: #d4432c; box-shadow: inset 0 0 0 2px #ffd3c4, var(--ph-shadow); }
+.cs-adds.big { display: grid; grid-template-columns: 1fr 1fr; margin-top: 0; }
+.ph-root .cs-adds.big button { border-radius: 18px; padding: 12px; display: flex; align-items: center; gap: 9px; color: var(--ph-ink); box-shadow: var(--ph-shadow); font-size: 15px; }
+.cs-add-i { font-size: 20px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #fff0e6; flex-shrink: 0; }
+
+/* review */
+.cs-problems { background: #ffe9e4; border-radius: 20px; padding: 12px 14px; margin-bottom: 12px; color: #a8321f; }
+.cs-problems > b { display: block; margin-bottom: 6px; }
+.ph-root .cs-problem { --btn-bg: #fff; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 14px; margin-top: 6px; text-align: left; color: #a8321f; font-weight: 700; font-size: 13.5px; }
+.cs-review { padding: 6px; }
+.ph-root .cs-rev-row { --btn-bg: transparent; width: 100%; display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 18px; text-align: left; color: var(--ph-ink); }
+.ph-root .cs-rev-row + .cs-rev-row { border-top: 1px solid var(--ph-line); border-radius: 0 0 18px 18px; }
+.cs-rev-row > div:last-child { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.cs-rev-row b { font-size: 16px; }
+.cs-rev-row span { font-size: 13px; color: var(--ph-dim); font-weight: 700; line-height: 1.35; }
+.cs-rev-i { width: 64px; height: 64px; flex-shrink: 0; border-radius: 50%; background: #fff0e6; display: grid; place-items: center; font-size: 28px; }
+.cs-what { background: #fff8e8; }
+.cs-what b { display: block; margin-bottom: 4px; }
+.cs-what p { color: var(--ph-ink-2); font-weight: 600; font-size: 14px; }
+
+/* editors (in a sheet) */
+.cs-ed { padding-bottom: 8px; }
+.cs-ed-top { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.cs-ed-top p { color: var(--ph-ink-2); font-weight: 700; font-size: 13.5px; line-height: 1.4; }
+.cs-typechips { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 6px; margin: 0 -2px; }
+.cs-typechips::-webkit-scrollbar { display: none; }
+.ph-root .cs-typechips button { --btn-bg: var(--ph-bg); flex-shrink: 0; padding: 9px 13px; border-radius: 999px; font-weight: 800; font-size: 13.5px; color: var(--ph-ink-2); box-shadow: inset 0 0 0 2px var(--ph-line); white-space: nowrap; }
+.ph-root .cs-typechips button.on { --btn-bg: var(--ph-coral); color: #fff; box-shadow: none; }
+.cs-rels { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.ph-root .cs-rels button { --btn-bg: var(--ph-bg); padding: 10px 11px; border-radius: 15px; font-weight: 800; font-size: 13.3px; color: var(--ph-ink-2); box-shadow: inset 0 0 0 2px var(--ph-line); text-align: left; line-height: 1.25; }
+.ph-root .cs-rels button.on { --btn-bg: #fff0ea; color: #d4432c; box-shadow: inset 0 0 0 2.5px var(--ph-coral); }
+.cs-ed-foot { margin-top: 18px; }
+.cs-ed .cs-fold { box-shadow: inset 0 0 0 2px var(--ph-line); }
+
+/* the look picker, light version */
+.ph-root .cs-look .lp-top { background: #fff; border: 0; box-shadow: var(--ph-shadow); border-radius: 22px; }
+.ph-root .cs-look .lp-status { color: var(--ph-ink-2); font-weight: 600; }
+.ph-root .cs-look .lp-h { color: var(--ph-dim); font-weight: 800; }
+.ph-root .cs-look .lp-row { grid-template-columns: repeat(4, 1fr); gap: 7px; }
+.ph-root .cs-look .lp-opt { --btn-bg: #fff; border: 0; box-shadow: inset 0 0 0 2px var(--ph-line); border-radius: 16px; }
+.ph-root .cs-look .lp-opt.on { --btn-bg: #fff0ea; box-shadow: inset 0 0 0 2.5px var(--ph-coral); }
+.ph-root .cs-look .lp-l { color: var(--ph-ink-2); font-weight: 700; }
+.ph-root .cs-look .lp-actions button { --btn-bg: var(--ph-bg); padding: 8px 12px; border-radius: 999px; font-weight: 800; font-size: 13px; color: var(--ph-ink); box-shadow: inset 0 0 0 2px var(--ph-line); }
+.cs-ed .cs-look .lp-top { box-shadow: inset 0 0 0 2px var(--ph-line); }
+
+@media (max-width: 360px) {
+  .cs-arch, .cs-rels, .cs-adds.big { grid-template-columns: 1fr; }
+  .cs-pos { grid-template-columns: repeat(2, 1fr); }
+}
+.ph-root .cs-seg.wrap button { flex: 0 1 auto; }

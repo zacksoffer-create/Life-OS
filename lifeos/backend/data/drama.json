@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "notes": "Drama and gossip. 'reasons' are why two friends fall out ({a_first}, {b_first}). 'open' starts a gossip text from a friend. Each scene's choices run a drama op (drama.py does what it says); 'say' lines are what happens, by outcome.",
+  "reasons": ["a screenshot from the group chat", "something {a_first} said about {b_first}'s ex", "who got invited to a party and who didn't",
+              "a bet over a game that got way too serious", "{a_first} bailing on plans, again", "a borrowed hoodie that never came back",
+              "something {b_first} posted", "who sits where at lunch", "{a_first} telling someone {b_first}'s secret"],
+  "open": ["did you hear", "ok you can't say anything but", "omg", "wait did you know", "not me hearing", "you're not gonna believe this"],
+  "scenes": {
+    "sides": {
+      "title": "{a_first} vs. {b_first}",
+      "text": ["{a_first} and {b_first} aren't speaking. It started with {reason}, and now both of them keep looking at you like you have to pick.",
+               "It's a whole thing: {a_first} and {b_first} blew up over {reason}. Each of them has texted you their side. Twice."],
+      "them": "a",
+      "choices": [
+        {"label": "Side with {a_first}.", "hint": "{b_first} won't love that", "fits": {"loyalty": 0.5}, "op": "side_a"},
+        {"label": "Side with {b_first}.", "hint": "{a_first} won't love that", "fits": {"loyalty": 0.5}, "op": "side_b"},
+        {"label": "Stay out of it.", "hint": "Switzerland", "fits": {"volatility": -0.6}, "op": "stay_out"},
+        {"label": "Get them in a room together.", "hint": "risky, could fix it", "fits": {"empathy": 0.8, "confidence": 0.4}, "op": "mediate"}
+      ]
+    },
+    "partner": {
+      "title": "{other_first}",
+      "text": ["People keep saying {other_first} is into {partner_first}. And {partner_first} doesn't exactly seem to hate it.",
+               "Third time this week you've seen {partner_first} laughing with {other_first}. Your friends have noticed too."],
+      "them": "other",
+      "choices": [
+        {"label": "Ask {partner_first} about it.", "hint": "straight up", "fits": {"confidence": 0.6}, "op": "ask_partner"},
+        {"label": "Make sure {other_first} knows {partner_first}'s taken.", "hint": "mark your territory", "fits": {"volatility": 0.6, "competitiveness": 0.4}, "op": "warn_other"},
+        {"label": "Let it go.", "hint": "trust it", "fits": {"volatility": -0.6}, "op": "let_go"}
+      ]
+    },
+    "crush_taken": {
+      "title": "{crush_first} and {other_first}",
+      "text": ["{crush_first} and {other_first} are officially a thing. It's all anyone's talking about. Great.",
+               "You find out the way everyone does: {crush_first} and {other_first}, holding hands by the lockers."],
+      "them": "crush",
+      "choices": [
+        {"label": "Be happy for them.", "hint": "the mature move", "fits": {"empathy": 0.6}, "op": "happy_for"},
+        {"label": "Tell {crush_first} how you feel anyway.", "hint": "big risk", "fits": {"confidence": 0.8, "impulsivity": 0.5}, "op": "confess"},
+        {"label": "Move on.", "hint": "for real this time", "fits": {"discipline": 0.4}, "op": "move_on"}
+      ]
+    },
+    "fallout": {
+      "title": "{them_first}",
+      "text": ["{them_first} hasn't said a word to you since {reason}. You used to talk every day.",
+               "{them_first} walks right past you in the hall. Ever since {reason}, it's been like this."],
+      "them": "them",
+      "choices": [
+        {"label": "Apologize.", "hint": "mean it", "fits": {"empathy": 0.7}, "op": "apologize"},
+        {"label": "Give it time.", "hint": "they'll come around (maybe)", "fits": {"volatility": -0.4}, "op": "give_time"},
+        {"label": "Write them off.", "hint": "their loss", "fits": {"volatility": 0.5, "loyalty": -0.5}, "op": "write_off"}
+      ]
+    },
+    "makeup": {
+      "title": "{them_first} wants to talk",
+      "text": ["{them_first} texted: \"hey. can we talk? i miss this.\"", "{them_first} catches you after class. \"Can we just... fix this?\""],
+      "them": "them",
+      "choices": [
+        {"label": "Hear them out.", "hint": "fix it", "fits": {"empathy": 0.6, "loyalty": 0.4}, "op": "hear_out"},
+        {"label": "Leave it.", "hint": "you're good", "fits": {"volatility": 0.4}, "op": "leave_it"}
+      ]
+    }
+  },
+  "say": {
+    "side_a": ["{a_first} is so relieved. {b_first} sees you two together at lunch and walks the other way."],
+    "side_b": ["{b_first} is so relieved. {a_first} sees you two together at lunch and walks the other way."],
+    "stay_out": ["Neither of them is thrilled, but neither of them is mad at you either. Mostly."],
+    "mediate_ok": ["It's awkward for ten minutes. Then {a_first} laughs at something {b_first} says, and it's over. You did that."],
+    "mediate_bad": ["It goes worse than before. Now they're both a little annoyed with you too."],
+    "ask_partner_ok": ["\"Seriously? It's nothing. It's you.\" {partner_first} means it. You can tell."],
+    "ask_partner_bad": ["{partner_first} gets defensive, fast. Too fast. Things are quiet between you for a while."],
+    "warn_other_ok": ["{other_first} gets the message. {partner_first} thinks it's kind of cute, actually."],
+    "warn_other_bad": ["{other_first} laughs it off. {partner_first} is embarrassed you did that."],
+    "let_go_ok": ["You let it go. A week later it's nothing, like it always was."],
+    "let_go_bad": ["You let it go. You'll hear about it later, though."],
+    "happy_for": ["It stings. You say congrats anyway, and {crush_first} looks like they really appreciate it."],
+    "confess_ok": ["{crush_first} goes quiet for a long time. Then: \"I think I've been with the wrong person.\" By Friday, everything's different."],
+    "confess_bad": ["{crush_first} looks at you like you've lost your mind. \"I'm with {other_first}. You know that.\" It gets around."],
+    "move_on": ["You mute {crush_first}'s stories. It helps more than you thought it would."],
+    "apologize_ok": ["{them_first} hears you out. \"Yeah. Me too.\" Just like that, you're good."],
+    "apologize_bad": ["\"Okay,\" {them_first} says, and walks away. Not yet, apparently."],
+    "give_time": ["You leave it alone. Maybe they'll come around."],
+    "write_off": ["Fine. Their loss. You stop looking for them in the hallway."],
+    "hear_out": ["You talk for an hour. It's like nothing ever happened. Okay, almost."],
+    "leave_it": ["You leave it on read. Some things don't need fixing."]
+  }
+}

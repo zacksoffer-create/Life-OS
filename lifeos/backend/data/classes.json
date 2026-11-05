@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "notes": "Your class schedule by grade. Each slot lists a standard class and an honors/AP version (taken when your academics are strong). subject = which trivia questions a quiz uses; math = which math course generates questions. Electives come from your interests. College years use the college list.",
+  "honors_bar": {"academic": 66, "gpa": 3.6},
+  "grades": {
+    "9": [
+      {"slot": "english", "std": ["English 9", "english"], "hon": ["Honors English 9", "english"]},
+      {"slot": "math", "std": ["Algebra I", "math", "algebra1"], "hon": ["Honors Geometry", "math", "geometry"]},
+      {"slot": "science", "std": ["Biology", "biology"], "hon": ["Honors Biology", "biology"]},
+      {"slot": "social", "std": ["World History", "world_history"], "hon": ["Honors World History", "world_history"]},
+      {"slot": "language", "std": ["Spanish I", "spanish"], "hon": ["Spanish II", "spanish"]},
+      {"slot": "health", "std": ["Health & PE", "health"], "hon": ["Health & PE", "health"]}
+    ],
+    "10": [
+      {"slot": "english", "std": ["English 10", "english"], "hon": ["Honors English 10", "english"]},
+      {"slot": "math", "std": ["Geometry", "math", "geometry"], "hon": ["Honors Algebra II", "math", "algebra2"]},
+      {"slot": "science", "std": ["Chemistry", "chemistry"], "hon": ["Honors Chemistry", "chemistry"]},
+      {"slot": "social", "std": ["Modern World History", "world_history"], "hon": ["AP World History", "world_history"]},
+      {"slot": "language", "std": ["Spanish II", "spanish"], "hon": ["Spanish III", "spanish"]},
+      {"slot": "health", "std": ["Physical Education", "health"], "hon": ["Physical Education", "health"]}
+    ],
+    "11": [
+      {"slot": "english", "std": ["American Literature", "english"], "hon": ["AP Language & Composition", "english"]},
+      {"slot": "math", "std": ["Algebra II", "math", "algebra2"], "hon": ["Honors Pre-Calculus", "math", "precalc"]},
+      {"slot": "science", "std": ["Physics", "physics"], "hon": ["AP Physics 1", "physics"]},
+      {"slot": "social", "std": ["U.S. History", "us_history"], "hon": ["AP U.S. History", "us_history"]},
+      {"slot": "language", "std": ["Spanish III", "spanish"], "hon": ["Spanish IV", "spanish"]}
+    ],
+    "12": [
+      {"slot": "english", "std": ["English 12", "english"], "hon": ["AP Literature", "english"]},
+      {"slot": "math", "std": ["Pre-Calculus", "math", "precalc"], "hon": ["AP Calculus AB", "math", "calculus"]},
+      {"slot": "science", "std": ["Environmental Science", "biology"], "hon": ["AP Biology", "biology"]},
+      {"slot": "social", "std": ["Civics & Economics", "government"], "hon": ["AP Government", "government"]},
+      {"slot": "language", "std": ["Psychology", "psychology"], "hon": ["AP Psychology", "psychology"]}
+    ],
+    "college": [
+      {"slot": "writing", "std": ["Writing Seminar", "english"], "hon": ["Writing Seminar", "english"]},
+      {"slot": "math", "std": ["Statistics", "math", "statistics"], "hon": ["Calculus I", "math", "calculus"]},
+      {"slot": "social", "std": ["Intro to Psychology", "psychology"], "hon": ["Intro to Psychology", "psychology"]},
+      {"slot": "econ", "std": ["Microeconomics", "economics"], "hon": ["Microeconomics", "economics"]}
+    ]
+  },
+  "electives": [
+    {"if": "art", "class": ["Studio Art", "art"]},
+    {"if": "music", "class": ["Concert Band", "music"]},
+    {"if": "drama", "class": ["Theater Arts", "english"]},
+    {"if": "tech", "class": ["Engineering & Design", "tech"]},
+    {"if": "writing", "class": ["Creative Writing", "english"]},
+    {"if": "fitness", "class": ["Strength & Conditioning", "health"]},
+    {"if": null, "class": ["Intro to Computer Science", "tech"]}
+  ]
+}

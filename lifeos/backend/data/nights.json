@@ -1,0 +1,266 @@
+{
+  "version": 1,
+  "notes": "Big nights: when you go to a party or a dance (or throw one), the night plays as a few short scenes built around who's actually there. nights.py picks the beats (an opening, two middles, an ending) and fills in the people: {host_first}, {friend_first}, {crush_first}, {date_first}, {partner_first}, {rival_first}, {them_first} (whoever the scene is about), {a_first} and {b_first} (two people about to fight), {secret} (a real crush someone tells you about), {other_first}, {event}, {n} (how many people came). A choice's 'did' is how it reads in the recap at the end of the night. Choices with 'requires' only show when those people are there.",
+  "beats": {
+    "arrive": {
+      "title": "{event}",
+      "them": "friend",
+      "text": ["{host_first}'s place is packed. Music's shaking the windows, {n} people at least. {friend_first} spots you from the kitchen and waves you over.",
+               "You can hear {host_first}'s party from the street. Inside: {n} people, a speaker way too big for the room, and {friend_first} yelling your name."],
+      "choices": [
+        {"label": "Go find {friend_first}.", "hint": "stick with your people", "fits": {"loyalty": 0.5},
+         "ops": [["rel", "friend", "affection", 2], ["rel_back", "friend", "affection", 3], ["need", "social", 6]], "did": "stuck with {friend_first}"},
+        {"label": "Work the room.", "hint": "meet people", "fits": {"sociability": 0.8, "confidence": 0.4},
+         "ops": [["night", "meet", 2]], "did": "worked the room"},
+        {"label": "Go looking for {crush_first}.", "hint": "you know why", "requires": ["crush"], "fits": {"confidence": 0.6},
+         "ops": [["night", "focus", "porch"], ["rel", "crush", "familiarity", 2]], "did": "went looking for {crush_first}"},
+        {"label": "Post up by the snacks and people-watch.", "hint": "low key", "fits": {"sociability": -0.6},
+         "ops": [["need", "fun", 3], ["night", "focus", "secret"]], "did": "people-watched"}
+      ]
+    },
+    "host": {
+      "title": "Your party",
+      "them": "friend",
+      "text": ["People start showing up at your place. {n} so far, and the doorbell keeps going. {friend_first} has already taken over the music.",
+               "Your house, your party. {n} people in, someone's already in the fridge, and {friend_first} is giving a tour you didn't ask for."],
+      "choices": [
+        {"label": "Play host. Greet everyone.", "hint": "everyone sees you", "fits": {"sociability": 0.7},
+         "ops": [["night", "meet", 2], ["rep", "host", 3]], "did": "played host"},
+        {"label": "Let {friend_first} run the door. Hang out.", "hint": "enjoy your own party", "fits": {"loyalty": 0.4},
+         "ops": [["rel", "friend", "affection", 2], ["rel_back", "friend", "affection", 3], ["need", "fun", 6]], "did": "hung out with {friend_first}"},
+        {"label": "Guard the living room furniture.", "hint": "somebody has to", "fits": {"discipline": 0.6},
+         "ops": [["need", "stress", 4], ["need", "fun", -2], ["say", "Nothing breaks. You have fun for roughly none of it."]], "did": "guarded the furniture"}
+      ]
+    },
+    "getready_date": {
+      "title": "{event}",
+      "text": ["{date_first} shows up at your door looking like a whole different person. Your family insists on photos. All of them.",
+               "It's {event} night. {date_first} is on your porch, and somebody in your family is already holding up a phone."],
+      "them": "date",
+      "choices": [
+        {"label": "Do all the photos.", "hint": "every pose", "fits": {"empathy": 0.5},
+         "ops": [["family", "affection", 2], ["rel_back", "date", "affection", 2], ["say", "Twenty photos later, you're out the door. Your mom will post at least six."]], "did": "did all the photos"},
+        {"label": "Tell {date_first} they look amazing.", "hint": "mean it", "fits": {"confidence": 0.6},
+         "ops": [["rel_back", "date", "attraction", 4], ["rel_back", "date", "affection", 3], ["rel", "date", "attraction", 2],
+                 ["say", "{date_first} actually blushes. Good start."]], "did": "told {date_first} they looked amazing"},
+        {"label": "Get out the door before it gets embarrassing.", "hint": "move", "fits": {"impulsivity": 0.5},
+         "ops": [["need", "fun", 3], ["say", "You grab {date_first}'s hand and bolt. Your family yells something about a curfew."]], "did": "made a run for it"}
+      ]
+    },
+    "getready_group": {
+      "title": "{event}",
+      "text": ["Everybody's getting ready at {friend_first}'s. Someone's ironing a shirt at the last second and the playlist is already too loud.",
+               "{event} night. The group's crammed into {friend_first}'s room, three people sharing one mirror."],
+      "them": "friend",
+      "choices": [
+        {"label": "Hype everyone up.", "hint": "be the energy", "fits": {"sociability": 0.6},
+         "ops": [["night", "crew", 2], ["need", "fun", 4]], "did": "hyped everyone up"},
+        {"label": "Take the group photo.", "hint": "for later", "fits": {"loyalty": 0.5},
+         "ops": [["night", "crew", 1], ["memory", "{event} with the group", 0.5, 40, ["friend"]], ["say", "Somebody blinked. It's still the best photo of the year."]], "did": "took the group photo"},
+        {"label": "Fix {friend_first}'s collar.", "hint": "they're a mess", "fits": {"empathy": 0.5},
+         "ops": [["rel_back", "friend", "affection", 3], ["say", "\"What would I do without you,\" {friend_first} says. A lot worse, probably."]], "did": "fixed {friend_first}'s collar"}
+      ]
+    },
+    "talk": {
+      "title": "Who do you end up with?",
+      "text": ["It's loud and everyone's everywhere. You end up next to…", "Half an hour in, you've got a drink in your hand and a choice of who to talk to."],
+      "dynamic": "people"
+    },
+    "game": {
+      "title": "Cups on the table",
+      "text": ["Somebody's set up cups on the ping-pong table. {them_first} points at you: \"You and me. Let's go.\"",
+               "The ping-pong table has become a cup table. {them_first} is undefeated and says so, loudly. They want you next."],
+      "them": "challenger",
+      "choices": [
+        {"label": "You're on.", "hint": "you play it", "fits": {"competitiveness": 0.8},
+         "ops": [["minigame", "cup_pong",
+                  {"great": [["mood", 4], ["need", "fun", 8], ["rep", "legend", 3], ["rel_back", "them", "respect", 6],
+                             ["say", "Last cup, no rim. The basement goes nuts. {them_first} wants a rematch immediately."], ["night", "did", "won at cups"]],
+                   "good": [["need", "fun", 6], ["rel_back", "them", "respect", 2], ["say", "Close game. {them_first} takes it on the last cup, but people saw."], ["night", "did", "almost beat {them_first} at cups"]],
+                   "miss": [["need", "fun", 5], ["mood", -1], ["say", "You don't hit one. Not one. People will talk about it, affectionately."], ["night", "did", "got destroyed at cups"]]},
+                  {"base": 0.5, "athletic": 0.3}]]},
+        {"label": "Be the ref.", "hint": "power", "fits": {"discipline": 0.4},
+         "ops": [["need", "fun", 4], ["need", "social", 4], ["say", "Every call you make is wrong, according to someone. You're having a great time."]], "did": "reffed cups"},
+        {"label": "Pass. Grab a snack.", "hint": "not tonight",
+         "ops": [["need", "fun", 2]], "did": "skipped cups"}
+      ]
+    },
+    "dancefloor": {
+      "title": "The dance-off",
+      "text": ["The gym's dark and loud. The DJ starts a dance-off circle, and {friend_first} shoves you toward it.",
+               "Somebody yells DANCE-OFF and a circle opens up in the middle of the floor. Everyone's looking at you."],
+      "them": "friend",
+      "choices": [
+        {"label": "Jump in the circle.", "hint": "you play it: hit the beat", "fits": {"confidence": 0.7, "sociability": 0.4},
+         "ops": [["minigame", "sweep",
+                  {"great": [["mood", 5], ["need", "fun", 8], ["night", "popular", 3], ["say", "You hit every beat. The circle loses it. Someone filmed it, and that's fine."], ["night", "did", "won the dance-off"]],
+                   "good": [["need", "fun", 6], ["night", "popular", 1], ["say", "Not bad at all. People cheer and the circle moves on."], ["night", "did", "held your own in the dance-off"]],
+                   "miss": [["need", "fun", 5], ["mood", -1], ["say", "You're completely off the beat. You commit anyway. Honestly? Respect."], ["night", "did", "went for it in the dance-off"]]},
+                  {"base": 0.5, "confidence": 0.3}]]},
+        {"label": "Hype up whoever's in it.", "hint": "be the crowd", "fits": {"empathy": 0.4},
+         "ops": [["need", "fun", 5], ["night", "crew", 1]], "did": "hyped up the dance-off"},
+        {"label": "Stay on the edge.", "hint": "safe", "fits": {"sociability": -0.5},
+         "ops": [["need", "fun", 2]], "did": "watched the dance-off"}
+      ]
+    },
+    "slow": {
+      "title": "Slow song",
+      "text": ["The lights drop. Slow song. Couples drift onto the floor and everyone else suddenly needs water.",
+               "The DJ slows it down. The whole gym rearranges itself in about four seconds."],
+      "choices": [
+        {"label": "Dance with {date_first}.", "hint": "the moment", "requires": ["date"],
+         "ops": [["night", "romance", "date", "slow"]], "did": "slow danced with {date_first}"},
+        {"label": "Ask {crush_first} to dance.", "hint": "now or never", "requires": ["crush"], "fits": {"confidence": 0.8},
+         "ops": [["night", "romance", "crush", "ask"]], "did": "asked {crush_first} to dance"},
+        {"label": "Sit this one out.", "hint": "not tonight",
+         "ops": [["need", "fun", 1], ["say", "You and a few others hold down the bleachers. It's fine. It's fine."]], "did": "sat out the slow song"}
+      ]
+    },
+    "porch": {
+      "title": "Out on the porch",
+      "text": ["{crush_first} is out on the porch by themselves, scrolling their phone.",
+               "You step outside for air. {crush_first} is already out there, sitting on the steps."],
+      "them": "crush",
+      "choices": [
+        {"label": "Go sit with them.", "hint": "just talk", "fits": {"confidence": 0.7},
+         "ops": [["night", "romance", "crush", "porch"]], "did": "sat with {crush_first} on the porch"},
+        {"label": "Text them from inside.", "hint": "smooth, kind of", "fits": {"confidence": -0.3},
+         "ops": [["rel_back", "crush", "affection", 2], ["text", "crush", ["lol are you hiding out there", "saw you leave. you good?"]],
+                 ["say", "You watch {crush_first} read it and smile. Then look around for you."]], "did": "texted {crush_first} from inside"},
+        {"label": "Leave it.", "hint": "not tonight",
+         "ops": [["need", "stress", 2]], "did": "left {crush_first} alone"}
+      ]
+    },
+    "fight": {
+      "title": "It's about to go down",
+      "text": ["{a_first} and {b_first} are squaring up by the pool table. People are already pulling out phones.",
+               "Voices get loud in the kitchen. {a_first} shoves {b_first}, and the whole party turns around."],
+      "them": "a",
+      "choices": [
+        {"label": "Step in.", "hint": "risky", "fits": {"confidence": 0.6, "empathy": 0.5},
+         "ops": [["chance", {"base": 0.55, "confidence": 0.3, "athletic": 0.2},
+                  [["rel_back", "a", "respect", 6], ["rel_back", "b", "respect", 6], ["rep", "kind", 3],
+                   ["say", "You get between them and somehow it works. Half the party saw you do it."], ["night", "did", "broke up a fight"]],
+                  [["mood", -3], ["need", "stress", 6], ["rel_back", "a", "affection", -3],
+                   ["say", "{a_first} shoves you out of the way. Nobody's hurt, but your pride is."], ["night", "did", "got shoved trying to stop a fight"]]]]},
+        {"label": "Film it.", "hint": "content", "fits": {"impulsivity": 0.5, "empathy": -0.5},
+         "ops": [["rel_back", "a", "affection", -4], ["rel_back", "b", "affection", -4], ["rep", "gossip", 2], ["night", "popular", 1],
+                 ["say", "Your video is in every group chat by midnight. {a_first} and {b_first} are not fans."]], "did": "filmed a fight"},
+        {"label": "Get out of the way.", "hint": "not your problem",
+         "ops": [["say", "You and {friend_first} end up on the stairs with a perfect view and zero involvement."]], "did": "watched a fight from the stairs"}
+      ]
+    },
+    "beef": {
+      "title": "{rival_first}",
+      "text": ["{rival_first} bumps you on purpose on the way past. \"Watch where you're going.\"",
+               "{rival_first} is here. Of course {rival_first} is here. They make a comment loud enough for you to hear."],
+      "them": "rival",
+      "choices": [
+        {"label": "Laugh it off.", "hint": "you're above it", "fits": {"confidence": 0.5, "volatility": -0.6},
+         "ops": [["rel_back", "rival", "respect", 3], ["night", "popular", 1], ["say", "You laugh. People around you laugh. {rival_first} hates that more than anything."]], "did": "laughed off {rival_first}"},
+        {"label": "Get in their face.", "hint": "escalate", "fits": {"volatility": 0.8, "competitiveness": 0.4},
+         "ops": [["chance", {"base": 0.5, "confidence": 0.3, "athletic": 0.2},
+                  [["rel", "rival", "rivalry", 6], ["rel_back", "rival", "respect", 5], ["rep", "tough", 3],
+                   ["say", "{rival_first} backs down first. Everybody saw."], ["night", "did", "stared down {rival_first}"]],
+                  [["rel", "rival", "rivalry", 8], ["rel", "rival", "affection", -6], ["mood", -3], ["night", "trouble", "getting into it at a party"],
+                   ["say", "It gets loud, then physical, then somebody's parent is on the phone."], ["night", "did", "got into it with {rival_first}"]]]]},
+        {"label": "Walk away.", "hint": "not worth it",
+         "ops": [["need", "stress", 2]], "did": "walked away from {rival_first}"}
+      ]
+    },
+    "secret": {
+      "title": "You can't say anything",
+      "text": ["{them_first} pulls you into the hallway. \"Okay. You can't say anything. {secret}\"",
+               "{them_first} leans in way too close. \"Swear you won't tell. {secret}\""],
+      "them": "gossip",
+      "choices": [
+        {"label": "Keep it to yourself.", "hint": "be trustworthy", "fits": {"loyalty": 0.6},
+         "ops": [["rel_back", "gossip", "trust", 5], ["night", "secret", "keep"]], "did": "kept a secret"},
+        {"label": "Tell {friend_first}.", "hint": "it's too good", "fits": {"impulsivity": 0.5, "loyalty": -0.4},
+         "ops": [["rel_back", "gossip", "trust", -6], ["rel_back", "friend", "affection", 2], ["night", "secret", "spread"]], "did": "spread a secret"},
+        {"label": "\"Who else knows?\"", "hint": "dig", "fits": {"curiosity": 0.6},
+         "ops": [["need", "fun", 3], ["night", "secret", "dig"]], "did": "dug for gossip"}
+      ]
+    },
+    "jealous": {
+      "title": "{partner_first}",
+      "text": ["{partner_first} has been talking to {other_first} by the speaker for a while now. Like, a while.",
+               "Every time you look over, {partner_first} is laughing at something {other_first} said."],
+      "them": "partner",
+      "choices": [
+        {"label": "Go over and join them.", "hint": "easy", "fits": {"confidence": 0.5},
+         "ops": [["night", "jealous", "join"]], "did": "joined {partner_first} and {other_first}"},
+        {"label": "Trust it. Do your thing.", "hint": "be cool", "fits": {"volatility": -0.6},
+         "ops": [["night", "jealous", "trust"]], "did": "trusted {partner_first}"},
+        {"label": "Pull {partner_first} aside.", "hint": "say something", "fits": {"volatility": 0.6},
+         "ops": [["night", "jealous", "confront"]], "did": "pulled {partner_first} aside"}
+      ]
+    },
+    "busted": {
+      "title": "Cops",
+      "text": ["Somebody yells from the front window: \"COPS!\" The music cuts and everyone moves at once.",
+               "Red and blue lights through the curtains. Forty people try to leave through one back door."],
+      "them": "host",
+      "choices": [
+        {"label": "Bolt out the back.", "hint": "run", "fits": {"impulsivity": 0.6},
+         "ops": [["chance", {"base": 0.65, "athletic": 0.3},
+                  [["need", "fun", 4], ["say", "Over the fence, through two backyards, home free. Your heart doesn't slow down until you're in bed."], ["night", "did", "escaped the bust"]],
+                  [["need", "stress", 8], ["night", "trouble", "being at a party the cops broke up"], ["say", "You get caught on the fence. An officer takes your name. Your parents will hear about this."], ["night", "did", "got caught in the bust"]]]]},
+        {"label": "Stay calm. Act normal.", "hint": "it's fine", "fits": {"discipline": 0.6},
+         "ops": [["chance", {"base": 0.5, "discipline": 0.3},
+                  [["say", "You stand there looking extremely innocent. It works."], ["night", "did", "talked your way out of the bust"]],
+                  [["need", "stress", 6], ["night", "trouble", "being at a party the cops broke up"], ["say", "Your parents get a call. Acting normal wasn't the move."], ["night", "did", "got caught in the bust"]]]]},
+        {"label": "Help {host_first} hide everything.", "hint": "loyal", "requires": ["host"], "fits": {"loyalty": 0.7},
+         "ops": [["rel_back", "host", "affection", 6], ["rel_back", "host", "trust", 6],
+                 ["chance", {"base": 0.45, "discipline": 0.2}, [["say", "You and {host_first} get everything hidden in four minutes flat. {host_first} owes you forever."]],
+                  [["night", "trouble", "being at a party the cops broke up"], ["say", "You're still holding a trash bag when they walk in. {host_first} owes you forever, for what it's worth."]]],
+                 ["night", "did", "helped {host_first} through the bust"]]}
+      ]
+    },
+    "end": {
+      "title": "End of the night",
+      "text": ["It's late. Phones are dying and the place is thinning out. Some people are heading to {after_first}'s.",
+               "Last song. Lights on. Somebody's already planning the after-party at {after_first}'s."],
+      "choices": [
+        {"label": "Go to the after-party.", "hint": "the night's not over", "fits": {"impulsivity": 0.6, "sociability": 0.4},
+         "ops": [["need", "fun", 8], ["need", "energy", -10], ["night", "curfew"]], "did": "hit the after-party"},
+        {"label": "Get a ride home with {friend_first}.", "hint": "talk the whole way", "fits": {"loyalty": 0.5},
+         "ops": [["rel", "friend", "affection", 2], ["rel_back", "friend", "affection", 3], ["say", "You and {friend_first} sit in the driveway for twenty minutes replaying the whole night."]], "did": "rode home with {friend_first}"},
+        {"label": "Walk {crush_first} home.", "hint": "the long way", "requires": ["crush"], "fits": {"confidence": 0.6},
+         "ops": [["night", "romance", "crush", "walk"]], "did": "walked {crush_first} home"},
+        {"label": "Walk {date_first} to the door.", "hint": "end it right", "requires": ["date"],
+         "ops": [["night", "romance", "date", "door"]], "did": "walked {date_first} to the door"},
+        {"label": "Head home and crash.", "hint": "sleep", "fits": {"discipline": 0.5},
+         "ops": [["need", "energy", 4]], "did": "headed home"}
+      ]
+    }
+  },
+  "romance": {
+    "porch": {
+      "great": ["You end up talking for an hour about everything. Then {them_first} leans in, and you're kissing on {host_first}'s porch steps."],
+      "good": ["Somehow an hour goes by. When you finally go back inside, people definitely noticed you two were gone."],
+      "bad": ["It's awkward. You both look at your phones. {them_first} says they should find their friends."]
+    },
+    "ask": {
+      "great": ["{them_first} takes your hand before you finish asking. Halfway through the song, they lean in and kiss you."],
+      "good": ["\"Yeah, okay,\" {them_first} says, smiling. You dance. Your hands don't know where to go. It's perfect."],
+      "bad": ["\"Oh, um. I'm good, thanks.\" {them_first} heads back to their friends. You walk very calmly to the water fountain."]
+    },
+    "slow": {
+      "great": ["The song ends and neither of you lets go. {them_first} kisses you right there in the middle of the gym."],
+      "good": ["{them_first} rests their head on your shoulder for the whole song. You'll think about it all week."],
+      "bad": ["You step on {them_first}'s foot. Twice. They laugh it off, mostly."]
+    },
+    "walk": {
+      "great": ["You take the long way. At {them_first}'s door, they kiss you goodnight and go inside grinning."],
+      "good": ["The long way home, talking about nothing. \"Text me when you're home,\" {them_first} says."],
+      "bad": ["The walk is mostly quiet. \"Thanks,\" {them_first} says at the door. Just thanks."]
+    },
+    "door": {
+      "great": ["At the door, {them_first} kisses you goodnight. You walk back to the car like you're floating."],
+      "good": ["\"Tonight was really fun,\" {them_first} says, and hugs you for a long time."],
+      "bad": ["A quick hug and they're inside. Something felt off tonight."]
+    }
+  },
+  "recap": "Your night: {list}."
+}

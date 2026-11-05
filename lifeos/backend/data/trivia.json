@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "notes": "Trivia for class quizzes and trivia games. Each question: q (question), a (the right answer), w (three wrong answers), g (lowest grade it fits: 9-12, or 13 for college). Math is generated in trivia.py by course. Dialogue packs can add more under a 'trivia' section.",
+  "subjects": {
+    "english": "English", "math": "Math", "biology": "Biology", "chemistry": "Chemistry", "physics": "Physics",
+    "us_history": "U.S. History", "world_history": "World History", "government": "Government", "spanish": "Spanish",
+    "health": "Health", "art": "Art", "music": "Music", "tech": "Technology", "psychology": "Psychology",
+    "economics": "Economics", "general": "General"
+  },
+  "questions": {
+    "english": [
+      {"q": "Who wrote 'Romeo and Juliet'?", "a": "William Shakespeare", "w": ["Charles Dickens", "Mark Twain", "Jane Austen"], "g": 9},
+      {"q": "In 'To Kill a Mockingbird', who is Scout's father?", "a": "Atticus Finch", "w": ["Boo Radley", "Tom Robinson", "Jem Finch"], "g": 9},
+      {"q": "Which of these words is a conjunction?", "a": "because", "w": ["quickly", "happy", "under"], "g": 9},
+      {"q": "What is the syllable pattern of a haiku?", "a": "5-7-5", "w": ["7-5-7", "5-5-5", "4-6-4"], "g": 9},
+      {"q": "\"The wind whispered through the trees\" is an example of...", "a": "Personification", "w": ["A simile", "Alliteration", "Hyperbole"], "g": 9},
+      {"q": "Which of these is a simile?", "a": "\"Fast as lightning\"", "w": ["\"Time is a thief\"", "\"The car groaned\"", "\"Buzz went the bee\""], "g": 9},
+      {"q": "What is the protagonist of a story?", "a": "The main character", "w": ["The villain", "The narrator's friend", "The setting"], "g": 9},
+      {"q": "Which sentence is correct?", "a": "They're going to their house.", "w": ["Their going to there house.", "There going to they're house.", "They're going to there house."], "g": 9},
+      {"q": "What is the climax of a story?", "a": "The turning point, where tension peaks", "w": ["The opening scene", "The list of characters", "The last sentence"], "g": 9},
+      {"q": "In 'Lord of the Flies', what object gives a boy the right to speak?", "a": "The conch shell", "w": ["Piggy's glasses", "A spear", "A drum"], "g": 9},
+      {"q": "In 'Of Mice and Men', who is Lennie's friend and traveling partner?", "a": "George", "w": ["Curley", "Slim", "Candy"], "g": 10},
+      {"q": "Who wrote '1984'?", "a": "George Orwell", "w": ["Aldous Huxley", "Ray Bradbury", "H. G. Wells"], "g": 10},
+      {"q": "How many lines does a sonnet have?", "a": "14", "w": ["10", "12", "16"], "g": 10},
+      {"q": "Who wrote 'The Great Gatsby'?", "a": "F. Scott Fitzgerald", "w": ["Ernest Hemingway", "John Steinbeck", "J. D. Salinger"], "g": 11},
+      {"q": "Who narrates 'The Catcher in the Rye'?", "a": "Holden Caulfield", "w": ["Nick Carraway", "Huck Finn", "Pip"], "g": 11},
+      {"q": "'The Crucible' is set during...", "a": "The Salem witch trials", "w": ["The Civil War", "The Gold Rush", "The Boston Tea Party"], "g": 11},
+      {"q": "Who wrote 'Pride and Prejudice'?", "a": "Jane Austen", "w": ["Charlotte Brontë", "Emily Dickinson", "Virginia Woolf"], "g": 12},
+      {"q": "Shakespeare's 'Hamlet' is set in which country?", "a": "Denmark", "w": ["England", "Italy", "Scotland"], "g": 12}
+    ],
+    "biology": [
+      {"q": "Which organelle is called the powerhouse of the cell?", "a": "Mitochondria", "w": ["Nucleus", "Ribosome", "Golgi apparatus"], "g": 9},
+      {"q": "Which molecule carries the genetic code in your cells?", "a": "DNA", "w": ["ATP", "Glucose", "Cellulose"], "g": 9},
+      {"q": "Plants make their own food through...", "a": "Photosynthesis", "w": ["Fermentation", "Digestion", "Osmosis"], "g": 9},
+      {"q": "Which organelle is found in plant cells but not animal cells?", "a": "Chloroplast", "w": ["Mitochondrion", "Ribosome", "Nucleus"], "g": 9},
+      {"q": "How many chromosomes do humans normally have?", "a": "46", "w": ["23", "44", "48"], "g": 9},
+      {"q": "Which blood cells fight infection?", "a": "White blood cells", "w": ["Red blood cells", "Platelets", "Plasma"], "g": 9},
+      {"q": "Cell division that makes two identical cells is called...", "a": "Mitosis", "w": ["Meiosis", "Osmosis", "Mutation"], "g": 9},
+      {"q": "Who proposed the theory of evolution by natural selection?", "a": "Charles Darwin", "w": ["Gregor Mendel", "Louis Pasteur", "Isaac Newton"], "g": 9},
+      {"q": "Which gas do plants take in for photosynthesis?", "a": "Carbon dioxide", "w": ["Oxygen", "Nitrogen", "Helium"], "g": 9},
+      {"q": "What is the largest organ of the human body?", "a": "Skin", "w": ["Liver", "Brain", "Lungs"], "g": 9},
+      {"q": "Water moving across a membrane is called...", "a": "Osmosis", "w": ["Mitosis", "Photosynthesis", "Respiration"], "g": 9},
+      {"q": "Mushrooms belong to which kingdom?", "a": "Fungi", "w": ["Plants", "Animals", "Protists"], "g": 9},
+      {"q": "Which four bases make up DNA?", "a": "A, T, C, G", "w": ["A, U, C, G", "A, T, C, U", "A, B, C, D"], "g": 10},
+      {"q": "Which organ makes insulin?", "a": "Pancreas", "w": ["Liver", "Kidney", "Stomach"], "g": 10},
+      {"q": "Who is called the father of genetics for his work with pea plants?", "a": "Gregor Mendel", "w": ["Charles Darwin", "Robert Hooke", "James Watson"], "g": 10},
+      {"q": "Where are proteins made in the cell?", "a": "Ribosomes", "w": ["Mitochondria", "Lysosomes", "Vacuoles"], "g": 10},
+      {"q": "An organism with two identical alleles for a trait is...", "a": "Homozygous", "w": ["Heterozygous", "Recessive", "Mutated"], "g": 10}
+    ],
+    "chemistry": [
+      {"q": "What is H2O?", "a": "Water", "w": ["Hydrogen peroxide", "Salt", "Oxygen gas"], "g": 9},
+      {"q": "Which particle has a negative charge?", "a": "Electron", "w": ["Proton", "Neutron", "Nucleus"], "g": 9},
+      {"q": "What is the chemical symbol for gold?", "a": "Au", "w": ["Ag", "Gd", "Go"], "g": 10},
+      {"q": "What is the atomic number of carbon?", "a": "6", "w": ["12", "8", "14"], "g": 10},
+      {"q": "A substance with a pH of 2 is...", "a": "Acidic", "w": ["Basic", "Neutral", "A metal"], "g": 10},
+      {"q": "What is NaCl commonly called?", "a": "Table salt", "w": ["Baking soda", "Bleach", "Sugar"], "g": 10},
+      {"q": "Which gas makes up most of Earth's atmosphere?", "a": "Nitrogen", "w": ["Oxygen", "Carbon dioxide", "Argon"], "g": 10},
+      {"q": "Who published the first widely used periodic table, in 1869?", "a": "Dmitri Mendeleev", "w": ["Marie Curie", "John Dalton", "Niels Bohr"], "g": 10},
+      {"q": "What is the chemical symbol for sodium?", "a": "Na", "w": ["So", "S", "Sd"], "g": 10},
+      {"q": "A bond where atoms share electrons is...", "a": "Covalent", "w": ["Ionic", "Metallic", "Magnetic"], "g": 10},
+      {"q": "What is the pH of pure water?", "a": "7", "w": ["0", "14", "1"], "g": 10},
+      {"q": "Which of these is a noble gas?", "a": "Neon", "w": ["Oxygen", "Nitrogen", "Chlorine"], "g": 10},
+      {"q": "What is the most abundant element in the universe?", "a": "Hydrogen", "w": ["Helium", "Oxygen", "Carbon"], "g": 10},
+      {"q": "Avogadro's number is about...", "a": "6.02 × 10²³", "w": ["3.00 × 10⁸", "9.81", "1.6 × 10⁻¹⁹"], "g": 11}
+    ],
+    "physics": [
+      {"q": "A car goes 60 miles in 1 hour. What is its average speed?", "a": "60 mph", "w": ["30 mph", "120 mph", "1 mph"], "g": 9},
+      {"q": "What is the SI unit of force?", "a": "Newton", "w": ["Joule", "Watt", "Pascal"], "g": 11},
+      {"q": "Acceleration due to gravity on Earth is about...", "a": "9.8 m/s²", "w": ["3.0 m/s²", "98 m/s²", "1.6 m/s²"], "g": 11},
+      {"q": "F = ma is Newton's ___ law.", "a": "Second", "w": ["First", "Third", "Fourth"], "g": 11},
+      {"q": "\"For every action there is an equal and opposite reaction\" is Newton's ___ law.", "a": "Third", "w": ["First", "Second", "Fourth"], "g": 11},
+      {"q": "The speed of light in a vacuum is about...", "a": "300,000 km/s", "w": ["300 km/s", "3,000 km/s", "30,000,000 km/s"], "g": 11},
+      {"q": "The energy of motion is called...", "a": "Kinetic energy", "w": ["Potential energy", "Inertia", "Friction"], "g": 11},
+      {"q": "What is the unit of electrical resistance?", "a": "Ohm", "w": ["Volt", "Ampere", "Watt"], "g": 11},
+      {"q": "Which color of visible light has the longest wavelength?", "a": "Red", "w": ["Blue", "Violet", "Green"], "g": 11},
+      {"q": "Work is measured in...", "a": "Joules", "w": ["Newtons", "Watts", "Meters"], "g": 11},
+      {"q": "Sound travels fastest through...", "a": "Steel", "w": ["Water", "Air", "A vacuum"], "g": 11},
+      {"q": "Power equals work divided by...", "a": "Time", "w": ["Mass", "Distance", "Force"], "g": 11},
+      {"q": "Who developed the theory of relativity?", "a": "Albert Einstein", "w": ["Isaac Newton", "Galileo Galilei", "Nikola Tesla"], "g": 11}
+    ],
+    "us_history": [
+      {"q": "Who was the first president of the United States?", "a": "George Washington", "w": ["Thomas Jefferson", "John Adams", "Benjamin Franklin"], "g": 9},
+      {"q": "Which war was fought between the North and the South?", "a": "The Civil War", "w": ["The Revolutionary War", "The War of 1812", "The Spanish-American War"], "g": 9},
+      {"q": "Connecticut was one of the original ___ colonies.", "a": "13", "w": ["10", "15", "50"], "g": 9},
+      {"q": "Who made the first successful powered airplane flight, in 1903?", "a": "The Wright brothers", "w": ["Charles Lindbergh", "Amelia Earhart", "Henry Ford"], "g": 9},
+      {"q": "In what year was the Declaration of Independence adopted?", "a": "1776", "w": ["1789", "1812", "1492"], "g": 10},
+      {"q": "Who wrote most of the Declaration of Independence?", "a": "Thomas Jefferson", "w": ["George Washington", "John Adams", "James Madison"], "g": 11},
+      {"q": "The first ten amendments to the Constitution are called...", "a": "The Bill of Rights", "w": ["The Federalist Papers", "The Articles of Confederation", "The Emancipation Proclamation"], "g": 11},
+      {"q": "Who gave the \"I Have a Dream\" speech?", "a": "Martin Luther King Jr.", "w": ["Malcolm X", "John F. Kennedy", "Frederick Douglass"], "g": 11},
+      {"q": "Which president issued the Emancipation Proclamation?", "a": "Abraham Lincoln", "w": ["Andrew Johnson", "Ulysses S. Grant", "James Buchanan"], "g": 11},
+      {"q": "The United States bought the Louisiana Territory from...", "a": "France", "w": ["Spain", "Britain", "Mexico"], "g": 11},
+      {"q": "In what year did the United States enter World War II?", "a": "1941", "w": ["1939", "1945", "1917"], "g": 11},
+      {"q": "Which amendment gave women the right to vote?", "a": "The 19th", "w": ["The 1st", "The 13th", "The 26th"], "g": 11},
+      {"q": "Who was president during the New Deal?", "a": "Franklin D. Roosevelt", "w": ["Herbert Hoover", "Harry Truman", "Woodrow Wilson"], "g": 11},
+      {"q": "In which city was the U.S. Constitution written?", "a": "Philadelphia", "w": ["Boston", "New York", "Washington, D.C."], "g": 11}
+    ],
+    "world_history": [
+      {"q": "Which ancient civilization built the pyramids of Giza?", "a": "The Egyptians", "w": ["The Romans", "The Greeks", "The Persians"], "g": 9},
+      {"q": "The Great Wall was built in...", "a": "China", "w": ["Japan", "India", "Korea"], "g": 9},
+      {"q": "Democracy first developed in ancient...", "a": "Athens", "w": ["Sparta", "Rome", "Babylon"], "g": 9},
+      {"q": "Who was the first emperor of Rome?", "a": "Augustus", "w": ["Julius Caesar", "Nero", "Constantine"], "g": 10},
+      {"q": "The Renaissance began in...", "a": "Italy", "w": ["France", "England", "Spain"], "g": 10},
+      {"q": "In what year was the Magna Carta sealed?", "a": "1215", "w": ["1066", "1492", "1776"], "g": 10},
+      {"q": "Who was crowned Emperor of the French in 1804?", "a": "Napoleon Bonaparte", "w": ["Louis XIV", "Charlemagne", "Robespierre"], "g": 10},
+      {"q": "World War I began in...", "a": "1914", "w": ["1918", "1939", "1905"], "g": 10},
+      {"q": "The Berlin Wall fell in...", "a": "1989", "w": ["1961", "1975", "1991"], "g": 10}
+    ],
+    "government": [
+      {"q": "What is the capital of Connecticut?", "a": "Hartford", "w": ["New Haven", "Bridgeport", "Stamford"], "g": 9},
+      {"q": "How many U.S. senators does each state have?", "a": "2", "w": ["1", "4", "It depends on population"], "g": 12},
+      {"q": "How many justices sit on the U.S. Supreme Court?", "a": "9", "w": ["7", "11", "12"], "g": 12},
+      {"q": "What are the three branches of the U.S. government?", "a": "Legislative, executive, judicial", "w": ["Federal, state, local", "House, Senate, President", "Army, Navy, Air Force"], "g": 12},
+      {"q": "How long is a U.S. president's term?", "a": "4 years", "w": ["2 years", "6 years", "8 years"], "g": 12},
+      {"q": "What is the minimum voting age in the United States?", "a": "18", "w": ["16", "21", "25"], "g": 12},
+      {"q": "Congress is made up of the Senate and the...", "a": "House of Representatives", "w": ["Supreme Court", "Cabinet", "Electoral College"], "g": 12},
+      {"q": "Which amendment protects freedom of speech?", "a": "The First", "w": ["The Second", "The Fifth", "The Tenth"], "g": 12},
+      {"q": "How many voting members are in the House of Representatives?", "a": "435", "w": ["100", "538", "50"], "g": 12}
+    ],
+    "spanish": [
+      {"q": "What does 'hola' mean?", "a": "Hello", "w": ["Goodbye", "Thank you", "Please"], "g": 9},
+      {"q": "How do you say 'thank you' in Spanish?", "a": "Gracias", "w": ["Por favor", "De nada", "Lo siento"], "g": 9},
+      {"q": "What does 'biblioteca' mean?", "a": "Library", "w": ["Bookstore", "Bible", "Bakery"], "g": 9},
+      {"q": "What is 'rojo' in English?", "a": "Red", "w": ["Blue", "Green", "Yellow"], "g": 9},
+      {"q": "'¿Cómo te llamas?' asks...", "a": "What's your name?", "w": ["How are you?", "Where are you from?", "How old are you?"], "g": 9},
+      {"q": "What does 'perro' mean?", "a": "Dog", "w": ["Cat", "Bird", "Horse"], "g": 9},
+      {"q": "'Me gusta el fútbol' means...", "a": "I like soccer", "w": ["I play soccer", "I hate soccer", "I watch soccer"], "g": 9},
+      {"q": "Which word means 'Wednesday'?", "a": "Miércoles", "w": ["Martes", "Jueves", "Viernes"], "g": 10},
+      {"q": "'Tengo hambre' means...", "a": "I'm hungry", "w": ["I'm thirsty", "I'm tired", "I'm cold"], "g": 10},
+      {"q": "Which verb do you use for where something is located?", "a": "Estar", "w": ["Ser", "Tener", "Ir"], "g": 10},
+      {"q": "Conjugate 'hablar' for 'nosotros' (present tense).", "a": "Hablamos", "w": ["Hablan", "Hablo", "Hablas"], "g": 10},
+      {"q": "Besides 'tomorrow', 'mañana' can also mean...", "a": "Morning", "w": ["Night", "Afternoon", "Yesterday"], "g": 10},
+      {"q": "What number is 'cincuenta'?", "a": "50", "w": ["15", "500", "5"], "g": 10}
+    ],
+    "health": [
+      {"q": "How much sleep do teenagers need a night, according to most experts?", "a": "8 to 10 hours", "w": ["4 to 5 hours", "6 hours", "12 to 14 hours"], "g": 9},
+      {"q": "What does CPR stand for?", "a": "Cardiopulmonary resuscitation", "w": ["Cardiac pulse recovery", "Central pressure release", "Critical patient response"], "g": 9},
+      {"q": "Which nutrient is the body's main source of energy?", "a": "Carbohydrates", "w": ["Vitamins", "Minerals", "Water"], "g": 9},
+      {"q": "A normal resting heart rate for adults is about...", "a": "60 to 100 beats per minute", "w": ["20 to 40", "120 to 160", "Over 200"], "g": 9},
+      {"q": "Which vitamin does your skin make from sunlight?", "a": "Vitamin D", "w": ["Vitamin C", "Vitamin A", "Vitamin B12"], "g": 9}
+    ],
+    "art": [
+      {"q": "Who painted the Mona Lisa?", "a": "Leonardo da Vinci", "w": ["Michelangelo", "Vincent van Gogh", "Pablo Picasso"], "g": 9},
+      {"q": "Mixing blue and yellow paint makes...", "a": "Green", "w": ["Purple", "Orange", "Brown"], "g": 9},
+      {"q": "The traditional primary colors in painting are...", "a": "Red, yellow and blue", "w": ["Orange, green and purple", "Black, white and gray", "Pink, teal and gold"], "g": 9},
+      {"q": "Who painted 'The Starry Night'?", "a": "Vincent van Gogh", "w": ["Claude Monet", "Salvador Dalí", "Rembrandt"], "g": 9}
+    ],
+    "music": [
+      {"q": "How many lines are in a musical staff?", "a": "5", "w": ["4", "6", "7"], "g": 9},
+      {"q": "In music, 'forte' means...", "a": "Loud", "w": ["Soft", "Fast", "Slow"], "g": 9},
+      {"q": "In 4/4 time, how many beats does a quarter note get?", "a": "1", "w": ["2", "4", "1/2"], "g": 9},
+      {"q": "Who composed the 'Moonlight Sonata'?", "a": "Ludwig van Beethoven", "w": ["Wolfgang Amadeus Mozart", "Johann Sebastian Bach", "Frédéric Chopin"], "g": 10}
+    ],
+    "tech": [
+      {"q": "What does CPU stand for?", "a": "Central processing unit", "w": ["Computer power unit", "Central program utility", "Core processing usage"], "g": 9},
+      {"q": "HTML is used to...", "a": "Structure web pages", "w": ["Store a database", "Edit photos", "Charge a battery"], "g": 9},
+      {"q": "In binary, what is 1 + 1?", "a": "10", "w": ["2", "11", "1"], "g": 10}
+    ],
+    "psychology": [
+      {"q": "Who is known for classical conditioning experiments with dogs?", "a": "Ivan Pavlov", "w": ["B. F. Skinner", "Sigmund Freud", "Jean Piaget"], "g": 12},
+      {"q": "In Maslow's hierarchy, which needs are at the base?", "a": "Physiological needs", "w": ["Self-actualization", "Esteem", "Belonging"], "g": 12},
+      {"q": "The fight-or-flight response comes from which part of the nervous system?", "a": "The sympathetic nervous system", "w": ["The parasympathetic nervous system", "The digestive system", "The immune system"], "g": 13},
+      {"q": "Who founded psychoanalysis?", "a": "Sigmund Freud", "w": ["Carl Rogers", "William James", "Ivan Pavlov"], "g": 12}
+    ],
+    "economics": [
+      {"q": "If demand rises and supply stays the same, the price usually...", "a": "Goes up", "w": ["Goes down", "Stays the same", "Drops to zero"], "g": 12},
+      {"q": "What does GDP stand for?", "a": "Gross domestic product", "w": ["General debt percentage", "Gross dollar profit", "Government development plan"], "g": 12},
+      {"q": "Who wrote 'The Wealth of Nations'?", "a": "Adam Smith", "w": ["Karl Marx", "John Maynard Keynes", "Milton Friedman"], "g": 12},
+      {"q": "Inflation means...", "a": "Prices rising over time", "w": ["Prices falling over time", "Interest rates hitting zero", "Taxes going up"], "g": 12},
+      {"q": "The value of the next-best option you give up is called...", "a": "Opportunity cost", "w": ["Sunk cost", "Marginal revenue", "Fixed cost"], "g": 13}
+    ],
+    "general": [
+      {"q": "What is the capital of Australia?", "a": "Canberra", "w": ["Sydney", "Melbourne", "Perth"], "g": 9},
+      {"q": "How many players does each soccer team have on the field?", "a": "11", "w": ["9", "10", "12"], "g": 9},
+      {"q": "How many points is a touchdown worth, before the extra point?", "a": "6", "w": ["7", "3", "2"], "g": 9},
+      {"q": "Which planet is known as the Red Planet?", "a": "Mars", "w": ["Jupiter", "Venus", "Mercury"], "g": 9},
+      {"q": "What is the largest ocean on Earth?", "a": "The Pacific", "w": ["The Atlantic", "The Indian", "The Arctic"], "g": 9},
+      {"q": "How many innings are in a regulation MLB game?", "a": "9", "w": ["7", "8", "10"], "g": 9},
+      {"q": "Which state is Yale University in?", "a": "Connecticut", "w": ["Massachusetts", "New York", "Rhode Island"], "g": 9},
+      {"q": "How high is a regulation basketball rim?", "a": "10 feet", "w": ["9 feet", "11 feet", "12 feet"], "g": 9},
+      {"q": "Water freezes at what temperature in Fahrenheit?", "a": "32°F", "w": ["0°F", "100°F", "212°F"], "g": 9},
+      {"q": "What is the smallest U.S. state by area?", "a": "Rhode Island", "w": ["Delaware", "Connecticut", "Vermont"], "g": 9},
+      {"q": "How many sides does a hexagon have?", "a": "6", "w": ["5", "7", "8"], "g": 9}
+    ]
+  }
+}

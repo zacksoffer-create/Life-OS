@@ -1,0 +1,270 @@
+{
+ "version": 1,
+ "notes": "Positions and how they show up in box scores. The stat formulas live in sports.py; this file holds the labels, the position lists and body preferences (height in inches, build). Teams are split by gender in world.json (a group's \"gender\"); softball is the girls' spring sport and plays like baseball.",
+ "builds": [
+  "slight",
+  "average",
+  "athletic",
+  "strong"
+ ],
+ "sports": {
+  "football": {
+   "label": "Football",
+   "starters": 11,
+   "season": "fall",
+   "positions": {
+    "QB": "Quarterback",
+    "RB": "Running back",
+    "WR": "Wide receiver",
+    "TE": "Tight end",
+    "OL": "Offensive line",
+    "DL": "Defensive line",
+    "LB": "Linebacker",
+    "DB": "Defensive back",
+    "K": "Kicker"
+   },
+   "lineup": [
+    "QB",
+    "RB",
+    "WR",
+    "WR",
+    "TE",
+    "OL",
+    "OL",
+    "DL",
+    "LB",
+    "LB",
+    "DB"
+   ],
+   "stats": {
+    "pass_yds": "pass yds",
+    "pass_td": "pass TD",
+    "int_thrown": "INT",
+    "rush_yds": "rush yds",
+    "rush_td": "rush TD",
+    "rec": "rec",
+    "rec_yds": "rec yds",
+    "rec_td": "rec TD",
+    "tackles": "tackles",
+    "sacks": "sacks",
+    "ints": "INT (def)",
+    "fg": "FG"
+   }
+  },
+  "basketball": {
+   "label": "Basketball",
+   "starters": 5,
+   "season": "winter",
+   "positions": {
+    "PG": "Point guard",
+    "SG": "Shooting guard",
+    "SF": "Small forward",
+    "PF": "Power forward",
+    "C": "Center"
+   },
+   "lineup": [
+    "PG",
+    "SG",
+    "SF",
+    "PF",
+    "C"
+   ],
+   "stats": {
+    "pts": "PTS",
+    "reb": "REB",
+    "ast": "AST",
+    "stl": "STL",
+    "blk": "BLK"
+   }
+  },
+  "baseball": {
+   "label": "Baseball",
+   "starters": 9,
+   "season": "spring",
+   "positions": {
+    "P": "Pitcher",
+    "C": "Catcher",
+    "1B": "First base",
+    "2B": "Second base",
+    "SS": "Shortstop",
+    "3B": "Third base",
+    "OF": "Outfield"
+   },
+   "lineup": [
+    "P",
+    "C",
+    "1B",
+    "2B",
+    "SS",
+    "3B",
+    "OF",
+    "OF",
+    "OF"
+   ],
+   "stats": {
+    "ab": "AB",
+    "h": "H",
+    "hr": "HR",
+    "rbi": "RBI",
+    "sb": "SB",
+    "ip": "IP",
+    "k": "K",
+    "er": "ER"
+   }
+  },
+  "soccer": {
+   "label": "Soccer",
+   "starters": 11,
+   "season": "fall",
+   "positions": {
+    "GK": "Goalkeeper",
+    "CB": "Center back",
+    "FB": "Fullback",
+    "CM": "Central midfield",
+    "WM": "Winger",
+    "ST": "Striker"
+   },
+   "lineup": [
+    "GK",
+    "FB",
+    "CB",
+    "CB",
+    "FB",
+    "CM",
+    "CM",
+    "WM",
+    "WM",
+    "ST",
+    "ST"
+   ],
+   "stats": {
+    "goals": "G",
+    "assists": "A",
+    "shots": "shots",
+    "saves": "saves",
+    "clean_sheets": "clean sheets"
+   }
+  },
+  "softball": {
+   "label": "Softball",
+   "starters": 9,
+   "season": "spring",
+   "positions": {
+    "P": "Pitcher",
+    "C": "Catcher",
+    "1B": "First base",
+    "2B": "Second base",
+    "SS": "Shortstop",
+    "3B": "Third base",
+    "OF": "Outfield"
+   },
+   "lineup": [
+    "P",
+    "C",
+    "1B",
+    "2B",
+    "SS",
+    "3B",
+    "OF",
+    "OF",
+    "OF"
+   ],
+   "stats": {
+    "ab": "AB",
+    "h": "H",
+    "hr": "HR",
+    "rbi": "RBI",
+    "sb": "SB",
+    "ip": "IP",
+    "k": "K",
+    "er": "ER"
+   }
+  }
+ },
+ "mlb": {
+  "notes": "The MLB draft: 20 rounds in mid-July. College players become eligible after their junior year (or at 21). Slot values are approximate recent figures for flavor, not official numbers. Draft order is a seeded shuffle each year.",
+  "draft_day": [
+   7,
+   13
+  ],
+  "rounds": 20,
+  "teams": [
+   "Arizona Diamondbacks",
+   "Athletics",
+   "Atlanta Braves",
+   "Baltimore Orioles",
+   "Boston Red Sox",
+   "Chicago Cubs",
+   "Chicago White Sox",
+   "Cincinnati Reds",
+   "Cleveland Guardians",
+   "Colorado Rockies",
+   "Detroit Tigers",
+   "Houston Astros",
+   "Kansas City Royals",
+   "Los Angeles Angels",
+   "Los Angeles Dodgers",
+   "Miami Marlins",
+   "Milwaukee Brewers",
+   "Minnesota Twins",
+   "New York Mets",
+   "New York Yankees",
+   "Philadelphia Phillies",
+   "Pittsburgh Pirates",
+   "San Diego Padres",
+   "San Francisco Giants",
+   "Seattle Mariners",
+   "St. Louis Cardinals",
+   "Tampa Bay Rays",
+   "Texas Rangers",
+   "Toronto Blue Jays",
+   "Washington Nationals"
+  ],
+  "slots": [
+   [
+    1,
+    10500000
+   ],
+   [
+    10,
+    5700000
+   ],
+   [
+    30,
+    2900000
+   ],
+   [
+    50,
+    1800000
+   ],
+   [
+    75,
+    1100000
+   ],
+   [
+    100,
+    750000
+   ],
+   [
+    150,
+    420000
+   ],
+   [
+    200,
+    280000
+   ],
+   [
+    315,
+    190000
+   ],
+   [
+    316,
+    150000
+   ],
+   [
+    615,
+    125000
+   ]
+  ]
+ }
+}

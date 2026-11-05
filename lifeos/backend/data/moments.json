@@ -1,0 +1,1386 @@
+{
+ "version": 1,
+ "notes": "Story moments: the points where the game stops and asks the player. Triggers live in moments.py; titles, text and choices live here. Placeholders like {group} come from the moment's context. Each choice runs a list of ops (see moments.py for the vocabulary). 'fits' says which personalities lean toward a choice when a character decides on their own. Chance ops roll against the person's own traits, so a choice never guarantees the outcome.",
+ "moments": {
+  "first_day": {
+   "title": "First day at {school}",
+   "text": "Freshman year starts today. {siblings_line}Football sign-ups are already on the board outside the gym. What do you want this first stretch to be about?",
+   "choices": [
+    {
+     "label": "Make the team. Sign up for football tryouts.",
+     "fits": {
+      "competitiveness": 1,
+      "ambition": 0.5
+     },
+     "ops": [
+      [
+       "focus",
+       "athletics"
+      ],
+      [
+       "sign_up",
+       "football"
+      ]
+     ]
+    },
+    {
+     "label": "Find my people first.",
+     "fits": {
+      "sociability": 1
+     },
+     "ops": [
+      [
+       "focus",
+       "social"
+      ]
+     ]
+    },
+    {
+     "label": "Start strong in class.",
+     "fits": {
+      "discipline": 1
+     },
+     "ops": [
+      [
+       "focus",
+       "academics"
+      ]
+     ]
+    },
+    {
+     "label": "Keep it balanced and see what happens.",
+     "fits": {},
+     "ops": [
+      [
+       "focus",
+       "balanced"
+      ]
+     ]
+    }
+   ]
+  },
+  "cut": {
+   "title": "Cut from {group}",
+   "text": "The list went up and your name isn't on it. {coach} is walking out of the gym.",
+   "choices": [
+    {
+     "label": "Catch {coach} and ask what to work on.",
+     "fits": {
+      "confidence": 1,
+      "discipline": 0.5
+     },
+     "ops": [
+      [
+       "chance",
+       {
+        "base": 0.5,
+        "charisma": 0.3,
+        "confidence": 0.3
+       },
+       [
+        [
+         "rel",
+         "coach",
+         "respect",
+         8
+        ],
+        [
+         "rel_back",
+         "coach",
+         "respect",
+         8
+        ],
+        [
+         "goal",
+         "improve_skill",
+         "sport",
+         80
+        ],
+        [
+         "memory",
+         "Asked {coach} what to work on after getting cut. It meant something.",
+         0.4,
+         50,
+         [
+          "coach"
+         ]
+        ]
+       ],
+       [
+        [
+         "rel_back",
+         "coach",
+         "respect",
+         2
+        ],
+        [
+         "mood",
+         -3
+        ],
+        [
+         "memory",
+         "Tried to talk to {coach} after getting cut. It was awkward.",
+         -0.2,
+         35,
+         [
+          "coach"
+         ]
+        ]
+       ]
+      ]
+     ]
+    },
+    {
+     "label": "Hit the weight room every day until next time.",
+     "fits": {
+      "discipline": 1,
+      "competitiveness": 1
+     },
+     "ops": [
+      [
+       "focus",
+       "athletics"
+      ],
+      [
+       "goal",
+       "improve_skill",
+       "sport",
+       85
+      ],
+      [
+       "interest",
+       "sport",
+       6
+      ]
+     ]
+    },
+    {
+     "label": "Shake it off and try something else.",
+     "fits": {
+      "volatility": -0.5,
+      "curiosity": 0.5
+     },
+     "ops": [
+      [
+       "interest",
+       "sport",
+       -12
+      ],
+      [
+       "focus",
+       "social"
+      ],
+      [
+       "need",
+       "stress",
+       -6
+      ]
+     ]
+    }
+   ]
+  },
+  "injury": {
+   "title": "Hurt: {injury}",
+   "text": "The trainer says you're out about {weeks} weeks. The season doesn't wait.",
+   "choices": [
+    {
+     "label": "Rest and rehab it properly.",
+     "fits": {
+      "discipline": 1
+     },
+     "ops": [
+      [
+       "need",
+       "stress",
+       -4
+      ],
+      [
+       "memory",
+       "Took the time to heal right",
+       0.2,
+       30,
+       []
+      ]
+     ]
+    },
+    {
+     "label": "Push to come back early.",
+     "fits": {
+      "competitiveness": 1,
+      "impulsivity": 1
+     },
+     "ops": [
+      [
+       "chance",
+       {
+        "base": 0.55,
+        "fitness": 0.3
+       },
+       [
+        [
+         "injury_shorten",
+         0.5
+        ],
+        [
+         "mood",
+         4
+        ],
+        [
+         "memory",
+         "Came back early from the {injury} and it held up",
+         0.4,
+         45,
+         []
+        ]
+       ],
+       [
+        [
+         "injury_extend",
+         12
+        ],
+        [
+         "mood",
+         -8
+        ],
+        [
+         "memory",
+         "Came back too soon from the {injury} and made it worse",
+         -0.6,
+         55,
+         []
+        ]
+       ]
+      ]
+     ]
+    },
+    {
+     "label": "Use the time for school and friends.",
+     "fits": {
+      "sociability": 0.5,
+      "ambition": 0.3
+     },
+     "ops": [
+      [
+       "focus",
+       "academics"
+      ],
+      [
+       "need",
+       "stress",
+       -6
+      ]
+     ]
+    }
+   ]
+  },
+  "benched": {
+   "title": "Riding the bench",
+   "text": "{games} games in a row without a start on {group}. You know you can play.",
+   "choices": [
+    {
+     "label": "Ask {coach} straight up what it takes to start.",
+     "fits": {
+      "confidence": 1
+     },
+     "ops": [
+      [
+       "chance",
+       {
+        "base": 0.5,
+        "charisma": 0.3
+       },
+       [
+        [
+         "rel_back",
+         "coach",
+         "respect",
+         6
+        ],
+        [
+         "goal",
+         "improve_skill",
+         "sport",
+         80
+        ]
+       ],
+       [
+        [
+         "rel_back",
+         "coach",
+         "respect",
+         -3
+        ],
+        [
+         "need",
+         "stress",
+         5
+        ]
+       ]
+      ]
+     ]
+    },
+    {
+     "label": "Outwork everyone in practice.",
+     "fits": {
+      "discipline": 1
+     },
+     "ops": [
+      [
+       "focus",
+       "athletics"
+      ],
+      [
+       "trait",
+       "discipline",
+       1.5
+      ],
+      [
+       "goal",
+       "improve_skill",
+       "sport",
+       85
+      ]
+     ]
+    },
+    {
+     "label": "Stay patient. Your time will come.",
+     "fits": {
+      "volatility": -1
+     },
+     "ops": [
+      [
+       "need",
+       "stress",
+       -6
+      ]
+     ]
+    }
+   ]
+  },
+  "offer": {
+   "title": "{college_name} wants you",
+   "text": "{college_name} ({tier}) offered you a spot to play {sport}.",
+   "choices": [
+    {
+     "label": "Thank them and keep your options open.",
+     "fits": {
+      "ambition": 0.5
+     },
+     "ops": [
+      [
+       "mood",
+       3
+      ]
+     ]
+    },
+    {
+     "label": "Take an official visit.",
+     "fits": {
+      "curiosity": 1
+     },
+     "ops": [
+      [
+       "interest",
+       "sport",
+       4
+      ],
+      [
+       "need",
+       "fun",
+       12
+      ],
+      [
+       "memory",
+       "Took an official visit to {college_name}",
+       0.6,
+       60,
+       []
+      ]
+     ]
+    },
+    {
+     "label": "Tell them you're seriously interested.",
+     "fits": {
+      "loyalty": 1
+     },
+     "ops": [
+      [
+       "flag",
+       "favorite_college",
+       "{college}"
+      ],
+      [
+       "mood",
+       4
+      ]
+     ]
+    }
+   ]
+  },
+  "college_decision": {
+   "title": "The big decision",
+   "text": "Senior spring. Offers and acceptance letters are on the table. Where do you go from here?",
+   "dynamic": "paths",
+   "choices": []
+  },
+  "game_day": {
+   "title": "Game day: {group} vs {opponent}",
+   "text": "Tonight you play {opponent}. How do you approach it?",
+   "choices": [
+    {
+     "label": "Leave it all out there.",
+     "hint": "bigger game, higher injury risk",
+     "fits": {
+      "competitiveness": 1
+     },
+     "ops": [
+      [
+       "approach",
+       "all_out"
+      ]
+     ]
+    },
+    {
+     "label": "Play smart and stay healthy.",
+     "hint": "steady, lower injury risk",
+     "fits": {
+      "discipline": 1
+     },
+     "ops": [
+      [
+       "approach",
+       "smart"
+      ]
+     ]
+    },
+    {
+     "label": "Play for your teammates.",
+     "hint": "teammates notice",
+     "fits": {
+      "empathy": 1,
+      "loyalty": 1
+     },
+     "ops": [
+      [
+       "approach",
+       "team"
+      ]
+     ]
+    },
+    {
+     "label": "Take over late. Play the big moment yourself.",
+     "hint": "you play it",
+     "fits": {
+      "confidence": 1,
+      "competitiveness": 0.5
+     },
+     "ops": [
+      [
+       "minigame",
+       "sport",
+       {
+        "great": [
+         [
+          "clutch",
+          7
+         ],
+         [
+          "mood",
+          4
+         ]
+        ],
+        "good": [
+         [
+          "clutch",
+          3
+         ]
+        ],
+        "miss": [
+         [
+          "clutch",
+          -2
+         ],
+         [
+          "need",
+          "stress",
+          3
+         ]
+        ]
+       },
+       {
+        "base": 0.5,
+        "confidence": 0.2,
+        "athletic": 0.3
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  "sibling_leaves": {
+   "title": "{sibling} is leaving",
+   "text": "The car's packed. {sibling} leaves for {place} today.",
+   "choices": [
+    {
+     "label": "Help them pack and say a real goodbye.",
+     "fits": {
+      "empathy": 1,
+      "loyalty": 1
+     },
+     "ops": [
+      [
+       "rel",
+       "sibling",
+       "affection",
+       10
+      ],
+      [
+       "rel_back",
+       "sibling",
+       "affection",
+       10
+      ],
+      [
+       "mood",
+       -3
+      ],
+      [
+       "memory",
+       "Said a real goodbye to {sibling}",
+       0.5,
+       60,
+       [
+        "sibling"
+       ]
+      ]
+     ]
+    },
+    {
+     "label": "Keep it light. Crack jokes until the car pulls away.",
+     "fits": {
+      "sociability": 1
+     },
+     "ops": [
+      [
+       "rel",
+       "sibling",
+       "affection",
+       4
+      ],
+      [
+       "rel_back",
+       "sibling",
+       "affection",
+       5
+      ]
+     ]
+    },
+    {
+     "label": "Avoid it. You hate goodbyes.",
+     "fits": {
+      "volatility": 1,
+      "empathy": -0.5
+     },
+     "ops": [
+      [
+       "rel_back",
+       "sibling",
+       "affection",
+       -6
+      ],
+      [
+       "need",
+       "stress",
+       4
+      ]
+     ]
+    }
+   ]
+  },
+  "rumor": {
+   "title": "People are talking about you",
+   "text": "Word got back to you: {about}.",
+   "choices": [
+    {
+     "label": "Find out who started it and confront them.",
+     "fits": {
+      "volatility": 1,
+      "confidence": 0.5
+     },
+     "ops": [
+      [
+       "chance",
+       {
+        "base": 0.45,
+        "charisma": 0.2,
+        "confidence": 0.2
+       },
+       [
+        [
+         "rep",
+         "tough",
+         3
+        ],
+        [
+         "mood",
+         3
+        ]
+       ],
+       [
+        [
+         "need",
+         "stress",
+         6
+        ],
+        [
+         "mood",
+         -4
+        ]
+       ]
+      ]
+     ]
+    },
+    {
+     "label": "Laugh it off.",
+     "fits": {
+      "confidence": 1
+     },
+     "ops": [
+      [
+       "chance",
+       {
+        "base": 0.5,
+        "confidence": 0.4
+       },
+       [
+        [
+         "mood",
+         3
+        ]
+       ],
+       [
+        [
+         "mood",
+         -4
+        ]
+       ]
+      ]
+     ]
+    },
+    {
+     "label": "Talk it through with a friend.",
+     "fits": {
+      "empathy": 0.5,
+      "loyalty": 0.5
+     },
+     "ops": [
+      [
+       "need",
+       "stress",
+       -8
+      ],
+      [
+       "rel",
+       "best_friend",
+       "trust",
+       5
+      ],
+      [
+       "rel_back",
+       "best_friend",
+       "affection",
+       3
+      ]
+     ]
+    }
+   ]
+  },
+  "heartbreak": {
+   "title": "{other} ended it",
+   "text": "{other} broke up with you. Your phone keeps lighting up and you don't want to look.",
+   "choices": [
+    {
+     "label": "Lean on your friends.",
+     "fits": {
+      "sociability": 1
+     },
+     "ops": [
+      [
+       "need",
+       "stress",
+       -10
+      ],
+      [
+       "need",
+       "social",
+       15
+      ],
+      [
+       "focus",
+       "social"
+      ]
+     ]
+    },
+    {
+     "label": "Throw yourself into training.",
+     "fits": {
+      "discipline": 1
+     },
+     "ops": [
+      [
+       "focus",
+       "athletics"
+      ],
+      [
+       "need",
+       "stress",
+       -5
+      ]
+     ]
+    },
+    {
+     "label": "Try to win them back.",
+     "fits": {
+      "loyalty": 1,
+      "impulsivity": 0.5
+     },
+     "ops": [
+      [
+       "chance",
+       {
+        "base": 0.25,
+        "charisma": 0.3
+       },
+       [
+        [
+         "rel_back",
+         "other",
+         "affection",
+         12
+        ],
+        [
+         "memory",
+         "Talked things out with {other}",
+         0.3,
+         45,
+         [
+          "other"
+         ]
+        ]
+       ],
+       [
+        [
+         "mood",
+         -6
+        ],
+        [
+         "rel_back",
+         "other",
+         "affection",
+         -5
+        ]
+       ]
+      ]
+     ]
+    }
+   ]
+  },
+  "summer": {
+   "title": "Summer break",
+   "text": "School's out. {summer_line}How do you spend the summer?",
+   "choices": [
+    {
+     "label": "Train for next season.",
+     "fits": {
+      "competitiveness": 1,
+      "discipline": 1
+     },
+     "ops": [
+      [
+       "focus",
+       "athletics"
+      ]
+     ]
+    },
+    {
+     "label": "Get a summer job and stack some money.",
+     "fits": {
+      "ambition": 0.5
+     },
+     "ops": [
+      [
+       "focus",
+       "work"
+      ]
+     ]
+    },
+    {
+     "label": "Summer with friends.",
+     "fits": {
+      "sociability": 1
+     },
+     "ops": [
+      [
+       "focus",
+       "social"
+      ]
+     ]
+    },
+    {
+     "label": "Rest and recharge.",
+     "fits": {},
+     "ops": [
+      [
+       "focus",
+       "rest"
+      ]
+     ]
+    }
+   ]
+  },
+  "graduation": {
+   "title": "Graduation day",
+   "text": "You walk across the stage at {school}. {path_line}",
+   "choices": [
+    {
+     "label": "Celebrate with your family.",
+     "fits": {
+      "loyalty": 1
+     },
+     "ops": [
+      [
+       "family",
+       "affection",
+       6
+      ],
+      [
+       "memory",
+       "Graduation night with the family",
+       0.8,
+       75,
+       []
+      ]
+     ]
+    },
+    {
+     "label": "Go out with your friends one last time.",
+     "fits": {
+      "sociability": 1
+     },
+     "ops": [
+      [
+       "need",
+       "social",
+       20
+      ],
+      [
+       "need",
+       "fun",
+       20
+      ],
+      [
+       "memory",
+       "Graduation night with my friends",
+       0.8,
+       75,
+       []
+      ]
+     ]
+    },
+    {
+     "label": "Take it in quietly.",
+     "fits": {},
+     "ops": [
+      [
+       "need",
+       "stress",
+       -10
+      ],
+      [
+       "memory",
+       "Sat on the bleachers after graduation and took it all in",
+       0.7,
+       70,
+       []
+      ]
+     ]
+    }
+   ]
+  },
+  "college_arrival": {
+   "title": "First day at {college_name}",
+   "text": "Move-in day. Your roommate, {roommate}, is already unpacking.{team_line}",
+   "choices": [
+    {
+     "label": "Introduce yourself and grab dinner together.",
+     "fits": {
+      "sociability": 1
+     },
+     "ops": [
+      [
+       "rel",
+       "roommate",
+       "affection",
+       12
+      ],
+      [
+       "rel_back",
+       "roommate",
+       "affection",
+       12
+      ],
+      [
+       "rel",
+       "roommate",
+       "familiarity",
+       20
+      ],
+      [
+       "rel_back",
+       "roommate",
+       "familiarity",
+       20
+      ]
+     ]
+    },
+    {
+     "label": "Go find the team facility first.",
+     "fits": {
+      "competitiveness": 1
+     },
+     "ops": [
+      [
+       "focus",
+       "athletics"
+      ],
+      [
+       "rel_back",
+       "coach",
+       "respect",
+       5
+      ]
+     ]
+    },
+    {
+     "label": "Walk the campus alone for a while.",
+     "fits": {
+      "curiosity": 1
+     },
+     "ops": [
+      [
+       "need",
+       "stress",
+       -8
+      ],
+      [
+       "memory",
+       "Walked the campus alone on day one",
+       0.4,
+       40,
+       []
+      ]
+     ]
+    }
+   ]
+  },
+  "year_review": {
+   "title": "{year_label} is in the books",
+   "text": "{review}",
+   "choices": [
+    {
+     "label": "Keep going.",
+     "fits": {},
+     "ops": []
+    }
+   ]
+  },
+  "asked_out": {
+   "title": "{other} asked you out",
+   "text": "{other} catches you after class and asks if you want to go out sometime.{extra}",
+   "choices": [
+    {
+     "label": "Say yes.",
+     "fits": {
+      "sociability": 0.5
+     },
+     "ops": [
+      [
+       "answer_ask",
+       "yes"
+      ]
+     ]
+    },
+    {
+     "label": "Let them down easy.",
+     "fits": {
+      "empathy": 0.5
+     },
+     "ops": [
+      [
+       "answer_ask",
+       "no"
+      ]
+     ]
+    }
+   ]
+  },
+  "asked_to_dance": {
+   "title": "{other} asked you to {event}",
+   "text": "{other} asks if you want to go to {event} together.",
+   "choices": [
+    {
+     "label": "Say yes.",
+     "fits": {
+      "sociability": 0.5
+     },
+     "ops": [
+      [
+       "answer_ask",
+       "yes"
+      ]
+     ]
+    },
+    {
+     "label": "Say no.",
+     "fits": {},
+     "ops": [
+      [
+       "answer_ask",
+       "no"
+      ]
+     ]
+    }
+   ]
+  },
+  "mlb_draft": {
+   "title": "Draft day: the {team} took you",
+   "text": "Round {round}, pick {pick} overall. Your phone hasn't stopped buzzing since your name came up. The slot value is about {bonus}, and they'd start you at {level}. {return_line}",
+   "choices": [
+    {
+     "label": "Sign. This is what you've worked for.",
+     "hint": "Leave {college_name} and start your pro career.",
+     "fits": {
+      "ambition": 1.0,
+      "competitiveness": 0.6
+     },
+     "ops": [
+      [
+       "pro",
+       "sign"
+      ],
+      [
+       "mood",
+       8
+      ],
+      [
+       "memory",
+       "Signed with the {team} out of {college_name}",
+       0.9,
+       95,
+       []
+      ]
+     ]
+    },
+    {
+     "label": "Go back to {college_name} for one more year.",
+     "hint": "Bet on yourself and try to climb the board next July.",
+     "fits": {
+      "loyalty": 0.6,
+      "discipline": 0.4,
+      "ambition": -0.6
+     },
+     "ops": [
+      [
+       "draft_return"
+      ],
+      [
+       "memory",
+       "Turned down the {team} to go back for one more year",
+       0.4,
+       70,
+       []
+      ]
+     ]
+    }
+   ]
+  },
+  "draft_passed": {
+   "title": "The draft came and went",
+   "text": "Twenty rounds, and your name never came up. {udfa_line}",
+   "choices": [
+    {
+     "label": "Go back to {college_name} and make them regret it.",
+     "hint": "One more season to change their minds.",
+     "fits": {
+      "competitiveness": 1.0,
+      "discipline": 0.5
+     },
+     "ops": [
+      [
+       "draft_return"
+      ],
+      [
+       "mood",
+       -4
+      ],
+      [
+       "memory",
+       "Went undrafted and went back to work",
+       -0.2,
+       70,
+       []
+      ]
+     ]
+    },
+    {
+     "label": "Take the free-agent call and sign anyway.",
+     "hint": "No bonus, but a uniform and a chance.",
+     "requires": "udfa",
+     "fits": {
+      "ambition": 1.0
+     },
+     "ops": [
+      [
+       "pro",
+       "udfa"
+      ],
+      [
+       "memory",
+       "Signed as an undrafted free agent",
+       0.6,
+       85,
+       []
+      ]
+     ]
+    },
+    {
+     "label": "Hang up the cleats and figure out what's next.",
+     "hint": "Baseball was a big part of who you are. Maybe not the whole thing.",
+     "fits": {
+      "ambition": -0.6,
+      "curiosity": 0.6
+     },
+     "ops": [
+      [
+       "retire_baseball"
+      ],
+      [
+       "memory",
+       "Walked away from baseball after college",
+       0.0,
+       80,
+       []
+      ]
+     ]
+    }
+   ]
+  },
+  "story_end": {
+   "title": "Seven years",
+   "text": "{review}",
+   "choices": [
+    {
+     "label": "Keep living.",
+     "hint": "The world keeps going if you do.",
+     "fits": {},
+     "ops": []
+    }
+   ]
+  },
+  "class_quiz": {
+   "title": "{exam}: {class_name}",
+   "text": "{exam} today in {class_name}{teacher_line}. {quiz_line}",
+   "choices": [
+    {
+     "label": "Take it yourself.",
+     "hint": "you answer the questions",
+     "fits": {
+      "discipline": 1,
+      "ambition": 0.5
+     },
+     "ops": [
+      [
+       "minigame",
+       "trivia",
+       {
+        "great": [
+         [
+          "mood",
+          3
+         ],
+         [
+          "need",
+          "stress",
+          -3
+         ],
+         [
+          "say",
+          "You walk out knowing you nailed it."
+         ]
+        ],
+        "good": [
+         [
+          "say",
+          "Not perfect, but you'll take it."
+         ]
+        ],
+        "miss": [
+         [
+          "need",
+          "stress",
+          4
+         ],
+         [
+          "say",
+          "You stare at the last question until the bell. Rough one."
+         ]
+        ]
+       },
+       {
+        "base": 0.55,
+        "academic": 0.4,
+        "discipline": 0.2
+       }
+      ]
+     ]
+    },
+    {
+     "label": "Let it ride.",
+     "hint": "your studying decides it",
+     "fits": {
+      "impulsivity": 0.5
+     },
+     "ops": []
+    }
+   ]
+  },
+  "class_game": {
+   "title": "{cg_title}",
+   "text": "{cg_text}",
+   "choices": [
+    {
+     "label": "{cg_go}",
+     "hint": "{cg_hint}",
+     "fits": {
+      "confidence": 0.6,
+      "competitiveness": 0.5
+     },
+     "ops": [
+      [
+       "minigame",
+       "class",
+       {
+        "great": [
+         [
+          "mood",
+          3
+         ],
+         [
+          "need",
+          "stress",
+          -2
+         ],
+         [
+          "skill",
+          "academics",
+          0.3
+         ],
+         [
+          "rel_back",
+          "them",
+          "affection",
+          2
+         ],
+         [
+          "say",
+          "{cg_great}"
+         ]
+        ],
+        "good": [
+         [
+          "mood",
+          1
+         ],
+         [
+          "skill",
+          "academics",
+          0.15
+         ],
+         [
+          "say",
+          "{cg_good}"
+         ]
+        ],
+        "miss": [
+         [
+          "need",
+          "fun",
+          3
+         ],
+         [
+          "mood",
+          -1
+         ],
+         [
+          "say",
+          "{cg_miss}"
+         ]
+        ]
+       },
+       {
+        "base": 0.5,
+        "academic": 0.3,
+        "academics": 0.2
+       }
+      ]
+     ]
+    },
+    {
+     "label": "{cg_pass_label}",
+     "hint": "",
+     "fits": {
+      "empathy": 0.5,
+      "sociability": 0.3
+     },
+     "ops": [
+      [
+       "rel",
+       "them",
+       "affection",
+       1
+      ],
+      [
+       "rel_back",
+       "them",
+       "affection",
+       1
+      ],
+      [
+       "say",
+       "{cg_pass}"
+      ]
+     ]
+    },
+    {
+     "label": "{cg_sit_label}",
+     "hint": "",
+     "fits": {
+      "sociability": -0.5,
+      "discipline": -0.3
+     },
+     "ops": [
+      [
+       "need",
+       "fun",
+       1
+      ],
+      [
+       "say",
+       "{cg_sit}"
+      ]
+     ]
+    }
+   ]
+  }
+ }
+}

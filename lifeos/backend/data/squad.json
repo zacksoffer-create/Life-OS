@@ -1,0 +1,166 @@
+{
+  "_about": "Your group (squad.py): what you do with them, how it reads, and their group chat (which never needs anything from you). {group} is the group's name (the boys, the girls, the crew), {a} and {b} two of them, {host} whose house.",
+  "acts": {
+    "game": {
+      "label": "Hop on the game with {group}",
+      "slots": [
+        "evening",
+        "day"
+      ],
+      "cost": 0,
+      "place": "online",
+      "lines": [
+        "You hopped on with {group}. {a} carried, {b} rage-quit twice, and nobody went to bed on time.",
+        "Three hours online with {group}. You lost more than you won and it didn't matter at all.",
+        "Party chat with {group} until way too late. {a} finally won one and wouldn't shut up about it.",
+        "You got on with {group}. Half the time was the game, half was {b} telling a story with no ending."
+      ]
+    },
+    "park": {
+      "label": "Park with {group}",
+      "slots": [
+        "after_school",
+        "day"
+      ],
+      "cost": 0,
+      "place": "the park",
+      "not_winter": true,
+      "sport": true,
+      "lines": [
+        "You and {group} ran pickup at the park until it was too dark to see the ball.",
+        "{group} took over half the field at the park. {a} talked trash the whole time.",
+        "Park with {group}. Mostly sitting on the bleachers. Some actual playing. Perfect afternoon."
+      ]
+    },
+    "hoops": {
+      "label": "Shoot around with {group}",
+      "slots": [
+        "after_school",
+        "day"
+      ],
+      "cost": 0,
+      "place": "the courts",
+      "likes": "basketball",
+      "sport": "basketball",
+      "lines": [
+        "Shooting around with {group} at the courts. {a} hit one from half court and has not stopped talking about it.",
+        "Twenty-one with {group} until the streetlights came on. {b} won and called it \"easy\"."
+      ]
+    },
+    "food": {
+      "label": "Food run with {group}",
+      "slots": [
+        "after_school",
+        "day",
+        "evening"
+      ],
+      "cost": 8,
+      "place": "the diner",
+      "lines": [
+        "Food run with {group}. {a} ordered way too much and {b} ate half of it.",
+        "You and {group} split three orders of fries and argued about absolutely everything.",
+        "Late food with {group}. The waitress knows your order now. That's a milestone."
+      ]
+    },
+    "movie": {
+      "label": "Movie night at {host}'s",
+      "slots": [
+        "evening"
+      ],
+      "weekend": true,
+      "cost": 0,
+      "place": "{host}'s house",
+      "lines": [
+        "Movie night at {host}'s. {a} fell asleep in the first twenty minutes and missed everything.",
+        "Movie night with {group}. Nobody watched the movie. Everybody had a great time."
+      ]
+    },
+    "beach": {
+      "label": "Beach day with {group}",
+      "slots": [
+        "day"
+      ],
+      "summer": true,
+      "cost": 3,
+      "place": "Jacobs Beach",
+      "lines": [
+        "Beach day with {group}. Sunburns all around. {a} swears they put sunscreen on. They did not.",
+        "You and {group} spent the whole day at Jacobs Beach and came home exhausted and happy."
+      ]
+    },
+    "study": {
+      "label": "Homework on FaceTime with {group}",
+      "slots": [
+        "evening"
+      ],
+      "school_night": true,
+      "cost": 0,
+      "place": "FaceTime",
+      "lines": [
+        "Homework on FaceTime with {group}. Maybe forty percent homework. {a} did a bit for an hour.",
+        "You got your homework done on FaceTime with {group}. Mostly. {b} was a real help, somehow."
+      ]
+    }
+  },
+  "chat": {
+    "plan": {
+      "game": [
+        "on at 8?",
+        "who's hopping on tonight",
+        "running it back tonight",
+        "everyone on later?"
+      ],
+      "park": [
+        "park after school?",
+        "field at 3?",
+        "who's down for the park"
+      ],
+      "hoops": [
+        "courts after school?",
+        "who's shooting around today"
+      ],
+      "food": [
+        "food run?",
+        "i'm starving. diner?",
+        "who wants food"
+      ],
+      "movie": [
+        "movie night at {host}'s?",
+        "{host} said we can do movies tonight"
+      ],
+      "beach": [
+        "beach today?",
+        "jacobs beach. who's in"
+      ],
+      "study": [
+        "facetime hw tonight?",
+        "someone please do the hw with me tonight"
+      ]
+    },
+    "agree": [
+      "bet",
+      "say less",
+      "i'm in",
+      "ya",
+      "👍",
+      "maybe if i finish hw",
+      "down",
+      "obviously"
+    ],
+    "after": [
+      "that was ridiculous",
+      "same time tomorrow?",
+      "gg",
+      "{a} we need to talk about that",
+      "best night in a while honestly",
+      "nobody bring up what {b} said"
+    ],
+    "fomo": [
+      "you missed it. {a} was going crazy",
+      "where were you tonight",
+      "{a} was cooking without you",
+      "next time you gotta come",
+      "you missed {b}'s worst decision of the year"
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+.hx-filters { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.hx-filters label { display: flex; flex-direction: column; gap: 4px; min-width: 150px; }
+.hx-filters label span { color: var(--muted); font-size: 12px; }
+.hx-filters label.narrow { min-width: 0; width: 100px; }
+.hx-filters label.narrow input { width: 100%; }
+.hx-filters label.grow { flex: 1; min-width: 200px; }
+.hx-filters label.grow input { width: 100%; }
+.hx-summary { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin: 14px 2px 10px; color: var(--muted); }
+.hx-summary b { color: var(--text); }
+.hx-folded { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dl { text-decoration: none; }
+.hx-back { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.hx-headline { margin-bottom: 16px; }
+.hx-text { font-size: 21px; margin: 10px 0 14px; line-height: 1.3; }
+.hx-stats { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.hx-small-v { font-size: 15px; font-weight: 650; }
+.hx-people { display: flex; flex-direction: column; gap: 8px; }
+.hx-person { display: flex; gap: 10px; align-items: center; }
+.hx-tracelinks { display: flex; flex-direction: column; gap: 4px; }
+.hx-tracelink { display: flex; gap: 8px; align-items: center; text-decoration: none; padding: 4px 6px; border-radius: 8px; }
+.hx-tracelink:hover { background: var(--panel-2); }
+.hx-mems { display: flex; flex-direction: column; gap: 6px; }
+.hx-gap { margin-top: 16px; }
+.tr { display: flex; flex-direction: column; gap: 12px; }
+.tr-head { display: flex; gap: 12px; align-items: center; }
+.tr-who { font-size: 15px; display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+.tr-tags { margin-top: 6px; gap: 6px; }
+.tr-summary { line-height: 1.55; }
+.tr-why { margin-top: 6px; }
+.tr-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, 1fr); gap: 16px; align-items: start; }
+.tr-body.embedded { grid-template-columns: 1fr; }
+@media (max-width: 1200px) { .tr-body { grid-template-columns: 1fr; } }
+.tr-cands { max-height: 560px; overflow-y: auto; }
+.tr-whyrow { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tr-p { min-width: 150px; }
+.tr-p .meter-row { grid-template-columns: 1fr auto; }
+tr.tr-chosen td { box-shadow: inset 0 1px 0 rgba(102, 217, 143, 0.25), inset 0 -1px 0 rgba(102, 217, 143, 0.25); }
+.tr-note { margin-top: 6px; }
+.tr-terms { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.tr-terms-h { margin-bottom: 10px; }
+.tr-weights summary { cursor: pointer; color: var(--muted); margin-bottom: 8px; }
+.tr-weights .chips { margin-bottom: 6px; }

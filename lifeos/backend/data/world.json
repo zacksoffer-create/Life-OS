@@ -1,0 +1,911 @@
+{
+ "version": 1,
+ "town": {
+  "name": "Guilford",
+  "state": "CT",
+  "full": "Guilford, Connecticut",
+  "tagline": "A shoreline town on Long Island Sound, about 22,000 people, one public high school and a town green everyone knows.",
+  "start_date": "2010-09-01"
+ },
+ "school": {
+  "id": "hchs",
+  "name": "Guilford High School",
+  "short": "Guilford High",
+  "mascot": "Grizzlies",
+  "colors": "green and white",
+  "conference": "Southern Connecticut Conference"
+ },
+ "skills": [
+  {
+   "id": "academics",
+   "label": "Academics",
+   "aptitude": "academic",
+   "kind": "academic"
+  },
+  {
+   "id": "football",
+   "label": "Football",
+   "aptitude": "athletic",
+   "kind": "sport"
+  },
+  {
+   "id": "basketball",
+   "label": "Basketball",
+   "aptitude": "athletic",
+   "kind": "sport"
+  },
+  {
+   "id": "baseball",
+   "label": "Baseball",
+   "aptitude": "athletic",
+   "kind": "sport"
+  },
+  {
+   "id": "soccer",
+   "label": "Soccer",
+   "aptitude": "athletic",
+   "kind": "sport"
+  },
+  {
+   "id": "softball",
+   "label": "Softball",
+   "aptitude": "athletic",
+   "kind": "sport"
+  },
+  {
+   "id": "drama",
+   "label": "Acting",
+   "aptitude": "charisma",
+   "kind": "art"
+  },
+  {
+   "id": "art",
+   "label": "Visual art",
+   "aptitude": "creativity",
+   "kind": "art"
+  },
+  {
+   "id": "music",
+   "label": "Music",
+   "aptitude": "creativity",
+   "kind": "art"
+  },
+  {
+   "id": "tech",
+   "label": "Robotics & code",
+   "aptitude": "technical",
+   "kind": "academic"
+  },
+  {
+   "id": "writing",
+   "label": "Writing",
+   "aptitude": "academic",
+   "kind": "art"
+  },
+  {
+   "id": "fitness",
+   "label": "Fitness",
+   "aptitude": "athletic",
+   "kind": "conditioning"
+  }
+ ],
+ "hobbies": [
+  {
+   "id": "gaming",
+   "label": "video games",
+   "skill": "tech",
+   "verb": "lost a few hours to video games"
+  },
+  {
+   "id": "reading",
+   "label": "reading",
+   "skill": "writing",
+   "verb": "read most of a novel"
+  },
+  {
+   "id": "sketching",
+   "label": "sketching",
+   "skill": "art",
+   "verb": "filled pages of a sketchbook"
+  },
+  {
+   "id": "guitar",
+   "label": "guitar",
+   "skill": "music",
+   "verb": "played guitar"
+  },
+  {
+   "id": "pickup_games",
+   "label": "pickup games",
+   "skill": "basketball",
+   "verb": "played pickup at the rec center courts"
+  },
+  {
+   "id": "batting_cage",
+   "label": "the batting cage",
+   "skill": "baseball",
+   "verb": "took swings at the batting cage"
+  },
+  {
+   "id": "shows",
+   "label": "streaming shows",
+   "skill": null,
+   "verb": "binged a show"
+  },
+  {
+   "id": "fashion",
+   "label": "fashion",
+   "skill": "art",
+   "verb": "reworked a thrifted jacket"
+  },
+  {
+   "id": "outdoors",
+   "label": "the outdoors",
+   "skill": "fitness",
+   "verb": "biked the river trail"
+  },
+  {
+   "id": "coding",
+   "label": "coding side projects",
+   "skill": "tech",
+   "verb": "tinkered with a side project"
+  },
+  {
+   "id": "cooking",
+   "label": "cooking",
+   "skill": null,
+   "verb": "tried a new recipe"
+  },
+  {
+   "id": "journaling",
+   "label": "journaling",
+   "skill": "writing",
+   "verb": "wrote in a journal"
+  }
+ ],
+ "places": [
+  {
+   "id": "diner",
+   "name": "the Route 1 Diner",
+   "cost": 8,
+   "vibe": "booths, fries and bottomless sodas"
+  },
+  {
+   "id": "park",
+   "name": "the Guilford Green",
+   "cost": 0,
+   "vibe": "benches under the big trees on the town green"
+  },
+  {
+   "id": "arcade",
+   "name": "the ice cream shop on the Green",
+   "cost": 10,
+   "vibe": "a cone on the steps and people watching"
+  },
+  {
+   "id": "library",
+   "name": "the Guilford Free Library",
+   "cost": 0,
+   "vibe": "the quiet back tables"
+  },
+  {
+   "id": "rec",
+   "name": "the rec center",
+   "cost": 3,
+   "vibe": "the courts and the snack machine"
+  },
+  {
+   "id": "house",
+   "name": "someone's house",
+   "cost": 0,
+   "vibe": "a basement couch"
+  },
+  {
+   "id": "riverwalk",
+   "name": "Jacobs Beach",
+   "cost": 0,
+   "vibe": "the sand and the jetty at sunset"
+  }
+ ],
+ "groups": [
+  {
+   "id": "football",
+   "name": "Guilford Football",
+   "kind": "team",
+   "skill": "football",
+   "selection": "tryout",
+   "capacity": 16,
+   "jv_capacity": 12,
+   "starters": 11,
+   "season": {
+    "start": [
+     9,
+     1
+    ],
+    "end": [
+     11,
+     14
+    ]
+   },
+   "tryout": [
+    9,
+    8
+   ],
+   "practice_days": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "game_day": 4,
+   "staff": "coach_bryant",
+   "prestige": 75,
+   "school": "hchs",
+   "gender": "m"
+  },
+  {
+   "id": "basketball",
+   "name": "Guilford Boys Basketball",
+   "kind": "team",
+   "skill": "basketball",
+   "selection": "tryout",
+   "capacity": 10,
+   "season": {
+    "start": [
+     11,
+     17
+    ],
+    "end": [
+     2,
+     27
+    ]
+   },
+   "tryout": [
+    11,
+    18
+   ],
+   "practice_days": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "game_day": 4,
+   "staff": "coach_okafor",
+   "prestige": 70,
+   "jv_capacity": 8,
+   "starters": 5,
+   "school": "hchs",
+   "gender": "m"
+  },
+  {
+   "id": "baseball",
+   "name": "Guilford Baseball",
+   "kind": "team",
+   "skill": "baseball",
+   "selection": "tryout",
+   "capacity": 14,
+   "season": {
+    "start": [
+     2,
+     23
+    ],
+    "end": [
+     5,
+     29
+    ]
+   },
+   "tryout": [
+    3,
+    2
+   ],
+   "practice_days": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "game_day": 5,
+   "staff": "coach_bryant",
+   "prestige": 60,
+   "jv_capacity": 10,
+   "starters": 9,
+   "school": "hchs",
+   "gender": "m"
+  },
+  {
+   "id": "soccer",
+   "name": "Guilford Boys Soccer",
+   "kind": "team",
+   "skill": "soccer",
+   "gender": "m",
+   "selection": "tryout",
+   "capacity": 18,
+   "jv_capacity": 14,
+   "starters": 11,
+   "season": {
+    "start": [
+     9,
+     1
+    ],
+    "end": [
+     11,
+     14
+    ]
+   },
+   "tryout": [
+    9,
+    9
+   ],
+   "practice_days": [
+    0,
+    1,
+    3
+   ],
+   "game_day": 2,
+   "staff": "coach_lindqvist",
+   "prestige": 58,
+   "school": "hchs"
+  },
+  {
+   "id": "soccer_girls",
+   "name": "Guilford Girls Soccer",
+   "kind": "team",
+   "skill": "soccer",
+   "gender": "f",
+   "selection": "tryout",
+   "capacity": 18,
+   "jv_capacity": 14,
+   "starters": 11,
+   "season": {
+    "start": [
+     9,
+     1
+    ],
+    "end": [
+     11,
+     14
+    ]
+   },
+   "tryout": [
+    9,
+    9
+   ],
+   "practice_days": [
+    0,
+    1,
+    2
+   ],
+   "game_day": 3,
+   "staff": "coach_mensah",
+   "prestige": 64,
+   "school": "hchs"
+  },
+  {
+   "id": "basketball_girls",
+   "name": "Guilford Girls Basketball",
+   "kind": "team",
+   "skill": "basketball",
+   "gender": "f",
+   "selection": "tryout",
+   "capacity": 10,
+   "jv_capacity": 8,
+   "starters": 5,
+   "season": {
+    "start": [
+     11,
+     17
+    ],
+    "end": [
+     2,
+     27
+    ]
+   },
+   "tryout": [
+    11,
+    18
+   ],
+   "practice_days": [
+    0,
+    2,
+    3
+   ],
+   "game_day": 1,
+   "staff": "coach_dimarco",
+   "prestige": 62,
+   "school": "hchs"
+  },
+  {
+   "id": "softball",
+   "name": "Guilford Softball",
+   "kind": "team",
+   "skill": "softball",
+   "gender": "f",
+   "selection": "tryout",
+   "capacity": 14,
+   "jv_capacity": 10,
+   "starters": 9,
+   "season": {
+    "start": [
+     2,
+     23
+    ],
+    "end": [
+     5,
+     29
+    ]
+   },
+   "tryout": [
+    3,
+    2
+   ],
+   "practice_days": [
+    0,
+    1,
+    2
+   ],
+   "game_day": 3,
+   "staff": "coach_torres",
+   "prestige": 60,
+   "school": "hchs"
+  },
+  {
+   "id": "drama",
+   "name": "Footlights Drama",
+   "kind": "production",
+   "skill": "drama",
+   "selection": "audition",
+   "capacity": 7,
+   "productions": [
+    {
+     "id": "fall_play",
+     "name": "the fall play",
+     "audition": [
+      9,
+      10
+     ],
+     "show": [
+      11,
+      14
+     ]
+    },
+    {
+     "id": "spring_musical",
+     "name": "the spring musical",
+     "audition": [
+      1,
+      14
+     ],
+     "show": [
+      4,
+      24
+     ]
+    }
+   ],
+   "practice_days": [
+    0,
+    2,
+    3
+   ],
+   "staff": "ms_whitfield",
+   "prestige": 45,
+   "school": "hchs"
+  },
+  {
+   "id": "art",
+   "name": "Art Club",
+   "kind": "club",
+   "skill": "art",
+   "selection": "open",
+   "capacity": 20,
+   "practice_days": [
+    1,
+    3
+   ],
+   "staff": "ms_novak",
+   "prestige": 25,
+   "school": "hchs"
+  },
+  {
+   "id": "robotics",
+   "name": "Robotics Club",
+   "kind": "club",
+   "skill": "tech",
+   "selection": "open",
+   "capacity": 16,
+   "practice_days": [
+    2
+   ],
+   "staff": "mr_chen",
+   "prestige": 30,
+   "school": "hchs"
+  },
+  {
+   "id": "band",
+   "name": "Jazz Band",
+   "kind": "club",
+   "skill": "music",
+   "selection": "open",
+   "capacity": 16,
+   "practice_days": [
+    1,
+    3
+   ],
+   "staff": "ms_novak",
+   "prestige": 30,
+   "school": "hchs"
+  },
+  {
+   "id": "paper",
+   "name": "The Grizzly Gazette",
+   "kind": "club",
+   "skill": "writing",
+   "selection": "open",
+   "capacity": 12,
+   "practice_days": [
+    0
+   ],
+   "staff": "mr_haddad",
+   "prestige": 25,
+   "school": "hchs"
+  },
+  {
+   "id": "council",
+   "name": "Student Council",
+   "kind": "council",
+   "skill": null,
+   "selection": "election",
+   "capacity": 4,
+   "election": [
+    10,
+    2
+   ],
+   "signup_open": [
+    9,
+    15
+   ],
+   "practice_days": [
+    1
+   ],
+   "staff": "dr_alvarez",
+   "prestige": 55,
+   "school": "hchs"
+  },
+  {
+   "id": "job_diner",
+   "name": "Route 1 Diner",
+   "kind": "job",
+   "skill": null,
+   "selection": "hire",
+   "capacity": 3,
+   "shift_days": [
+    2,
+    5
+   ],
+   "pay": 42,
+   "min_age": 15,
+   "prestige": 10,
+   "school": null,
+   "location": "hollow_creek"
+  },
+  {
+   "id": "job_market",
+   "name": "Bishop's Orchards",
+   "kind": "job",
+   "skill": null,
+   "selection": "hire",
+   "capacity": 3,
+   "shift_days": [
+    1,
+    6
+   ],
+   "pay": 38,
+   "min_age": 15,
+   "prestige": 5,
+   "school": null,
+   "location": "hollow_creek"
+  },
+  {
+   "id": "job_auto",
+   "name": "Route 1 Auto",
+   "kind": "job",
+   "skill": null,
+   "selection": "hire",
+   "capacity": 40,
+   "shift_days": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "pay": 95,
+   "min_age": 18,
+   "prestige": 10,
+   "adult": true,
+   "school": null,
+   "location": "hollow_creek"
+  },
+  {
+   "id": "job_builders",
+   "name": "Shoreline Builders",
+   "kind": "job",
+   "skill": null,
+   "selection": "hire",
+   "capacity": 40,
+   "shift_days": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "pay": 105,
+   "min_age": 18,
+   "prestige": 12,
+   "adult": true,
+   "school": null,
+   "location": "hollow_creek"
+  },
+  {
+   "id": "rec_league",
+   "name": "Guilford Rec League",
+   "kind": "club",
+   "skill": "basketball",
+   "selection": "open",
+   "capacity": 30,
+   "practice_days": [
+    1,
+    3
+   ],
+   "prestige": 10,
+   "adult": true,
+   "school": null,
+   "location": "hollow_creek",
+   "note": "For grads who still want to play"
+  }
+ ],
+ "calendar": {
+  "school_year_start": [
+   9,
+   1
+  ],
+  "breaks": [
+   {
+    "name": "Thanksgiving break",
+    "from": [
+     11,
+     26
+    ],
+    "to": [
+     11,
+     28
+    ]
+   },
+   {
+    "name": "Winter break",
+    "from": [
+     12,
+     20
+    ],
+    "to": [
+     1,
+     4
+    ]
+   },
+   {
+    "name": "Spring break",
+    "from": [
+     4,
+     4
+    ],
+    "to": [
+     4,
+     12
+    ]
+   },
+   {
+    "name": "Summer",
+    "from": [
+     6,
+     13
+    ],
+    "to": [
+     8,
+     31
+    ]
+   }
+  ],
+  "events": [
+   {
+    "id": "homecoming",
+    "name": "Homecoming Dance",
+    "kind": "dance",
+    "date": [
+     10,
+     18
+    ],
+    "ask_window": 16,
+    "grades": [
+     9,
+     10,
+     11,
+     12
+    ]
+   },
+   {
+    "id": "snow_ball",
+    "name": "Snow Ball",
+    "kind": "dance",
+    "date": [
+     2,
+     14
+    ],
+    "ask_window": 14,
+    "grades": [
+     9,
+     10,
+     11,
+     12
+    ]
+   },
+   {
+    "id": "prom",
+    "name": "Prom",
+    "kind": "dance",
+    "date": [
+     5,
+     16
+    ],
+    "ask_window": 21,
+    "grades": [
+     11,
+     12
+    ]
+   },
+   {
+    "id": "midterms_fall",
+    "name": "Fall midterms",
+    "kind": "exam",
+    "date": [
+     10,
+     24
+    ],
+    "weight": 2
+   },
+   {
+    "id": "finals_fall",
+    "name": "Fall finals",
+    "kind": "exam",
+    "date": [
+     12,
+     18
+    ],
+    "weight": 3
+   },
+   {
+    "id": "midterms_spring",
+    "name": "Spring midterms",
+    "kind": "exam",
+    "date": [
+     3,
+     13
+    ],
+    "weight": 2
+   },
+   {
+    "id": "finals_spring",
+    "name": "Spring finals",
+    "kind": "exam",
+    "date": [
+     6,
+     10
+    ],
+    "weight": 3
+   },
+   {
+    "id": "rc1",
+    "name": "First-quarter report cards",
+    "kind": "report_card",
+    "date": [
+     11,
+     7
+    ]
+   },
+   {
+    "id": "rc2",
+    "name": "Semester report cards",
+    "kind": "report_card",
+    "date": [
+     1,
+     23
+    ]
+   },
+   {
+    "id": "rc3",
+    "name": "Third-quarter report cards",
+    "kind": "report_card",
+    "date": [
+     4,
+     17
+    ]
+   },
+   {
+    "id": "rc4",
+    "name": "Final report cards",
+    "kind": "report_card",
+    "date": [
+     6,
+     12
+    ]
+   },
+   {
+    "id": "graduation",
+    "name": "Graduation",
+    "kind": "graduation",
+    "date": [
+     6,
+     12
+    ]
+   },
+   {
+    "id": "college_decision",
+    "name": "College decision time",
+    "kind": "college_decision",
+    "date": [
+     4,
+     10
+    ]
+   },
+   {
+    "id": "admissions",
+    "name": "Acceptance letters",
+    "kind": "admissions",
+    "date": [
+     3,
+     16
+    ]
+   },
+   {
+    "id": "decision_day",
+    "name": "Decision day",
+    "kind": "decision_day",
+    "date": [
+     4,
+     24
+    ]
+   }
+  ],
+  "quiz_every_days": 14
+ },
+ "opponents": {
+  "hchs": [
+   "Hand",
+   "Branford",
+   "North Haven",
+   "East Haven",
+   "Amity",
+   "Cheshire",
+   "Hamden",
+   "Shelton",
+   "Xavier",
+   "Notre Dame-West Haven",
+   "West Haven",
+   "Lyman Hall",
+   "Sheehan",
+   "Wilbur Cross"
+  ],
+  "college": [
+   "Northgate",
+   "Ashford",
+   "Calder State",
+   "Harlan",
+   "Bell River",
+   "Southport",
+   "Crestwood",
+   "Maple Bay",
+   "Tamarack",
+   "Vale"
+  ]
+ }
+}

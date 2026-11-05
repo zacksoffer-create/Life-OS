@@ -1,0 +1,13 @@
+.graph-wrap { position: relative; }
+.graph { width: 100%; height: auto; display: block; background: radial-gradient(600px 400px at 50% 50%, #161c3a, transparent 70%); border-radius: var(--radius) var(--radius) 0 0; }
+.graph .node { cursor: pointer; }
+.graph .edge { cursor: pointer; }
+.node-label { fill: var(--muted); font-size: 11px; pointer-events: none; paint-order: stroke; stroke: #0c0f1d; stroke-width: 3px; }
+.edge-legend { display: flex; flex-wrap: wrap; gap: 14px; padding: 10px 14px 14px; font-size: 12px; color: var(--muted); align-items: center; }
+.edge-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.edge-tip { position: absolute; top: 10px; left: 10px; background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 10px; padding: 8px 10px; font-size: 12px; pointer-events: none; box-shadow: var(--shadow); }
+.swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.conn { display: flex; align-items: center; gap: 10px; padding: 6px 4px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.conn:hover { background: var(--panel-2); }
+.member { position: relative; }
+.crown { position: absolute; top: -6px; right: -4px; color: var(--warm); font-size: 11px; }

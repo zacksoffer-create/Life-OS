@@ -1,0 +1,1758 @@
+{
+ "version": 1,
+ "notes": "Every autonomous action. Utility = base + needs + motives + traits + interest + target terms + goals + memory + experience + habit + conformity - risk + obligation + context, then a softmax draw. Coefficients are experimental design values. 'needs' > 0 means the action relieves that need (more attractive the more urgent the need); < 0 means it costs that need (less attractive when depleted). Resolver params are applied when the action is carried out.",
+ "actions": [
+  {
+   "id": "study",
+   "label": "Study",
+   "category": "academic",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": null,
+   "base": 2.5,
+   "needs": {
+    "energy": -0.4,
+    "fun": -0.5
+   },
+   "motives": {
+    "achievement": 1.0,
+    "mastery": 0.25
+   },
+   "traits": {
+    "discipline": 0.9,
+    "ambition": 0.4,
+    "impulsivity": -0.4,
+    "curiosity": 0.2
+   },
+   "risk": 0,
+   "resolver": "solo",
+   "params": {
+    "skill": "academics",
+    "gain": 0.9,
+    "study_points": 1.0,
+    "energy": -9,
+    "fun": -7,
+    "stress": -1,
+    "social": -2,
+    "enjoy_trait": "curiosity"
+   },
+   "importance": 3,
+   "tags": [
+    "achievement",
+    "solo"
+   ],
+   "interest": 0.6
+  },
+  {
+   "id": "study_at_lunch",
+   "label": "Study through lunch",
+   "category": "academic",
+   "slots": [
+    "lunch"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": null,
+   "base": -3.0,
+   "needs": {
+    "social": -0.6,
+    "fun": -0.3
+   },
+   "motives": {
+    "achievement": 0.8
+   },
+   "traits": {
+    "discipline": 0.8,
+    "sociability": -0.6
+   },
+   "risk": 0,
+   "resolver": "solo",
+   "params": {
+    "skill": "academics",
+    "gain": 0.4,
+    "study_points": 0.5,
+    "energy": -3,
+    "fun": -3,
+    "stress": 0,
+    "social": -3,
+    "enjoy_trait": "curiosity"
+   },
+   "importance": 2,
+   "tags": [
+    "achievement",
+    "solo"
+   ]
+  },
+  {
+   "id": "practice_skill",
+   "label": "Practice on your own",
+   "category": "activity",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "skill",
+   "base": 0.0,
+   "needs": {
+    "energy": -0.5,
+    "fun": 0.2,
+    "stress": 0.15
+   },
+   "motives": {
+    "mastery": 0.9,
+    "achievement": 0.6
+   },
+   "traits": {
+    "discipline": 0.7,
+    "competitiveness": 0.3,
+    "impulsivity": -0.2
+   },
+   "interest": 1.0,
+   "risk": 0,
+   "resolver": "solo",
+   "params": {
+    "skill": "@target",
+    "gain": 1.0,
+    "energy": -12,
+    "fun": 3,
+    "stress": -3,
+    "social": -2,
+    "enjoy_trait": "interest"
+   },
+   "importance": 4,
+   "tags": [
+    "mastery",
+    "solo"
+   ]
+  },
+  {
+   "id": "hobby",
+   "label": "Do a hobby",
+   "category": "leisure",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni",
+    "staff"
+   ],
+   "target": "hobby",
+   "base": 2.0,
+   "needs": {
+    "fun": 1.0,
+    "stress": 0.5,
+    "energy": -0.1
+   },
+   "motives": {
+    "pleasure": 0.9,
+    "mastery": 0.2
+   },
+   "traits": {
+    "curiosity": 0.3,
+    "discipline": -0.2
+   },
+   "interest": 0.8,
+   "risk": 0,
+   "resolver": "solo",
+   "params": {
+    "skill": "@hobby_skill",
+    "gain": 0.35,
+    "energy": -4,
+    "fun": 16,
+    "stress": -4,
+    "social": -2,
+    "enjoy_trait": "interest"
+   },
+   "importance": 2,
+   "tags": [
+    "pleasure",
+    "solo"
+   ]
+  },
+  {
+   "id": "rest",
+   "label": "Rest and recharge",
+   "category": "leisure",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni",
+    "staff"
+   ],
+   "target": null,
+   "base": -2.0,
+   "needs": {
+    "energy": 1.3,
+    "stress": 0.7
+   },
+   "motives": {
+    "pleasure": 0.3
+   },
+   "traits": {
+    "sociability": -0.3,
+    "ambition": -0.3
+   },
+   "risk": 0,
+   "resolver": "solo",
+   "params": {
+    "energy": 22,
+    "fun": 4,
+    "stress": -9,
+    "social": -1
+   },
+   "importance": 1,
+   "tags": [
+    "rest",
+    "solo"
+   ]
+  },
+  {
+   "id": "sit_alone",
+   "label": "Eat alone",
+   "category": "leisure",
+   "slots": [
+    "lunch"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": null,
+   "base": -3.0,
+   "needs": {
+    "energy": 0.5,
+    "stress": 0.4,
+    "social": -0.7
+   },
+   "motives": {},
+   "traits": {
+    "sociability": -0.9,
+    "confidence": -0.3
+   },
+   "risk": 0,
+   "resolver": "solo",
+   "params": {
+    "energy": 5,
+    "fun": 1,
+    "stress": -3,
+    "social": -3
+   },
+   "importance": 1,
+   "tags": [
+    "rest",
+    "solo"
+   ]
+  },
+  {
+   "id": "sit_with",
+   "label": "Sit with someone at lunch",
+   "category": "social",
+   "slots": [
+    "lunch"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "known",
+   "base": 5.0,
+   "needs": {
+    "social": 1.0,
+    "fun": 0.3
+   },
+   "motives": {
+    "belonging": 0.9,
+    "approval": 0.3
+   },
+   "traits": {
+    "sociability": 0.5
+   },
+   "target_terms": {
+    "affection": 1.0,
+    "familiarity": 0.2,
+    "attraction": 0.25,
+    "rivalry": -0.8,
+    "popularity_approval": 1.0
+   },
+   "risk": 0,
+   "resolver": "lunch_table",
+   "params": {},
+   "importance": 3,
+   "tags": [
+    "social"
+   ]
+  },
+  {
+   "id": "introduce",
+   "label": "Introduce yourself",
+   "category": "social",
+   "slots": [
+    "lunch",
+    "after_school",
+    "day"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "stranger",
+   "base": -1.0,
+   "needs": {
+    "social": 0.8,
+    "energy": -0.2
+   },
+   "motives": {
+    "belonging": 0.6,
+    "approval": 0.4
+   },
+   "traits": {
+    "sociability": 0.9,
+    "confidence": 0.6,
+    "curiosity": 0.3
+   },
+   "target_terms": {
+    "popularity_approval": 0.8,
+    "attraction": 0.3
+   },
+   "risk": 0.15,
+   "resolver": "interact",
+   "params": {
+    "kind": "introduce",
+    "quality_bias": 0.05,
+    "familiarity": 14,
+    "affection": 10,
+    "trust": 3,
+    "attraction": 1.0,
+    "social": 8,
+    "fun": 3,
+    "energy": -3,
+    "first_meeting": true
+   },
+   "importance": 8,
+   "tags": [
+    "social",
+    "meet"
+   ]
+  },
+  {
+   "id": "chat_online",
+   "label": "Message someone",
+   "category": "social",
+   "slots": [
+    "evening",
+    "after_school"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "known",
+   "base": 1.5,
+   "needs": {
+    "social": 0.7,
+    "fun": 0.3
+   },
+   "motives": {
+    "belonging": 0.7
+   },
+   "traits": {
+    "sociability": 0.4
+   },
+   "target_terms": {
+    "affection": 0.8,
+    "familiarity": 0.2,
+    "attraction": 0.4,
+    "rivalry": -0.6
+   },
+   "risk": 0,
+   "resolver": "interact",
+   "params": {
+    "kind": "chat",
+    "quality_bias": 0.1,
+    "familiarity": 3,
+    "affection": 5,
+    "trust": 1.5,
+    "attraction": 0.6,
+    "social": 8,
+    "fun": 4,
+    "energy": -2
+   },
+   "importance": 3,
+   "tags": [
+    "social"
+   ]
+  },
+  {
+   "id": "hang_out",
+   "label": "Invite someone to hang out",
+   "category": "social",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "known",
+   "base": 1.0,
+   "needs": {
+    "social": 1.2,
+    "fun": 0.8,
+    "energy": -0.3
+   },
+   "motives": {
+    "belonging": 0.9,
+    "pleasure": 0.6,
+    "approval": 0.2
+   },
+   "traits": {
+    "sociability": 0.7,
+    "discipline": -0.15
+   },
+   "target_terms": {
+    "affection": 1.0,
+    "familiarity": 0.3,
+    "attraction": 0.4,
+    "rivalry": -0.8,
+    "popularity_approval": 0.6
+   },
+   "requires": [
+    "not_grounded",
+    "money:4"
+   ],
+   "risk": 0.05,
+   "resolver": "interact",
+   "params": {
+    "kind": "hang_out",
+    "needs_acceptance": true,
+    "quality_bias": 0.15,
+    "familiarity": 8,
+    "affection": 10,
+    "trust": 4,
+    "attraction": 1.2,
+    "social": 22,
+    "fun": 18,
+    "energy": -8,
+    "stress": -4,
+    "place": true
+   },
+   "importance": 6,
+   "tags": [
+    "social",
+    "pleasure"
+   ]
+  },
+  {
+   "id": "help_friend",
+   "label": "Check in on a struggling friend",
+   "category": "social",
+   "slots": [
+    "lunch",
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "needy_friend",
+   "base": 1.0,
+   "needs": {
+    "social": 0.5,
+    "energy": -0.2
+   },
+   "motives": {
+    "altruism": 1.3,
+    "belonging": 0.5
+   },
+   "traits": {
+    "empathy": 1.0,
+    "loyalty": 0.5
+   },
+   "target_terms": {
+    "affection": 0.8,
+    "target_stress": 1.0
+   },
+   "risk": 0,
+   "resolver": "interact",
+   "params": {
+    "kind": "support",
+    "quality_bias": 0.25,
+    "familiarity": 4,
+    "affection": 9,
+    "trust": 8,
+    "attraction": 0.4,
+    "social": 8,
+    "fun": 0,
+    "energy": -5,
+    "target_stress": -12,
+    "target_mood": 6
+   },
+   "importance": 10,
+   "tags": [
+    "altruism",
+    "social"
+   ]
+  },
+  {
+   "id": "flirt",
+   "label": "Flirt",
+   "category": "romance",
+   "slots": [
+    "lunch",
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "crush",
+   "base": 0.0,
+   "needs": {
+    "social": 0.5,
+    "fun": 0.5
+   },
+   "motives": {
+    "pleasure": 0.5,
+    "approval": 0.3
+   },
+   "traits": {
+    "confidence": 0.8,
+    "sociability": 0.4,
+    "impulsivity": 0.3
+   },
+   "target_terms": {
+    "attraction": 1.2,
+    "perceived": 0.6
+   },
+   "requires": [
+    "romance"
+   ],
+   "risk": 0.2,
+   "resolver": "interact",
+   "params": {
+    "kind": "flirt",
+    "quality_bias": 0.0,
+    "familiarity": 5,
+    "affection": 4,
+    "trust": 1,
+    "attraction": 3.0,
+    "social": 8,
+    "fun": 8,
+    "energy": -3,
+    "romantic": true
+   },
+   "importance": 7,
+   "tags": [
+    "romance"
+   ]
+  },
+  {
+   "id": "ask_out",
+   "label": "Ask someone out",
+   "category": "romance",
+   "slots": [
+    "lunch",
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "crush",
+   "base": -7.0,
+   "needs": {},
+   "motives": {
+    "pleasure": 0.4,
+    "belonging": 0.6,
+    "approval": 0.3
+   },
+   "traits": {
+    "confidence": 1.0,
+    "impulsivity": 0.4
+   },
+   "target_terms": {
+    "attraction": 1.6,
+    "perceived": 1.2
+   },
+   "requires": [
+    "romance",
+    "single"
+   ],
+   "risk": 0.6,
+   "resolver": "ask_out",
+   "params": {},
+   "importance": 30,
+   "tags": [
+    "romance",
+    "risky"
+   ]
+  },
+  {
+   "id": "ask_to_dance",
+   "label": "Ask someone to the dance",
+   "category": "romance",
+   "slots": [
+    "lunch",
+    "after_school",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "dance_date",
+   "base": -1.0,
+   "needs": {},
+   "motives": {
+    "approval": 0.5,
+    "belonging": 0.5,
+    "pleasure": 0.4
+   },
+   "traits": {
+    "confidence": 0.9,
+    "sociability": 0.3
+   },
+   "target_terms": {
+    "attraction": 1.2,
+    "affection": 0.5,
+    "perceived": 0.8
+   },
+   "requires": [
+    "dance_window",
+    "no_dance_date"
+   ],
+   "risk": 0.4,
+   "resolver": "ask_out",
+   "params": {
+    "context": "dance"
+   },
+   "importance": 22,
+   "tags": [
+    "romance",
+    "risky"
+   ]
+  },
+  {
+   "id": "date",
+   "label": "Go on a date",
+   "category": "romance",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "partner",
+   "base": 6.0,
+   "needs": {
+    "social": 1.0,
+    "fun": 0.8,
+    "energy": -0.3
+   },
+   "motives": {
+    "belonging": 0.8,
+    "pleasure": 0.7
+   },
+   "traits": {
+    "loyalty": 0.3
+   },
+   "target_terms": {
+    "affection": 0.6,
+    "attraction": 0.8
+   },
+   "requires": [
+    "not_grounded",
+    "money:6"
+   ],
+   "risk": 0,
+   "resolver": "interact",
+   "params": {
+    "kind": "date",
+    "needs_acceptance": true,
+    "quality_bias": 0.2,
+    "familiarity": 5,
+    "affection": 9,
+    "trust": 5,
+    "attraction": 2.0,
+    "social": 24,
+    "fun": 18,
+    "energy": -8,
+    "stress": -6,
+    "place": true,
+    "romantic": true
+   },
+   "importance": 8,
+   "tags": [
+    "romance",
+    "social"
+   ]
+  },
+  {
+   "id": "break_up",
+   "label": "Break up",
+   "category": "romance",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "partner",
+   "base": -14.0,
+   "needs": {},
+   "motives": {
+    "pleasure": 0.2
+   },
+   "traits": {
+    "loyalty": -0.8,
+    "impulsivity": 0.4
+   },
+   "target_terms": {
+    "dissatisfaction": 1.6,
+    "attraction": -0.6
+   },
+   "risk": 0.2,
+   "resolver": "break_up",
+   "params": {},
+   "importance": 40,
+   "tags": [
+    "romance",
+    "conflict"
+   ]
+  },
+  {
+   "id": "confront",
+   "label": "Confront someone",
+   "category": "conflict",
+   "slots": [
+    "lunch",
+    "after_school",
+    "day"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "grudge",
+   "base": -11.0,
+   "needs": {
+    "stress": 0.3
+   },
+   "motives": {
+    "approval": 0.3
+   },
+   "traits": {
+    "volatility": 0.9,
+    "confidence": 0.5,
+    "competitiveness": 0.4,
+    "empathy": -0.4
+   },
+   "target_terms": {
+    "grudge": 1.4,
+    "rivalry": 0.5
+   },
+   "risk": 0.3,
+   "resolver": "confront",
+   "params": {},
+   "importance": 25,
+   "tags": [
+    "conflict"
+   ]
+  },
+  {
+   "id": "apologize",
+   "label": "Apologize / patch things up",
+   "category": "conflict",
+   "slots": [
+    "lunch",
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "conflict",
+   "base": -2.0,
+   "needs": {
+    "stress": 0.4
+   },
+   "motives": {
+    "belonging": 0.8,
+    "altruism": 0.6
+   },
+   "traits": {
+    "empathy": 0.8,
+    "loyalty": 0.6,
+    "confidence": -0.2,
+    "competitiveness": -0.3
+   },
+   "target_terms": {
+    "past_affection": 1.2
+   },
+   "risk": 0.2,
+   "resolver": "apologize",
+   "params": {},
+   "importance": 22,
+   "tags": [
+    "altruism",
+    "conflict"
+   ]
+  },
+  {
+   "id": "gossip",
+   "label": "Share gossip",
+   "category": "social",
+   "slots": [
+    "lunch",
+    "after_school",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "listener",
+   "base": -2.0,
+   "needs": {
+    "social": 0.6,
+    "fun": 0.5
+   },
+   "motives": {
+    "approval": 0.7,
+    "belonging": 0.4,
+    "pleasure": 0.3
+   },
+   "traits": {
+    "sociability": 0.4,
+    "empathy": -0.5,
+    "loyalty": -0.2
+   },
+   "target_terms": {
+    "affection": 0.6,
+    "rumor_juice": 1.0
+   },
+   "risk": 0.1,
+   "resolver": "gossip",
+   "params": {},
+   "importance": 9,
+   "tags": [
+    "social",
+    "information"
+   ]
+  },
+  {
+   "id": "spread_rumor",
+   "label": "Start a rumor about someone",
+   "category": "conflict",
+   "slots": [
+    "lunch",
+    "after_school",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "rumor_victim",
+   "base": -14.0,
+   "needs": {},
+   "motives": {
+    "approval": 0.8
+   },
+   "traits": {
+    "empathy": -1.2,
+    "competitiveness": 0.6,
+    "impulsivity": 0.3,
+    "loyalty": -0.3
+   },
+   "target_terms": {
+    "grudge": 1.0,
+    "rivalry": 0.8,
+    "popularity_threat": 0.6
+   },
+   "risk": 0.4,
+   "resolver": "spread_rumor",
+   "params": {},
+   "importance": 28,
+   "tags": [
+    "conflict",
+    "information"
+   ]
+  },
+  {
+   "id": "tease",
+   "label": "Mock someone in front of others",
+   "category": "conflict",
+   "slots": [
+    "lunch"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "tease_target",
+   "base": -10.0,
+   "needs": {
+    "fun": 0.4
+   },
+   "motives": {
+    "approval": 1.0,
+    "pleasure": 0.3
+   },
+   "traits": {
+    "empathy": -1.3,
+    "confidence": 0.5,
+    "impulsivity": 0.4,
+    "competitiveness": 0.3
+   },
+   "target_terms": {
+    "grudge": 0.6,
+    "rivalry": 0.6,
+    "low_status": 0.8
+   },
+   "risk": 0.25,
+   "resolver": "tease",
+   "params": {},
+   "importance": 24,
+   "tags": [
+    "conflict",
+    "status"
+   ]
+  },
+  {
+   "id": "prank",
+   "label": "Pull a prank",
+   "category": "risk",
+   "slots": [
+    "lunch",
+    "after_school"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": null,
+   "base": -10.0,
+   "needs": {
+    "fun": 1.0
+   },
+   "motives": {
+    "pleasure": 0.7,
+    "approval": 0.5
+   },
+   "traits": {
+    "impulsivity": 1.2,
+    "discipline": -0.6,
+    "curiosity": 0.2
+   },
+   "risk": 0.7,
+   "resolver": "prank",
+   "params": {},
+   "importance": 26,
+   "tags": [
+    "risky",
+    "pleasure"
+   ]
+  },
+  {
+   "id": "sneak_out",
+   "label": "Sneak out while grounded",
+   "category": "risk",
+   "slots": [
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": null,
+   "base": -6.0,
+   "needs": {
+    "fun": 1.0,
+    "social": 0.8
+   },
+   "motives": {
+    "pleasure": 0.9
+   },
+   "traits": {
+    "impulsivity": 1.1,
+    "discipline": -0.6,
+    "loyalty": -0.2
+   },
+   "requires": [
+    "grounded"
+   ],
+   "risk": 0.7,
+   "resolver": "sneak_out",
+   "params": {},
+   "importance": 24,
+   "tags": [
+    "risky",
+    "pleasure"
+   ]
+  },
+  {
+   "id": "attend_practice",
+   "label": "Go to practice / meeting",
+   "category": "obligation",
+   "slots": [
+    "after_school",
+    "day"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "practice",
+   "base": 3.0,
+   "needs": {
+    "social": 0.4,
+    "energy": -0.4
+   },
+   "motives": {
+    "achievement": 0.6,
+    "mastery": 0.5,
+    "belonging": 0.5
+   },
+   "traits": {
+    "discipline": 0.5
+   },
+   "interest": 0.7,
+   "obligation": 1.0,
+   "risk": 0,
+   "resolver": "attend",
+   "params": {
+    "what": "practice"
+   },
+   "importance": 2,
+   "tags": [
+    "obligation"
+   ]
+  },
+  {
+   "id": "attend_event",
+   "label": "Show up to a scheduled event",
+   "category": "obligation",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "event",
+   "base": 4.0,
+   "needs": {
+    "social": 0.4,
+    "fun": 0.3
+   },
+   "motives": {
+    "achievement": 0.5,
+    "approval": 0.4,
+    "belonging": 0.4
+   },
+   "traits": {
+    "confidence": 0.4
+   },
+   "obligation": 1.0,
+   "risk": 0,
+   "resolver": "attend",
+   "params": {
+    "what": "event"
+   },
+   "importance": 3,
+   "tags": [
+    "obligation"
+   ]
+  },
+  {
+   "id": "sign_up",
+   "label": "Sign up for something",
+   "category": "achievement",
+   "slots": [
+    "lunch",
+    "after_school"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "opportunity",
+   "base": -1.0,
+   "needs": {},
+   "motives": {
+    "achievement": 0.7,
+    "approval": 0.4,
+    "belonging": 0.4,
+    "mastery": 0.3
+   },
+   "traits": {
+    "ambition": 0.6,
+    "confidence": 0.5,
+    "curiosity": 0.2
+   },
+   "interest": 1.2,
+   "risk": 0.1,
+   "resolver": "sign_up",
+   "params": {},
+   "importance": 12,
+   "tags": [
+    "achievement"
+   ]
+  },
+  {
+   "id": "quit_group",
+   "label": "Quit a group",
+   "category": "achievement",
+   "slots": [
+    "after_school"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "membership",
+   "base": -10.0,
+   "needs": {
+    "stress": 0.6,
+    "energy": 0.3
+   },
+   "motives": {
+    "pleasure": 0.3
+   },
+   "traits": {
+    "discipline": -0.6,
+    "loyalty": -0.5,
+    "impulsivity": 0.3
+   },
+   "target_terms": {
+    "group_discontent": 1.5
+   },
+   "risk": 0,
+   "resolver": "quit_group",
+   "params": {},
+   "importance": 20,
+   "tags": [
+    "change"
+   ]
+  },
+  {
+   "id": "work_shift",
+   "label": "Work a shift",
+   "category": "obligation",
+   "slots": [
+    "after_school",
+    "day"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "shift",
+   "base": 2.0,
+   "needs": {
+    "energy": -0.4,
+    "fun": -0.2
+   },
+   "motives": {
+    "achievement": 0.4
+   },
+   "traits": {
+    "discipline": 0.4
+   },
+   "obligation": 1.0,
+   "risk": 0,
+   "resolver": "work_shift",
+   "params": {},
+   "importance": 3,
+   "tags": [
+    "obligation",
+    "money"
+   ]
+  },
+  {
+   "id": "throw_party",
+   "label": "Throw a party tonight",
+   "category": "social",
+   "slots": [
+    "day"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": null,
+   "base": -9.0,
+   "needs": {
+    "fun": 0.7,
+    "social": 0.6
+   },
+   "motives": {
+    "approval": 1.1,
+    "pleasure": 0.6,
+    "belonging": 0.3
+   },
+   "traits": {
+    "sociability": 1.0,
+    "impulsivity": 0.4,
+    "confidence": 0.4
+   },
+   "requires": [
+    "weekend",
+    "not_grounded",
+    "can_host",
+    "money:15"
+   ],
+   "risk": 0.3,
+   "resolver": "throw_party",
+   "params": {},
+   "importance": 25,
+   "tags": [
+    "social",
+    "status"
+   ]
+  },
+  {
+   "id": "go_to_party",
+   "label": "Go to a party",
+   "category": "social",
+   "slots": [
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "party",
+   "base": 2.0,
+   "needs": {
+    "fun": 1.0,
+    "social": 1.0,
+    "energy": -0.4
+   },
+   "motives": {
+    "pleasure": 0.8,
+    "approval": 0.7,
+    "belonging": 0.5
+   },
+   "traits": {
+    "sociability": 0.8,
+    "impulsivity": 0.3,
+    "discipline": -0.2
+   },
+   "target_terms": {
+    "host_affection": 0.8
+   },
+   "requires": [
+    "not_grounded"
+   ],
+   "risk": 0.15,
+   "resolver": "attend",
+   "params": {
+    "what": "party"
+   },
+   "importance": 6,
+   "tags": [
+    "social",
+    "pleasure"
+   ]
+  },
+  {
+   "id": "spectate",
+   "label": "Go watch a game or show",
+   "category": "social",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "staff"
+   ],
+   "target": "spectate",
+   "base": 0.0,
+   "needs": {
+    "fun": 0.6,
+    "social": 0.5
+   },
+   "motives": {
+    "belonging": 0.6,
+    "approval": 0.3,
+    "pleasure": 0.3
+   },
+   "traits": {
+    "sociability": 0.4,
+    "loyalty": 0.3
+   },
+   "target_terms": {
+    "friends_performing": 1.0
+   },
+   "risk": 0,
+   "resolver": "attend",
+   "params": {
+    "what": "spectate"
+   },
+   "importance": 3,
+   "tags": [
+    "social"
+   ]
+  },
+  {
+   "id": "family_time",
+   "label": "Spend time with family",
+   "category": "family",
+   "slots": [
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "sibling",
+   "base": 0.0,
+   "needs": {
+    "social": 0.6,
+    "stress": 0.4
+   },
+   "motives": {
+    "belonging": 0.6,
+    "altruism": 0.3
+   },
+   "traits": {
+    "loyalty": 0.5,
+    "empathy": 0.3,
+    "impulsivity": -0.2
+   },
+   "target_terms": {
+    "affection": 0.7
+   },
+   "risk": 0,
+   "resolver": "interact",
+   "params": {
+    "kind": "family",
+    "quality_bias": 0.2,
+    "familiarity": 1,
+    "affection": 6,
+    "trust": 4,
+    "attraction": 0,
+    "social": 12,
+    "fun": 6,
+    "energy": -3,
+    "stress": -6
+   },
+   "importance": 4,
+   "tags": [
+    "family",
+    "social"
+   ]
+  },
+  {
+   "id": "pet_time",
+   "label": "Spend time with the pet",
+   "category": "family",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student"
+   ],
+   "target": "pet",
+   "base": 0.5,
+   "needs": {
+    "stress": 0.9,
+    "fun": 0.5
+   },
+   "motives": {
+    "pleasure": 0.4,
+    "altruism": 0.4
+   },
+   "traits": {
+    "empathy": 0.4,
+    "sociability": -0.2
+   },
+   "requires": [
+    "has_pet"
+   ],
+   "risk": 0,
+   "resolver": "pet_time",
+   "params": {
+    "energy": -3,
+    "fun": 9,
+    "stress": -11,
+    "social": 4
+   },
+   "importance": 3,
+   "tags": [
+    "family",
+    "rest"
+   ]
+  },
+  {
+   "id": "mentor",
+   "label": "Mentor a student",
+   "category": "staff",
+   "slots": [
+    "after_school",
+    "day"
+   ],
+   "roles": [
+    "staff"
+   ],
+   "target": "mentee",
+   "base": 3.0,
+   "needs": {
+    "energy": -0.3
+   },
+   "motives": {
+    "altruism": 1.0,
+    "achievement": 0.4
+   },
+   "traits": {
+    "empathy": 0.7,
+    "ambition": 0.3
+   },
+   "target_terms": {
+    "affection": 0.5,
+    "respect": 0.6,
+    "mentee_need": 1.0
+   },
+   "risk": 0,
+   "resolver": "mentor",
+   "params": {},
+   "importance": 12,
+   "tags": [
+    "altruism",
+    "staff"
+   ]
+  },
+  {
+   "id": "staff_chat",
+   "label": "Talk with a colleague",
+   "category": "social",
+   "slots": [
+    "after_school",
+    "day"
+   ],
+   "roles": [
+    "staff"
+   ],
+   "target": "colleague",
+   "base": 1.0,
+   "needs": {
+    "social": 0.9,
+    "fun": 0.3
+   },
+   "motives": {
+    "belonging": 0.6
+   },
+   "traits": {
+    "sociability": 0.6
+   },
+   "target_terms": {
+    "affection": 0.6
+   },
+   "risk": 0,
+   "resolver": "interact",
+   "params": {
+    "kind": "chat",
+    "quality_bias": 0.15,
+    "familiarity": 2,
+    "affection": 4,
+    "trust": 2,
+    "attraction": 0,
+    "social": 14,
+    "fun": 6,
+    "energy": -2
+   },
+   "importance": 2,
+   "tags": [
+    "social",
+    "staff"
+   ]
+  },
+  {
+   "id": "train",
+   "label": "Work out / train",
+   "category": "activity",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": null,
+   "base": -1.0,
+   "needs": {
+    "energy": -0.6,
+    "fun": 0.1,
+    "stress": 0.4
+   },
+   "motives": {
+    "achievement": 0.7,
+    "mastery": 0.5
+   },
+   "traits": {
+    "discipline": 0.8,
+    "competitiveness": 0.5,
+    "impulsivity": -0.2
+   },
+   "interest": 0.9,
+   "requires": [
+    "healthy"
+   ],
+   "risk": 0,
+   "resolver": "solo",
+   "params": {
+    "skill": "fitness",
+    "gain": 1.0,
+    "energy": -14,
+    "fun": 2,
+    "stress": -5,
+    "social": -1,
+    "enjoy_trait": "interest"
+   },
+   "importance": 3,
+   "tags": [
+    "athletic",
+    "solo"
+   ]
+  },
+  {
+   "id": "reply_invite",
+   "label": "Say yes to an invitation",
+   "category": "social",
+   "slots": [
+    "lunch",
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "roles": [
+    "student",
+    "alumni"
+   ],
+   "target": "inbox",
+   "base": 6.0,
+   "needs": {
+    "social": 1.0,
+    "fun": 0.8
+   },
+   "motives": {
+    "belonging": 0.8,
+    "pleasure": 0.5
+   },
+   "traits": {
+    "sociability": 0.4
+   },
+   "target_terms": {
+    "affection": 0.8,
+    "attraction": 0.5
+   },
+   "risk": 0,
+   "resolver": "interact",
+   "params": {
+    "kind": "hang_out",
+    "quality_bias": 0.2,
+    "familiarity": 8,
+    "affection": 10,
+    "trust": 4,
+    "attraction": 1.2,
+    "social": 22,
+    "fun": 18,
+    "energy": -8,
+    "stress": -4,
+    "place": true
+   },
+   "importance": 10,
+   "tags": [
+    "social"
+   ]
+  },
+  {
+   "roles": [
+    "student"
+   ],
+   "risk": 0,
+   "resolver": "pet_activity",
+   "tags": [
+    "family",
+    "pet"
+   ],
+   "requires": [
+    "pet_home"
+   ],
+   "id": "pet_walk",
+   "label": "Walk the dog",
+   "category": "family",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "target": "pet_entity_dog",
+   "base": 0.2,
+   "needs": {
+    "stress": 0.6,
+    "fun": 0.3,
+    "energy": -0.2
+   },
+   "motives": {
+    "altruism": 0.3,
+    "pleasure": 0.2
+   },
+   "traits": {
+    "discipline": 0.3,
+    "empathy": 0.3
+   },
+   "params": {
+    "kind": "walk"
+   },
+   "importance": 5
+  },
+  {
+   "roles": [
+    "student"
+   ],
+   "risk": 0,
+   "resolver": "pet_activity",
+   "tags": [
+    "family",
+    "pet"
+   ],
+   "requires": [
+    "pet_home"
+   ],
+   "id": "pet_park",
+   "label": "Take the dog to the park",
+   "category": "family",
+   "slots": [
+    "after_school",
+    "day"
+   ],
+   "target": "pet_entity_dog",
+   "base": 0.0,
+   "needs": {
+    "stress": 0.6,
+    "fun": 0.6,
+    "social": 0.3,
+    "energy": -0.3
+   },
+   "motives": {
+    "pleasure": 0.4,
+    "belonging": 0.2
+   },
+   "traits": {
+    "sociability": 0.2,
+    "empathy": 0.3
+   },
+   "params": {
+    "kind": "park"
+   },
+   "importance": 8
+  },
+  {
+   "roles": [
+    "student"
+   ],
+   "risk": 0,
+   "resolver": "pet_activity",
+   "tags": [
+    "family",
+    "pet"
+   ],
+   "requires": [
+    "pet_home"
+   ],
+   "id": "pet_play",
+   "label": "Play with the pet",
+   "category": "family",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "target": "pet_entity",
+   "base": 0.1,
+   "needs": {
+    "fun": 0.8,
+    "stress": 0.5
+   },
+   "motives": {
+    "pleasure": 0.5
+   },
+   "traits": {
+    "impulsivity": 0.2,
+    "empathy": 0.3
+   },
+   "params": {
+    "kind": "play"
+   },
+   "importance": 4
+  },
+  {
+   "roles": [
+    "student"
+   ],
+   "risk": 0,
+   "resolver": "pet_activity",
+   "tags": [
+    "family",
+    "pet"
+   ],
+   "requires": [
+    "pet_home"
+   ],
+   "id": "pet_train",
+   "label": "Teach the pet a trick",
+   "category": "family",
+   "slots": [
+    "after_school",
+    "day",
+    "evening"
+   ],
+   "target": "pet_entity",
+   "base": -0.2,
+   "needs": {
+    "fun": 0.4
+   },
+   "motives": {
+    "mastery": 0.5,
+    "achievement": 0.2
+   },
+   "traits": {
+    "discipline": 0.4,
+    "empathy": 0.2
+   },
+   "params": {
+    "kind": "train"
+   },
+   "importance": 5
+  }
+ ]
+}

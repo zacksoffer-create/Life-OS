@@ -1,0 +1,818 @@
+{
+ "day": 2565,
+ "date": "Thu, Sep 9, 2032",
+ "profile": "dense",
+ "counts": {
+  "played": 33,
+  "unreachable": 7
+ },
+ "scenes": [
+  {
+   "sid": "cover_for_me",
+   "pack": "builtin:everyday_life",
+   "title": "{them_first} needs a favor",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 0,
+   "state": "played",
+   "day": 3,
+   "date": "Thu, Sep 4, 2025",
+   "why": ""
+  },
+  {
+   "sid": "cover_story_falls_apart",
+   "pack": "builtin:everyday_life",
+   "title": "The library story",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 1,
+   "state": "unreachable",
+   "reason": "branch_closed",
+   "detail": "covered_for_sibling",
+   "why": "a choice already went the other way"
+  },
+  {
+   "sid": "hoodie_thief",
+   "pack": "builtin:everyday_life",
+   "title": "Your hoodie is missing",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 2,
+   "state": "played",
+   "day": 8,
+   "date": "Tue, Sep 9, 2025",
+   "why": ""
+  },
+  {
+   "sid": "eating_alone",
+   "pack": "builtin:everyday_life",
+   "title": "Someone's eating alone",
+   "importance": "regular",
+   "window": null,
+   "window_rule": "the scene says",
+   "window_text": "Sep, Oct",
+   "order": 3,
+   "state": "played",
+   "day": 23,
+   "date": "Wed, Sep 24, 2025",
+   "why": ""
+  },
+  {
+   "sid": "u_up",
+   "pack": "builtin:everyday_life",
+   "title": "11:48 PM",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 4,
+   "state": "played",
+   "day": 2468,
+   "date": "Fri, Jun 4, 2032",
+   "why": ""
+  },
+  {
+   "sid": "extra_reps",
+   "pack": "builtin:everyday_life",
+   "title": "One more round",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 5,
+   "state": "played",
+   "day": 60,
+   "date": "Fri, Oct 31, 2025",
+   "why": ""
+  },
+  {
+   "sid": "test_tomorrow",
+   "pack": "builtin:everyday_life",
+   "title": "Test tomorrow",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 6,
+   "state": "played",
+   "day": 11,
+   "date": "Fri, Sep 12, 2025",
+   "why": ""
+  },
+  {
+   "sid": "pet_got_out",
+   "pack": "builtin:everyday_life",
+   "title": "{pet} got out",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 7,
+   "state": "played",
+   "day": 5,
+   "date": "Sat, Sep 6, 2025",
+   "why": ""
+  },
+  {
+   "sid": "hallway_trash_talk",
+   "pack": "builtin:everyday_life",
+   "title": "{them_first} has something to say",
+   "importance": "ambient",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 8,
+   "state": "played",
+   "day": 13,
+   "date": "Sun, Sep 14, 2025",
+   "why": ""
+  },
+  {
+   "sid": "bad_night_at_home",
+   "pack": "builtin:everyday_life",
+   "title": "{them_first} isn't okay",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 9,
+   "state": "played",
+   "day": 53,
+   "date": "Fri, Oct 24, 2025",
+   "why": ""
+  },
+  {
+   "sid": "first_weeks_away",
+   "pack": "builtin:everyday_life",
+   "title": "First few weeks",
+   "importance": "regular",
+   "window": null,
+   "window_rule": "the scene says",
+   "window_text": "Aug, Sep, Oct",
+   "order": 10,
+   "state": "played",
+   "day": 1467,
+   "date": "Fri, Sep 7, 2029",
+   "why": ""
+  },
+  {
+   "sid": "halloween_plans",
+   "pack": "builtin:everyday_life",
+   "title": "Halloween",
+   "importance": "regular",
+   "window": null,
+   "window_rule": "the scene says",
+   "window_text": "10-31",
+   "order": 11,
+   "state": "played",
+   "day": 60,
+   "date": "Fri, Oct 31, 2025",
+   "why": ""
+  },
+  {
+   "sid": "pickup_soccer",
+   "pack": "builtin:everyday_life",
+   "title": "Pickup at the park",
+   "importance": "regular",
+   "window": null,
+   "window_rule": "the scene says",
+   "window_text": "Apr, May, Jun, Jul, Aug, Sep, Oct",
+   "order": 12,
+   "state": "played",
+   "day": 321,
+   "date": "Sun, Jul 19, 2026",
+   "why": ""
+  },
+  {
+   "sid": "basement_pong",
+   "pack": "builtin:everyday_life",
+   "title": "Next game's yours",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 13,
+   "state": "played",
+   "day": 62,
+   "date": "Sun, Nov 2, 2025",
+   "why": ""
+  },
+  {
+   "sid": "bro_team_01_first_morning",
+   "pack": "yours:brothers_same_team",
+   "title": "bro team 01 first morning",
+   "importance": "regular",
+   "window": {
+    "from": [
+     8,
+     25
+    ],
+    "to": [
+     9,
+     21
+    ]
+   },
+   "window_rule": "First days of school",
+   "window_text": "Aug 25 to Sep 21",
+   "order": 0,
+   "state": "played",
+   "day": 0,
+   "date": "Mon, Sep 1, 2025",
+   "why": ""
+  },
+  {
+   "sid": "bro_team_02_lunch_table",
+   "pack": "yours:brothers_same_team",
+   "title": "bro team 02 lunch table",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 1,
+   "state": "played",
+   "day": 1,
+   "date": "Tue, Sep 2, 2025",
+   "why": ""
+  },
+  {
+   "sid": "bro_team_05_tryouts",
+   "pack": "yours:brothers_same_team",
+   "title": "bro team 05 tryouts",
+   "importance": "major",
+   "window": {
+    "from": [
+     11,
+     16
+    ],
+    "to": [
+     12,
+     2
+    ]
+   },
+   "window_rule": "Tryouts and the first practice",
+   "window_text": "Nov 16 to Dec 2",
+   "order": 2,
+   "state": "played",
+   "day": 76,
+   "date": "Sun, Nov 16, 2025",
+   "why": ""
+  },
+  {
+   "sid": "bro_team_09_scrimmage",
+   "pack": "yours:brothers_same_team",
+   "title": "bro team 09 scrimmage",
+   "importance": "regular",
+   "window": {
+    "from": [
+     11,
+     17
+    ],
+    "to": [
+     2,
+     27
+    ]
+   },
+   "window_rule": "Games and practices, in season",
+   "window_text": "Nov 17 to Feb 27",
+   "order": 3,
+   "state": "played",
+   "day": 77,
+   "date": "Mon, Nov 17, 2025",
+   "why": ""
+  },
+  {
+   "sid": "brother_final_13_senior_night",
+   "pack": "yours:brothers_same_team",
+   "title": "brother final 13 senior night",
+   "importance": "finale",
+   "window": {
+    "from": [
+     2,
+     6
+    ],
+    "to": [
+     2,
+     24
+    ]
+   },
+   "window_rule": "Senior night",
+   "window_text": "Feb 6 to Feb 24",
+   "order": 4,
+   "state": "played",
+   "day": 158,
+   "date": "Fri, Feb 6, 2026",
+   "why": ""
+  },
+  {
+   "sid": "bro_team_17_last_school_game",
+   "pack": "yours:brothers_same_team",
+   "title": "bro team 17 last school game",
+   "importance": "finale",
+   "window": {
+    "from": [
+     2,
+     20
+    ],
+    "to": [
+     3,
+     20
+    ]
+   },
+   "window_rule": "Last games and playoffs",
+   "window_text": "Feb 20 to Mar 20",
+   "order": 5,
+   "state": "played",
+   "day": 172,
+   "date": "Fri, Feb 20, 2026",
+   "why": ""
+  },
+  {
+   "sid": "bro_graduation_day",
+   "pack": "yours:brothers_same_team",
+   "title": "bro graduation day",
+   "importance": "finale",
+   "window": {
+    "from": [
+     6,
+     8
+    ],
+    "to": [
+     6,
+     19
+    ]
+   },
+   "window_rule": "Graduation",
+   "window_text": "Jun 8 to Jun 19",
+   "order": 6,
+   "state": "played",
+   "day": 280,
+   "date": "Mon, Jun 8, 2026",
+   "why": ""
+  },
+  {
+   "sid": "bro_college_call",
+   "pack": "yours:brothers_same_team",
+   "title": "bro college call",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 7,
+   "state": "played",
+   "day": 365,
+   "date": "Tue, Sep 1, 2026",
+   "why": ""
+  },
+  {
+   "sid": "college_move_in",
+   "pack": "yours:campus",
+   "title": "college move in",
+   "importance": "major",
+   "window": {
+    "from": [
+     8,
+     20
+    ],
+    "to": [
+     9,
+     15
+    ]
+   },
+   "window_rule": "Moving in at college",
+   "window_text": "Aug 20 to Sep 15",
+   "order": 0,
+   "state": "played",
+   "day": 1461,
+   "date": "Sat, Sep 1, 2029",
+   "why": ""
+  },
+  {
+   "sid": "college_first_class",
+   "pack": "yours:campus",
+   "title": "college first class",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 1,
+   "state": "played",
+   "day": 1461,
+   "date": "Sat, Sep 1, 2029",
+   "why": ""
+  },
+  {
+   "sid": "baseball_01_tryouts",
+   "pack": "yours:diamond",
+   "title": "baseball 01 tryouts",
+   "importance": "major",
+   "window": {
+    "from": [
+     2,
+     28
+    ],
+    "to": [
+     3,
+     16
+    ]
+   },
+   "window_rule": "Tryouts and the first practice",
+   "window_text": "Feb 28 to Mar 16",
+   "order": 0,
+   "state": "played",
+   "day": 180,
+   "date": "Sat, Feb 28, 2026",
+   "why": ""
+  },
+  {
+   "sid": "baseball_02_jv_debut",
+   "pack": "yours:diamond",
+   "title": "baseball 02 jv debut",
+   "importance": "major",
+   "window": {
+    "from": [
+     3,
+     2
+    ],
+    "to": [
+     4,
+     6
+    ]
+   },
+   "window_rule": "Debuts and openers",
+   "window_text": "Mar 2 to Apr 6",
+   "order": 1,
+   "state": "played",
+   "day": 187,
+   "date": "Sat, Mar 7, 2026",
+   "why": ""
+  },
+  {
+   "sid": "baseball_03_varsity_call",
+   "pack": "yours:diamond",
+   "title": "baseball 03 varsity call",
+   "importance": "major",
+   "window": null,
+   "window_rule": "the scene says",
+   "window_text": "Apr, May, Jun",
+   "order": 2,
+   "state": "played",
+   "day": 212,
+   "date": "Wed, Apr 1, 2026",
+   "why": ""
+  },
+  {
+   "sid": "hc_ask",
+   "pack": "yours:homecoming",
+   "title": "hc ask",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     2
+    ],
+    "to": [
+     10,
+     23
+    ]
+   },
+   "window_rule": "Homecoming: asking someone",
+   "window_text": "Oct 2 to Oct 23",
+   "order": 0,
+   "state": "played",
+   "day": 31,
+   "date": "Thu, Oct 2, 2025",
+   "why": ""
+  },
+  {
+   "sid": "hc_dance_a",
+   "pack": "yours:homecoming",
+   "title": "hc dance a",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     17
+    ],
+    "to": [
+     10,
+     25
+    ]
+   },
+   "window_rule": "Homecoming: the dance",
+   "window_text": "Oct 17 to Oct 25",
+   "order": 1,
+   "state": "unreachable",
+   "reason": "branch_closed",
+   "detail": null,
+   "why": "a choice already went the other way"
+  },
+  {
+   "sid": "hc_dance_b",
+   "pack": "yours:homecoming",
+   "title": "hc dance b",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     17
+    ],
+    "to": [
+     10,
+     25
+    ]
+   },
+   "window_rule": "Homecoming: the dance",
+   "window_text": "Oct 17 to Oct 25",
+   "order": 2,
+   "state": "played",
+   "day": 46,
+   "date": "Fri, Oct 17, 2025",
+   "why": ""
+  },
+  {
+   "sid": "hc_dance_c",
+   "pack": "yours:homecoming",
+   "title": "hc dance c",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     17
+    ],
+    "to": [
+     10,
+     25
+    ]
+   },
+   "window_rule": "Homecoming: the dance",
+   "window_text": "Oct 17 to Oct 25",
+   "order": 3,
+   "state": "unreachable",
+   "reason": "branch_closed",
+   "detail": null,
+   "why": "a choice already went the other way"
+  },
+  {
+   "sid": "hc_dance_d",
+   "pack": "yours:homecoming",
+   "title": "hc dance d",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     17
+    ],
+    "to": [
+     10,
+     25
+    ]
+   },
+   "window_rule": "Homecoming: the dance",
+   "window_text": "Oct 17 to Oct 25",
+   "order": 4,
+   "state": "unreachable",
+   "reason": "branch_closed",
+   "detail": null,
+   "why": "a choice already went the other way"
+  },
+  {
+   "sid": "hc_after_a",
+   "pack": "yours:homecoming",
+   "title": "hc after a",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     18
+    ],
+    "to": [
+     10,
+     30
+    ]
+   },
+   "window_rule": "Homecoming: the aftermath",
+   "window_text": "Oct 18 to Oct 30",
+   "order": 5,
+   "state": "unreachable",
+   "reason": "after_unreachable",
+   "detail": null,
+   "why": "needs a scene that can't happen anymore"
+  },
+  {
+   "sid": "hc_after_b",
+   "pack": "yours:homecoming",
+   "title": "hc after b",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     18
+    ],
+    "to": [
+     10,
+     30
+    ]
+   },
+   "window_rule": "Homecoming: the aftermath",
+   "window_text": "Oct 18 to Oct 30",
+   "order": 6,
+   "state": "played",
+   "day": 47,
+   "date": "Sat, Oct 18, 2025",
+   "why": ""
+  },
+  {
+   "sid": "hc_after_c",
+   "pack": "yours:homecoming",
+   "title": "hc after c",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     18
+    ],
+    "to": [
+     10,
+     30
+    ]
+   },
+   "window_rule": "Homecoming: the aftermath",
+   "window_text": "Oct 18 to Oct 30",
+   "order": 7,
+   "state": "unreachable",
+   "reason": "after_unreachable",
+   "detail": null,
+   "why": "needs a scene that can't happen anymore"
+  },
+  {
+   "sid": "hc_after_d",
+   "pack": "yours:homecoming",
+   "title": "hc after d",
+   "importance": "regular",
+   "window": {
+    "from": [
+     10,
+     18
+    ],
+    "to": [
+     10,
+     30
+    ]
+   },
+   "window_rule": "Homecoming: the aftermath",
+   "window_text": "Oct 18 to Oct 30",
+   "order": 8,
+   "state": "unreachable",
+   "reason": "after_unreachable",
+   "detail": null,
+   "why": "needs a scene that can't happen anymore"
+  },
+  {
+   "sid": "cross_brother_twins",
+   "pack": "yours:season_plan",
+   "title": "cross brother twins",
+   "importance": "regular",
+   "window": null,
+   "window_rule": null,
+   "window_text": "",
+   "order": 0,
+   "state": "played",
+   "day": 158,
+   "date": "Fri, Feb 6, 2026",
+   "why": ""
+  },
+  {
+   "sid": "twins_first_week",
+   "pack": "yours:the_twins",
+   "title": "twins first week",
+   "importance": "regular",
+   "window": {
+    "from": [
+     8,
+     25
+    ],
+    "to": [
+     9,
+     21
+    ]
+   },
+   "window_rule": "First days of school",
+   "window_text": "Aug 25 to Sep 21",
+   "order": 0,
+   "state": "played",
+   "day": 0,
+   "date": "Mon, Sep 1, 2025",
+   "why": ""
+  },
+  {
+   "sid": "twins_homecoming_advice",
+   "pack": "yours:the_twins",
+   "title": "twins homecoming advice",
+   "importance": "major",
+   "window": {
+    "from": [
+     10,
+     17
+    ],
+    "to": [
+     10,
+     25
+    ]
+   },
+   "window_rule": "Homecoming: the dance",
+   "window_text": "Oct 17 to Oct 25",
+   "order": 1,
+   "state": "played",
+   "day": 46,
+   "date": "Fri, Oct 17, 2025",
+   "why": ""
+  },
+  {
+   "sid": "twins_graduation",
+   "pack": "yours:the_twins",
+   "title": "twins graduation",
+   "importance": "finale",
+   "window": {
+    "from": [
+     6,
+     8
+    ],
+    "to": [
+     6,
+     19
+    ]
+   },
+   "window_rule": "Graduation",
+   "window_text": "Jun 8 to Jun 19",
+   "order": 2,
+   "state": "played",
+   "day": 1011,
+   "date": "Thu, Jun 8, 2028",
+   "why": ""
+  }
+ ],
+ "deadline_misses": [],
+ "warnings": [],
+ "identity": [
+  {
+   "slot": "lead_brother",
+   "who": "older_brother",
+   "bound": "mike-soffer",
+   "name": "Mike Soffer",
+   "problems": [],
+   "grade_gap": 4,
+   "gender": "m"
+  },
+  {
+   "slot": "twin_a",
+   "who": "older_sister",
+   "bound": "ally-soffer",
+   "name": "Ally Soffer",
+   "problems": [],
+   "grade_gap": 1,
+   "gender": "f"
+  }
+ ],
+ "busiest_days": [
+  {
+   "day": 0,
+   "date": "Mon, Sep 1, 2025",
+   "scenes": 2
+  },
+  {
+   "day": 46,
+   "date": "Fri, Oct 17, 2025",
+   "scenes": 2
+  },
+  {
+   "day": 60,
+   "date": "Fri, Oct 31, 2025",
+   "scenes": 2
+  },
+  {
+   "day": 158,
+   "date": "Fri, Feb 6, 2026",
+   "scenes": 2
+  },
+  {
+   "day": 1461,
+   "date": "Sat, Sep 1, 2029",
+   "scenes": 2
+  }
+ ],
+ "days_with_scenes": 28,
+ "run": {
+  "start": 0,
+  "end": 2565,
+  "profile": "dense",
+  "full": true,
+  "note": "seed 1234"
+ },
+ "seed": 1234
+}

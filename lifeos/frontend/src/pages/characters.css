@@ -1,0 +1,28 @@
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+.ccard { background: linear-gradient(180deg, var(--panel), #131830); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; transition: border-color 0.15s, transform 0.15s; }
+.ccard:hover { border-color: var(--line-2); transform: translateY(-2px); }
+.ccard-name { font-weight: 700; font-size: 15px; }
+.ccard-bio { color: var(--muted); font-size: 12.5px; line-height: 1.4; min-height: 34px; }
+.star { color: var(--warm); font-size: 12px; }
+.hero h1 { font-size: 24px; }
+.goal { padding: 7px 0; border-bottom: 1px solid var(--line); }
+.skillbar { position: relative; }
+.skillbar .cap { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--warm); }
+.mem { padding: 3px 0; }
+.mem-row { display: flex; gap: 12px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.mem-v { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 44px; }
+.edit-row { display: grid; grid-template-columns: 120px 1fr 64px auto; gap: 10px; align-items: center; padding: 4px 0; }
+.edit-row input[type="number"] { width: 64px; }
+.form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form label { display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 12px; }
+table.rels td { vertical-align: middle; }
+/* athlete panel */
+.ath { display: flex; flex-direction: column; gap: 14px; }
+.ath-pos { display: flex; gap: 10px; flex-wrap: wrap; }
+.ath-pos-i, .ath-path { display: flex; flex-direction: column; gap: 1px; padding: 9px 12px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line); min-width: 120px; }
+.ath-pos-i b { font-size: 20px; color: var(--accent); }
+.ath-path { border-color: #1f5550; }
+.ath-sport-h { display: flex; gap: 10px; align-items: baseline; margin-bottom: 4px; }
+.ath-total td { border-top: 1px solid var(--line-2); }
+.ath-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .ath-grid { grid-template-columns: 1fr; } }

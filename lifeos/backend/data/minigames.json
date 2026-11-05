@@ -1,0 +1,381 @@
+{
+  "version": 1,
+  "notes": "Mini games: what exists, where each one shows up, and what playing it does. 'html' games are standalone pages in frontend/public/minigames/ that talk to the game through the LifeOS bridge (see minigames/README.md); 'builtin' games are part of the app. status 'ready' games can be played; 'coming' games are listed but hidden from story choices until their page exists. A round is scored as score/max; tiers turn that into great / good / miss. 'play' says what each game launches in each context: free play (menu = the game's own home screen), clutch (game day), scene. Class games ('class': true) are quick builtin rounds of a few seconds that teachers throw at the class (see data/class_games.json and lifeos/classgames.py); 'secs' is about how long one takes.",
+  "tiers": {
+    "great": 0.8,
+    "good": 0.5
+  },
+  "sport_games": {
+    "basketball": "basketball",
+    "football": "football",
+    "baseball": "baseball",
+    "soccer": "soccer_11",
+    "softball": "baseball"
+  },
+  "games": {
+    "trivia": {
+      "title": "Quiz",
+      "kind": "builtin",
+      "status": "ready",
+      "icon": "book",
+      "blurb": "Answer before the timer runs out.",
+      "skill": "academics",
+      "aptitude": "academic",
+      "secs": 30
+    },
+    "soccer_pk": {
+      "title": "Penalty kicks",
+      "kind": "html",
+      "file": "soccer.html",
+      "status": "ready",
+      "icon": "ball",
+      "blurb": "Five shots from the spot. Swipe to shoot, curve your swipe to bend it.",
+      "skill": "fitness",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Penalty kicks at the park",
+        "phases": [
+          "after_school",
+          "day",
+          "evening"
+        ]
+      },
+      "practice": {
+        "skill": "fitness",
+        "gain": 0.6,
+        "fun": 8,
+        "energy": -6
+      },
+      "play": {
+        "free": "menu",
+        "clutch": "clutch",
+        "scene": "menu"
+      }
+    },
+    "soccer_11": {
+      "title": "Soccer Playmaker",
+      "kind": "html",
+      "file": "soccer11.html",
+      "status": "ready",
+      "icon": "ball",
+      "blurb": "Eleven on eleven, and whoever has the ball is you. Draw your way through, find the runner, finish it.",
+      "skill": "fitness",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Play a pickup match (11 v 11)",
+        "phases": [
+          "after_school",
+          "day",
+          "evening"
+        ]
+      },
+      "practice": {
+        "skill": "fitness",
+        "gain": 0.7,
+        "fun": 9,
+        "energy": -7
+      },
+      "play": {
+        "free": "menu",
+        "clutch": "clutch",
+        "scene": "menu"
+      }
+    },
+    "basketball": {
+      "title": "Basketball Playground",
+      "kind": "html",
+      "file": "basketball.html",
+      "status": "ready",
+      "icon": "ballplay",
+      "blurb": "Read & React, 3-Point Contest, HORSE, Shootaround, Playmaker.",
+      "skill": "basketball",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Shoot around in the driveway",
+        "phases": [
+          "after_school",
+          "day",
+          "evening"
+        ]
+      },
+      "practice": {
+        "skill": "basketball",
+        "gain": 0.8,
+        "fun": 6,
+        "energy": -5
+      },
+      "play": {
+        "free": "menu",
+        "clutch": "clutch",
+        "scene": "menu"
+      }
+    },
+    "football": {
+      "title": "Option Arcade",
+      "kind": "html",
+      "file": "football.html",
+      "status": "ready",
+      "icon": "ball",
+      "blurb": "The option, the jet sweep and the passing game. Read it, then take the ball yourself.",
+      "skill": "football",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Run the option at practice",
+        "phases": [
+          "after_school",
+          "day",
+          "evening"
+        ]
+      },
+      "practice": {
+        "skill": "football",
+        "gain": 0.8,
+        "fun": 6,
+        "energy": -6
+      },
+      "play": {
+        "free": "menu",
+        "clutch": "clutch",
+        "scene": "menu"
+      }
+    },
+    "baseball": {
+      "title": "At Bat",
+      "kind": "html",
+      "file": "baseball.html",
+      "status": "ready",
+      "icon": "ball",
+      "blurb": "Read the pitcher, the count and the situation, then put a swing on it.",
+      "skill": "baseball",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Hit at the batting cages",
+        "phases": [
+          "after_school",
+          "day",
+          "evening"
+        ]
+      },
+      "practice": {
+        "skill": "baseball",
+        "gain": 0.8,
+        "fun": 6,
+        "energy": -5
+      },
+      "play": {
+        "free": "menu",
+        "clutch": "clutch",
+        "scene": "menu"
+      }
+    },
+    "paper_toss": {
+      "title": "Paper toss",
+      "kind": "html",
+      "file": "paper_toss.html",
+      "status": "coming",
+      "icon": "sparkle",
+      "blurb": "Coming: the flick that started it all.",
+      "skill": "fitness",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Paper toss in your room",
+        "phases": [
+          "after_school",
+          "day",
+          "evening",
+          "night"
+        ]
+      },
+      "practice": {
+        "fun": 6
+      }
+    },
+    "cup_pong": {
+      "title": "Cup pong",
+      "college_title": "Beer pong",
+      "kind": "html",
+      "file": "cup_pong.html",
+      "status": "ready",
+      "icon": "people",
+      "blurb": "Ten cups a side. Read the rack and the guy across the table.",
+      "skill": "fitness",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Cup pong in a friend's basement",
+        "college_label": "Beer pong at a party",
+        "phases": [
+          "evening",
+          "night"
+        ],
+        "weekend": true
+      },
+      "practice": {
+        "fun": 10,
+        "social": 6
+      },
+      "play": {
+        "free": "menu",
+        "scene": "game"
+      }
+    },
+    "golf": {
+      "title": "Fairway",
+      "kind": "html",
+      "file": "golf.html",
+      "status": "ready",
+      "icon": "leaf",
+      "blurb": "Nine holes, closest to the pin, the putting green.",
+      "skill": "fitness",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Play a round of golf",
+        "phases": [
+          "day",
+          "evening"
+        ],
+        "weekend": true
+      },
+      "practice": {
+        "fun": 8
+      },
+      "play": {
+        "free": "menu",
+        "scene": "short"
+      }
+    },
+    "playmaker": {
+      "title": "Playmaker",
+      "kind": "html",
+      "file": "basketball.html",
+      "status": "ready",
+      "icon": "people",
+      "blurb": "Five on five, and you're passing. Break your man down, find the open man.",
+      "skill": "basketball",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Run the offense at the park",
+        "phases": [
+          "after_school",
+          "day",
+          "evening"
+        ]
+      },
+      "practice": {
+        "skill": "basketball",
+        "gain": 0.6,
+        "fun": 7,
+        "energy": -5
+      },
+      "play": {
+        "free": "playmaker",
+        "scene": "playmaker"
+      }
+    },
+    "swing_lab": {
+      "title": "Swing Lab",
+      "kind": "html",
+      "file": "swing.html",
+      "status": "ready",
+      "icon": "ball",
+      "blurb": "Batting prototype: track the ball, swipe through it as it arrives.",
+      "skill": "baseball",
+      "aptitude": "athletic",
+      "free": {
+        "label": "Batting practice (Swing Lab)",
+        "phases": [
+          "after_school",
+          "day",
+          "evening"
+        ]
+      },
+      "practice": {
+        "skill": "baseball",
+        "gain": 0.5,
+        "fun": 6,
+        "energy": -4
+      },
+      "play": {
+        "free": "menu",
+        "clutch": "clutch",
+        "scene": "menu"
+      }
+    },
+    "hold": {
+      "title": "Hold it",
+      "kind": "builtin",
+      "status": "ready",
+      "icon": "clock",
+      "blurb": "Press and hold. Let go on the line.",
+      "secs": 8,
+      "skill": "academics",
+      "aptitude": "academic",
+      "class": true
+    },
+    "sweep": {
+      "title": "Stop it",
+      "kind": "builtin",
+      "status": "ready",
+      "icon": "bolt",
+      "blurb": "Tap to stop the needle in the zone.",
+      "secs": 8,
+      "skill": "academics",
+      "aptitude": "academic",
+      "class": true
+    },
+    "mathdash": {
+      "title": "Quick math",
+      "kind": "builtin",
+      "status": "ready",
+      "icon": "sparkle",
+      "blurb": "Five problems, a few seconds each.",
+      "secs": 12,
+      "skill": "academics",
+      "aptitude": "academic",
+      "class": true
+    },
+    "flash": {
+      "title": "Flash",
+      "kind": "builtin",
+      "status": "ready",
+      "icon": "star",
+      "blurb": "Watch the pattern, tap it back.",
+      "secs": 10,
+      "skill": "academics",
+      "aptitude": "academic",
+      "class": true
+    },
+    "oddone": {
+      "title": "Odd one out",
+      "kind": "builtin",
+      "status": "ready",
+      "icon": "check",
+      "blurb": "Find the one that's different.",
+      "secs": 10,
+      "skill": "academics",
+      "aptitude": "academic",
+      "class": true
+    },
+    "lineup": {
+      "title": "In order",
+      "kind": "builtin",
+      "status": "ready",
+      "icon": "story",
+      "blurb": "Tap the cards in the right order.",
+      "secs": 12,
+      "skill": "academics",
+      "aptitude": "academic",
+      "class": true
+    },
+    "reflex": {
+      "title": "Quick hands",
+      "kind": "builtin",
+      "status": "ready",
+      "icon": "flame",
+      "blurb": "Wait for it. Tap the instant it goes.",
+      "secs": 8,
+      "skill": "fitness",
+      "aptitude": "athletic",
+      "class": true
+    }
+  }
+}

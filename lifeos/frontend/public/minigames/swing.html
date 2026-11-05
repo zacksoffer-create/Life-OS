@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b0f18">
+<style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Swing Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root { --ink: #0e1420; --chalk: #f5f7fb; --gold: #ffcf4a; --mint: #43d39e; --coral: #ff6a55; --sky1: #12223d; --sky2: #284b72; }
+  html, body { margin: 0; height: 100%; background: var(--ink); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none;
+    font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--chalk); }
+  #sl-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block; }
+  .sl-top { position: fixed; top: calc(10px + env(safe-area-inset-top)); left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; z-index: 3; }
+  .sl-pill { background: rgba(8, 14, 26, 0.62); border-radius: 999px; padding: 7px 12px; font-weight: 800; font-size: 13px; letter-spacing: 0.02em; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .sl-pill small { font-weight: 700; opacity: 0.7; margin-left: 6px; }
+  .sl-btns { display: flex; gap: 8px; pointer-events: auto; }
+  .sl-ic { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(8, 14, 26, 0.62); color: #fff; font-size: 18px; display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .sl-feed { position: fixed; left: 0; right: 0; bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; z-index: 3; }
+  .sl-timing { display: none; width: min(320px, 82vw); }
+  .sl-timing.on { display: block; }
+  .sl-tbar { position: relative; height: 10px; border-radius: 999px; background: linear-gradient(90deg, rgba(255,106,85,0.55), rgba(255,207,74,0.55) 35%, rgba(67,211,158,0.85) 50%, rgba(255,207,74,0.55) 65%, rgba(255,106,85,0.55)); }
+  .sl-tbar i { position: absolute; top: -4px; width: 4px; height: 18px; margin-left: -2px; border-radius: 2px; background: #fff; box-shadow: 0 0 6px rgba(255,255,255,0.8); transition: left 0.15s; }
+  .sl-tlab { display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; opacity: 0.75; margin-top: 3px; }
+  .sl-msg { font-weight: 800; font-size: 14px; text-shadow: 0 1px 4px rgba(0,0,0,0.7); min-height: 18px; text-align: center; }
+  .sl-ov { position: fixed; inset: 0; z-index: 10; display: flex; align-items: flex-end; justify-content: center; background: rgba(5, 9, 16, 0.55); }
+  .sl-ov[hidden] { display: none; }
+  .sl-sheet { width: min(460px, 100vw); max-height: 88vh; overflow-y: auto; background: #f6f2ea; color: #1b2232; border-radius: 26px 26px 0 0; padding: 18px 18px calc(22px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+  .sl-sheet h2 { margin: 0 0 4px; font-size: 22px; }
+  .sl-sheet p { margin: 0 0 10px; color: #4b5468; font-weight: 600; font-size: 14px; line-height: 1.45; }
+  .sl-row { margin: 12px 0; }
+  .sl-row b { display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #7a8297; margin-bottom: 6px; }
+  .sl-seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sl-seg button { flex: 1 1 auto; border: 0; border-radius: 999px; padding: 10px 12px; font: inherit; font-weight: 800; font-size: 14px; background: #fff; color: #39415a; box-shadow: inset 0 0 0 2px #e6ddcf; cursor: pointer; }
+  .sl-seg button.on { background: #1b2232; color: #fff; box-shadow: none; }
+  .sl-go { display: block; width: 100%; margin-top: 14px; border: 0; border-radius: 18px; padding: 15px; font: inherit; font-weight: 800; font-size: 17px; color: #fff; cursor: pointer;
+    background: linear-gradient(135deg, #ff6a55, #ff9d5c); box-shadow: 0 14px 26px -14px rgba(255, 92, 66, 0.9); }
+  .sl-ghost { display: block; width: 100%; margin-top: 8px; border: 0; background: none; color: #6a7286; font: inherit; font-weight: 800; padding: 10px; cursor: pointer; }
+  .sl-how { display: grid; grid-template-columns: 34px 1fr; gap: 8px 10px; align-items: center; margin: 8px 0 4px; font-size: 14px; font-weight: 600; color: #39415a; }
+  .sl-how span:nth-child(odd) { font-size: 22px; text-align: center; }
+  .sl-stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0; }
+  .sl-stat div { background: #fff; border-radius: 14px; padding: 10px; text-align: center; box-shadow: inset 0 0 0 2px #ece4d8; }
+  .sl-stat b { display: block; font-size: 22px; color: #1b2232; letter-spacing: 0; text-transform: none; margin: 0; }
+  .sl-stat small { font-size: 11.5px; font-weight: 800; color: #7a8297; }
+  #sl-scatter { width: 100%; height: 150px; display: block; background: #fff; border-radius: 14px; box-shadow: inset 0 0 0 2px #ece4d8; }
+  .sl-q { margin: 10px 0 0; padding-left: 18px; color: #39415a; font-weight: 600; font-size: 13.5px; line-height: 1.5; }
+</style>
+
+<canvas id="sl-canvas"></canvas>
+<div class="sl-top">
+  <div class="sl-pill" id="sl-count">Practice<small>0 swings</small></div>
+  <div class="sl-btns">
+    <button class="sl-ic" id="sl-stats-btn" aria-label="Your swings">📈</button>
+    <button class="sl-ic" id="sl-gear" aria-label="Settings">⚙︎</button>
+  </div>
+</div>
+<div class="sl-feed">
+  <div class="sl-msg" id="sl-msg"></div>
+  <div class="sl-timing" id="sl-timing">
+    <div class="sl-tbar"><i id="sl-tick" style="left:50%"></i></div>
+    <div class="sl-tlab"><span>early</span><span id="sl-tval">on time</span><span>late</span></div>
+  </div>
+</div>
+
+<div class="sl-ov" id="sl-intro">
+  <div class="sl-sheet">
+    <h2>Swing Lab</h2>
+    <p>Watch the ball come in. When it reaches you, swipe across it. A quick swipe is all it takes.</p>
+    <div class="sl-how">
+      <span>👀</span><span>Track it all the way. It gets bigger as it gets close.</span>
+      <span>👆</span><span>Swipe sideways through the ball as it arrives. Swing early and you'll miss it.</span>
+      <span>↕︎</span><span>Swipe at the ball's height: under it pops it up, over it chops it into the ground.</span>
+      <span>🎯</span><span>Fastball, changeup, curveball. Learn them by how they move.</span>
+    </div>
+    <div class="sl-row"><b>Try the camera first</b><div class="sl-seg" data-k="cam"></div></div>
+    <button class="sl-go" id="sl-start">Play ball</button>
+    <button class="sl-ghost" id="sl-intro-more">More settings</button>
+  </div>
+</div>
+
+<div class="sl-ov" id="sl-settings" hidden>
+  <div class="sl-sheet">
+    <h2>Settings</h2>
+    <p>Change anything mid-session. Every setting applies from the next pitch.</p>
+    <div class="sl-row"><b>Camera</b><div class="sl-seg" data-k="cam"></div></div>
+    <div class="sl-row"><b>Pitch speed</b><div class="sl-seg" data-k="speed"></div></div>
+    <div class="sl-row"><b>Ball trail</b><div class="sl-seg" data-k="trail"></div></div>
+    <div class="sl-row"><b>Training</b><div class="sl-seg" data-k="training"></div></div>
+    <div class="sl-row"><b>Swing height</b><div class="sl-seg" data-k="height"></div></div>
+    <div class="sl-row"><b>Pitches</b><div class="sl-seg" data-k="pitches"></div></div>
+    <div class="sl-row"><b>Mode</b><div class="sl-seg" data-k="mode"></div></div>
+    <div class="sl-row"><b>Sound</b><div class="sl-seg" data-k="sound"></div></div>
+    <button class="sl-go" id="sl-close">Back to the plate</button>
+  </div>
+</div>
+
+<div class="sl-ov" id="sl-statsheet" hidden>
+  <div class="sl-sheet">
+    <h2>Your swings</h2>
+    <p>Each dot is a swing: left is early, right is late, the middle line is on time. Higher dots are newer swings.</p>
+    <canvas id="sl-scatter"></canvas>
+    <div class="sl-stat">
+      <div><b id="sl-s-contact">-</b><small>contact rate</small></div>
+      <div><b id="sl-s-timing">-</b><small>avg timing miss</small></div>
+      <div><b id="sl-s-trend">-</b><small>first half → now</small></div>
+    </div>
+    <div class="sl-stat">
+      <div><b id="sl-s-fb">-</b><small>vs fastballs</small></div>
+      <div><b id="sl-s-ch">-</b><small>vs changeups</small></div>
+      <div><b id="sl-s-cb">-</b><small>vs curveballs</small></div>
+    </div>
+    <ul class="sl-q">
+      <li>Could you track the ball the whole way?</li>
+      <li>Did you know when to swipe?</li>
+      <li>Is your timing miss shrinking?</li>
+      <li>Does a good hit feel good before you see the result?</li>
+    </ul>
+    <button class="sl-go" id="sl-stats-close">Keep swinging</button>
+    <button class="sl-ghost" id="sl-reset">Reset stats</button>
+  </div>
+</div>
+
+<div class="sl-ov" id="sl-done" hidden>
+  <div class="sl-sheet">
+    <h2 id="sl-done-t">Done</h2>
+    <p id="sl-done-p"></p>
+    <button class="sl-go" id="sl-done-btn">Done</button>
+  </div>
+</div>
+
+<script>
+// LIFE OS bridge: lets a game run inside the LIFE OS phone app and hand its score back to the story.
+// Opened on its own (a file, an artifact, Google Drive), the game behaves exactly as before: LifeOS.embedded is false.
+//
+//   LifeOS.embedded                 true when running inside LIFE OS (in an iframe, with ?embed=1)
+//   LifeOS.onStart(cfg => ...)      called once with the round's config (see below)
+//   LifeOS.finish({score, max, summary, stats})   the round is over: score out of max (any units), a short summary
+//   LifeOS.quit()                   the player backed out
+//
+// config: { play: what to launch ("menu" = let the player pick a mode, "clutch" = a short pressure round, or a game-specific
+//           mode name), skill 0-100 (the character's skill), difficulty 0-100, mode ("free" | "clutch"), seed, me, them,
+//           college (true in college), opponent, label }
+const LifeOS = (() => {
+  const qs = new URLSearchParams(location.search);
+  const embedded = window.parent !== window && qs.get('embed') === '1';
+  const config = { play: qs.get('play') || 'menu', skill: +(qs.get('skill') || 55), difficulty: +(qs.get('difficulty') || 50),
+                   mode: qs.get('mode') || 'free', me: qs.get('me') || 'You', seed: +(qs.get('seed') || 0), college: qs.get('college') === '1' };
+  let started = false, cb = null, done = false;
+  const fire = () => { if (!started && cb) { started = true; cb(config); } };
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'lifeos:init') { Object.assign(config, e.data.config || {}); fire(); }
+  });
+  const post = (event, data) => { if (embedded) parent.postMessage(Object.assign({ type: 'lifeos:minigame', event }, data || {}), '*'); };
+  return {
+    embedded, config,
+    onStart(f) { cb = f; if (!embedded) return; post('ready'); setTimeout(fire, 2500); },
+    finish(result) { if (done) return; done = true; post('finish', { result }); },
+    quit() { post('quit'); },
+  };
+})();
+</script>
+<script>
+(() => {
+// ============================================================================ settings
+const OPTS = {
+  cam: [['catcher', 'Catcher view'], ['side', 'Side view']],
+  speed: [['slow', 'Slow'], ['normal', 'Normal'], ['fast', 'Fast']],
+  trail: [['off', 'Off'], ['subtle', 'Subtle'], ['strong', 'Strong']],
+  training: [[false, 'Off'], [true, 'Zone + slow + timing']],
+  height: [['manual', 'Swipe height counts'], ['auto', 'Timing only']],
+  pitches: [['mix', 'Mix'], ['fastball', 'Fastball'], ['changeup', 'Changeup'], ['curve', 'Curveball']],
+  mode: [['practice', 'Practice'], ['atbat', 'At-bats']],
+  sound: [[true, 'On'], [false, 'Off']],
+};
+const KEY = 'swinglab.v1';
+let S = { cam: 'catcher', speed: 'normal', trail: 'subtle', training: false, height: 'manual', pitches: 'mix', mode: 'practice', sound: true };
+try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* no storage */ }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* no storage */ } };
+function renderSegs() {
+  document.querySelectorAll('.sl-seg').forEach((el) => {
+    const k = el.dataset.k;
+    el.innerHTML = '';
+    for (const [v, label] of OPTS[k]) {
+      const b = document.createElement('button');
+      b.textContent = label;
+      if (S[k] === v) b.className = 'on';
+      b.onclick = () => {
+        if (k === 'cam' && S.cam !== v) { const c = camera(); camFrom = { pos: c.pos, look: c.look }; camBlend = 0; }
+        S[k] = v; save(); renderSegs(); if (k === 'mode') resetCount();
+      };
+      el.appendChild(b);
+    }
+  });
+}
+
+// ============================================================================ canvas + camera
+const cv = document.getElementById('sl-canvas'), g = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1, F = 600, UI = 1;
+function resize() {
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  F = Math.min(W * 1.18, H * 0.75);
+  UI = Math.max(0.92, Math.min(1.35, Math.min(W, H * 0.6) / 390));
+}
+addEventListener('resize', resize);
+resize();
+const V = { sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], dot: (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2],
+  cross: (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]],
+  norm: (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; },
+  lerp: (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t] };
+// world: home plate at the origin, the pitcher up the +z axis, y is up, x is to the catcher's right
+const CAMS = {
+  catcher: { pos: [0, 1.2, -2.7], look: [0, 1.05, 18], cy: 0.42 },
+  side: { pos: [1.5, 1.8, -2.25], look: [-2.5, 0.9, 9], cy: 0.44 },  // angled from the first-base side: the ball sweeps across the screen into the hitting plane
+};
+let camBlend = 1, camFrom = null, follow = null;  // follow: the batted ball the camera chases
+function camera() {
+  const c = CAMS[S.cam];
+  let pos = c.pos, look = c.look;
+  if (follow) {  // pull back and look up after a hit
+    const k = follow.k;
+    pos = V.lerp(c.pos, [c.pos[0] * 0.6, c.pos[1] + 6, c.pos[2] - 9], k);
+    look = V.lerp(c.look, [follow.p[0] * 0.8, Math.max(1, follow.p[1] * 0.7), Math.max(14, follow.p[2])], k);
+  }
+  if (camFrom && camBlend < 1) { pos = V.lerp(camFrom.pos, pos, ease(camBlend)); look = V.lerp(camFrom.look, look, ease(camBlend)); }
+  const fwd = V.norm(V.sub(look, pos)), right = V.norm(V.cross([0, 1, 0], fwd)), up = V.cross(fwd, right);  // +x (first base) on screen right
+  return { pos, look, fwd, right, up, cy: c.cy };
+}
+function P(cam, p) {
+  const v = V.sub(p, cam.pos), z = V.dot(v, cam.fwd);
+  const zz = Math.max(0.05, z);
+  return { x: W / 2 + F * V.dot(v, cam.right) / zz, y: H * cam.cy - F * V.dot(v, cam.up) / zz, z, s: F / zz };
+}
+const ease = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const rand = (a, b) => a + Math.random() * (b - a);
+
+// ============================================================================ pitches
+const ZC = 0.45;               // the contact plane: just in front of the plate
+const RELEASE = [0.38, 1.85, 17.4];
+const ZONE = { x: 0.215, lo: 0.5, hi: 1.1 };
+const TYPES = {
+  fastball: { name: 'Fastball', t: [1.0, 1.08], B: 0.1, L: 0.03, k: 2.0 },
+  changeup: { name: 'Changeup', t: [1.24, 1.32], B: 0.32, L: 0.09, k: 2.0 },
+  curve: { name: 'Curveball', t: [1.16, 1.24], B: 0.72, L: -0.3, k: 2.35 },
+};
+const SPEED = { slow: 1.32, normal: 1.0, fast: 0.78 };
+function newPitch() {
+  const type = S.pitches === 'mix' ? (Math.random() < 0.45 ? 'fastball' : Math.random() < 0.5 ? 'changeup' : 'curve') : S.pitches;
+  const T0 = TYPES[type];
+  const inZone = Math.random() < 0.72;
+  let x = rand(-0.17, 0.17), y = rand(0.6, 1.02);
+  if (!inZone) {
+    if (Math.random() < 0.5) x = (Math.random() < 0.5 ? -1 : 1) * rand(0.3, 0.45);
+    else y = Math.random() < 0.5 ? rand(0.22, 0.42) : rand(1.18, 1.35);
+  }
+  const T = rand(T0.t[0], T0.t[1]) * SPEED[S.speed] * (S.training ? 1.22 : 1);
+  return { type, T, target: [x, y], B: T0.B, L: T0.L, k: T0.k, uC: 1 - ZC / RELEASE[2], inZone: Math.abs(x) <= ZONE.x + 0.03 && y >= ZONE.lo - 0.03 && y <= ZONE.hi + 0.03 };
+}
+// smooth path: it starts out looking like it's headed a little high and wide, then the movement brings it in gradually
+function ballPos(p, u) {
+  const z = RELEASE[2] * (1 - u);
+  const y = RELEASE[1] + (p.target[1] + p.B - RELEASE[1]) * u - p.B * Math.pow(Math.max(0, u), p.k);
+  const x = RELEASE[0] + (p.target[0] + p.L - RELEASE[0]) * u - p.L * Math.pow(Math.max(0, u), p.k);
+  return [x, y, z];
+}
+function ballR(u) {  // deliberately not to scale: big and bright, growing smoothly to about 34 px at contact
+  const r0 = 6.5 * UI, r1 = 17 * UI;
+  return r0 + (r1 - r0) * Math.pow(clamp(u, 0, 1.1), 1.6);
+}
+
+// ============================================================================ state
+let phase = 'intro', tPhase = 0, pitch = null, tRel = 0, swung = false, swing = null, hit = null, effects = [], slash = [];
+let hitPause = 0, shake = 0, count = { b: 0, s: 0, pa: 1, onBase: 0, done: [] }, lastMsg = '';
+let stats = [];
+try { stats = JSON.parse(localStorage.getItem(KEY + '.stats') || '[]'); } catch (e) { stats = []; }
+const saveStats = () => { try { localStorage.setItem(KEY + '.stats', JSON.stringify(stats.slice(-200))); } catch (e) { /* none */ } };
+const now = () => performance.now() / 1000;
+function resetCount() { count = { b: 0, s: 0, pa: 1, onBase: 0, done: [] }; updateTop(); }
+function updateTop() {
+  const el = document.getElementById('sl-count');
+  const sw = stats.length;
+  if (S.mode === 'atbat' || embedPAs) {
+    el.innerHTML = `${embedPAs ? `PA ${Math.min(count.pa, embedPAs)} of ${embedPAs}` : `PA ${count.pa}`}<small>${count.b}-${count.s}</small>`;
+  } else el.innerHTML = `Practice<small>${sw} swing${sw === 1 ? '' : 's'}</small>`;
+}
+function say(text, ms = 1800) {
+  const el = document.getElementById('sl-msg');
+  el.textContent = text; lastMsg = text;
+  clearTimeout(say.t); say.t = setTimeout(() => { if (lastMsg === text) el.textContent = ''; }, ms);
+}
+function nextPitch() {
+  pitch = newPitch(); swung = false; swing = null; hit = null; follow = null; slash = [];
+  phase = 'windup'; tPhase = now();
+}
+
+// ============================================================================ input: one quick swipe per pitch
+let track = null;
+cv.addEventListener('pointerdown', (e) => {
+  audioUnlock();
+  if (phase !== 'pitch' && phase !== 'windup') return;
+  track = { pts: [{ x: e.clientX, y: e.clientY, t: e.timeStamp / 1000 }] };
+  slash = [{ x: e.clientX, y: e.clientY, a: 1 }];
+  try { cv.setPointerCapture(e.pointerId); } catch (err) { /* fine */ }
+});
+cv.addEventListener('pointermove', (e) => {
+  if (!track) return;
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  for (const ev of evs) {
+    const q = { x: ev.clientX, y: ev.clientY, t: (ev.timeStamp || e.timeStamp) / 1000 };
+    const a = track.pts[track.pts.length - 1];
+    track.pts.push(q);
+    slash.push({ x: q.x, y: q.y, a: 1 });
+    if (!swung && phase === 'pitch') checkCross(a, q);
+  }
+});
+cv.addEventListener('pointerup', (e) => {
+  if (!track) return;
+  const t = track; track = null;
+  if (swung || phase !== 'pitch') return;
+  const a = t.pts[0], z = t.pts[t.pts.length - 1];
+  if (Math.abs(z.x - a.x) >= 45 * UI && z.t - a.t < 0.6) {  // swiped but never crossed the ball's line: the swing happens now, where you were
+    const ys = t.pts.reduce((s, q) => s + q.y, 0) / t.pts.length;
+    doSwing(z.t, ys, Math.atan2(a.y - z.y, Math.abs(z.x - a.x)) * 57.3, Math.abs(z.x - a.x) / Math.max(0.03, z.t - a.t));
+  }
+});
+// the swing happens the instant your finger crosses the ball's line at the contact plane
+function checkCross(a, q) {
+  const cam = camera();
+  const c = P(cam, ballPos(pitch, pitch.uC));
+  const dx = q.x - a.x, dt = Math.max(0.001, q.t - a.t);
+  if ((a.x - c.x) * (q.x - c.x) > 0 || Math.abs(dx) / dt < 250) return;  // didn't cross, or too slow to be a swing
+  const k = (c.x - a.x) / (dx || 1);
+  const t = a.t + (q.t - a.t) * k, y = a.y + (q.y - a.y) * k;
+  const first = track.pts[0];
+  const slope = Math.atan2(first.y - q.y, Math.abs(q.x - first.x) || 1) * 57.3;
+  doSwing(t, y, slope, Math.abs(dx) / dt);
+}
+
+// ============================================================================ the swing
+function windows() { return S.training ? { perfect: 0.055, good: 0.11, foul: 0.17, h: 1.55 } : { perfect: 0.035, good: 0.08, foul: 0.135, h: 1.25 }; }
+function doSwing(tS, yS, slopeDeg, speedPx) {
+  swung = true;
+  const w = windows();
+  const tArrive = tRel + pitch.T * pitch.uC;
+  const dt = tS - tArrive;              // seconds: negative is early
+  const cam = camera();
+  const cpt = ballPos(pitch, pitch.uC), cs = P(cam, cpt);
+  const r1 = ballR(pitch.uC);
+  const e = S.height === 'auto' ? 0 : clamp((yS - cs.y) / r1, -4, 4);   // + means you swung under the ball
+  const ae = Math.abs(e), adt = Math.abs(dt);
+  const sp = clamp(speedPx / (1400 * UI), 0.7, 1.25);
+  let kind;
+  if (dt < -w.foul) kind = 'early';
+  else if (dt > w.foul) kind = 'late';
+  else if (ae > w.h + 0.6) kind = 'whiff';
+  else if (ae > w.h) kind = 'tip';
+  else if (adt <= w.good) kind = adt <= w.perfect && ae <= 0.6 ? 'barrel' : 'solid';
+  else kind = dt > 0 ? 'jam' : 'pull_foul';
+  swing = { t: tS, dt, e, kind, y: yS };
+  const quality = clamp(1 - (adt / w.good) * 0.55 - (ae / w.h) * 0.45, 0, 1);
+  stats.push({ dt: Math.round(dt * 1000), e: Math.round(e * 100) / 100, kind, type: pitch.type, q: Math.round(quality * 100) / 100, cam: S.cam, speed: S.speed });
+  saveStats(); updateTop();
+  showTiming(dt, kind);
+  if (kind === 'early' || kind === 'late' || kind === 'whiff') { sfx('whoosh'); return; }
+  // contact
+  if (kind === 'tip') {
+    sfx('tick');
+    hit = launch(cpt, 38, -60 + rand(-10, 10), rand(-20, 20), 'tip');
+  } else if (kind === 'jam') {
+    sfx('jam'); shake = 0.12;
+    hit = launch(cpt, rand(48, 62) * sp, clamp(8 + e * 18, -12, 45), rand(18, 34), 'jam');
+  } else if (kind === 'pull_foul') {
+    sfx('crack', 0.65); shake = 0.1;
+    hit = launch(cpt, rand(70, 88) * sp, clamp(14 + e * 20, -5, 40), -rand(48, 62), 'foul');
+  } else {
+    const barrel = kind === 'barrel';
+    sfx('crack', barrel ? 1 : 0.8);
+    hitPause = barrel ? 0.09 : 0.05; shake = barrel ? 0.22 : 0.14;
+    const ev = (barrel ? rand(99, 108) : 72 + quality * 24) * clamp(sp, 0.9, 1.05);
+    const la = clamp((barrel ? 24 : 13) + e * 21 + slopeDeg * 0.35 + rand(-5, 5), -18, 62);
+    const spray = clamp(-dt / w.good * 30 + rand(-6, 6), -44, 44);
+    hit = launch(cpt, ev, la, spray, barrel ? 'barrel' : 'solid');
+  }
+  effects.push({ x: cs.x, y: cs.y, t: 0, big: kind === 'barrel', soft: kind === 'jam' || kind === 'tip' });
+}
+function launch(p0, mph, laDeg, sprayDeg, how) {
+  const v = mph * 0.447, la = laDeg / 57.3, sp = sprayDeg / 57.3;
+  return { p: [...p0], v: [v * Math.cos(la) * Math.sin(sp), v * Math.sin(la), v * Math.cos(la) * Math.cos(sp)], how, mph: Math.round(mph), la: Math.round(laDeg),
+           spray: Math.round(sprayDeg), t: 0, landed: false, bounces: 0, peak: 0, result: null, shownAt: 0, trail: [] };
+}
+function showTiming(dt, kind) {
+  const el = document.getElementById('sl-timing');
+  if (!S.training) { el.classList.remove('on'); return; }
+  el.classList.add('on');
+  const w = windows();
+  document.getElementById('sl-tick').style.left = `${clamp(50 + (dt / (w.foul * 1.6)) * 50, 2, 98)}%`;
+  const ms = Math.round(Math.abs(dt) * 1000);
+  document.getElementById('sl-tval').textContent = Math.abs(dt) <= w.perfect ? `on time (${ms} ms)` : `${dt < 0 ? 'early' : 'late'} ${ms} ms`;
+}
+
+// ============================================================================ batted ball
+const FENCE = (spray) => 92 + 10 * Math.cos(spray * 2 / 57.3 * 1.0);  // deeper to center
+// infield first (1B, 2B, SS, 3B, P), then LF, CF, RF. x is toward first base, z is out toward center
+const FIELDERS = [[17, 0, 24], [9, 0, 34], [-9, 0, 34], [-17, 0, 24], [0, 0, 18.4], [-28, 0, 70], [0, 0, 80], [28, 0, 70]];
+function stepHit(h, dt) {
+  if (h.landed && h.rolled) return;
+  const k = h.how === 'tip' ? 0.02 : 0.0055 * (1 + Math.max(0, h.la - 28) * 0.025);  // simple drag; steep balls die faster
+  const sp = Math.hypot(h.v[0], h.v[1], h.v[2]);
+  h.v[0] -= h.v[0] * k * sp * dt; h.v[2] -= h.v[2] * k * sp * dt; h.v[1] -= (9.8 + h.v[1] * k * sp) * dt;
+  h.p[0] += h.v[0] * dt; h.p[1] += h.v[1] * dt; h.p[2] += h.v[2] * dt;
+  h.t += dt; h.peak = Math.max(h.peak, h.p[1]);
+  h.trail.push([...h.p]); if (h.trail.length > 18) h.trail.shift();
+  const dist = Math.hypot(h.p[0], h.p[2]), spray = Math.atan2(h.p[0], h.p[2]) * 57.3;
+  if (!h.result && h.how !== 'tip' && h.how !== 'foul' && Math.abs(spray) < 45 && dist > FENCE(spray) && h.p[1] > 3) {
+    h.result = { label: 'HOME RUN', tone: 'great' }; h.landed = true; h.rolled = true; h.shownAt = h.t;
+  }
+  if (h.p[1] <= 0.04) {
+    h.p[1] = 0.04;
+    if (!h.landed) {
+      h.landed = true; h.landAt = h.t;
+      if (!h.result) h.result = judge(h, dist, spray);
+      if (h.how !== 'tip') sfx('thump');
+    }
+    if (h.v[1] < -1.5 && h.bounces < 3) { h.v[1] = -h.v[1] * 0.38; h.bounces++; h.v[0] *= 0.7; h.v[2] *= 0.7; }
+    else { h.v[1] = 0; h.v[0] *= 0.93; h.v[2] *= 0.93; if (Math.hypot(h.v[0], h.v[2]) < 1) h.rolled = true; }
+  }
+  if (h.how === 'tip' && h.t > 0.6) { h.result = h.result || { label: 'Foul tip', tone: 'meh' }; h.rolled = true; h.landed = true; }
+}
+function judge(h, dist, spray) {
+  if (h.how === 'foul' || Math.abs(spray) > 45) return { label: 'Foul ball', tone: 'meh', foul: true };
+  const hang = h.t;
+  const land = [h.p[0], 0, h.p[2]];
+  const nearest = Math.min(...FIELDERS.map((f) => Math.hypot(f[0] - land[0], f[2] - land[2])));
+  const reach = 2 + hang * 5.4;
+  const ground = h.la < 9 || h.peak < 2.2;
+  if (ground) {
+    const reachG = 4.6 + (h.mph < 75 ? 3 : 0);
+    const dir = [Math.sin(h.spray / 57.3), Math.cos(h.spray / 57.3)];  // the grounder's path along the ground
+    const infieldNear = Math.min(...FIELDERS.slice(0, 5).map((f) => {
+      const along = f[0] * dir[0] + f[2] * dir[1];
+      return along > 0 ? Math.abs(f[0] * dir[1] - f[2] * dir[0]) : 99;
+    }));
+    if (h.mph < 66 || infieldNear < reachG + (95 - h.mph) * 0.12) return { label: h.how === 'jam' ? 'Weak grounder. Out.' : 'Ground out', tone: 'out' };
+    return { label: 'Single', tone: 'good', base: 1 };
+  }
+  if (nearest < (h.peak < 6 ? 1.5 + hang * 3.8 : reach) && dist < FENCE(spray) - 1) return { label: dist > 84 ? 'Caught at the wall' : h.peak < 6 ? 'Line out' : 'Fly out', tone: 'out' };
+  if (dist > 78) return { label: Math.abs(spray) > 30 && dist > 88 ? 'Triple' : 'Double', tone: 'great', base: dist > 88 ? 3 : 2 };
+  return { label: 'Single', tone: 'good', base: 1 };
+}
+
+// ============================================================================ sound
+let actx = null, noiseBuf = null;
+function audioUnlock() {
+  if (actx || !S.sound) return;
+  try {
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    noiseBuf = actx.createBuffer(1, actx.sampleRate * 0.5, actx.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  } catch (e) { actx = null; }
+}
+function tone(type, f0, f1, dur, vol, at = 0) {
+  const t = actx.currentTime + at, o = actx.createOscillator(), v = actx.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+  v.gain.setValueAtTime(vol, t); v.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+  o.connect(v); v.connect(actx.destination); o.start(t); o.stop(t + dur + 0.02);
+}
+function noise(filter, freq, q, dur, vol, at = 0, sweepTo = 0) {
+  const t = actx.currentTime + at, s = actx.createBufferSource(), fl = actx.createBiquadFilter(), v = actx.createGain();
+  s.buffer = noiseBuf; fl.type = filter; fl.frequency.setValueAtTime(freq, t); fl.Q.value = q;
+  if (sweepTo) fl.frequency.exponentialRampToValueAtTime(sweepTo, t + dur);
+  v.gain.setValueAtTime(vol, t); v.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+  s.connect(fl); fl.connect(v); v.connect(actx.destination); s.start(t); s.stop(t + dur + 0.02);
+}
+function sfx(kind, power = 1) {
+  if (!S.sound) return;
+  audioUnlock();
+  if (!actx) return;
+  if (actx.state === 'suspended') actx.resume();
+  if (kind === 'crack') {  // a sharp wooden crack: a bright noise snap plus a high ping, more body on a barrel
+    noise('bandpass', 2600, 1.2, 0.07, 0.9 * power);
+    noise('highpass', 4200, 0.7, 0.04, 0.5 * power);
+    tone('triangle', 1900, 1200, 0.06, 0.22 * power);
+    if (power > 0.9) tone('sine', 140, 70, 0.12, 0.35);
+  } else if (kind === 'jam') {  // dull: low thud, no ring
+    noise('lowpass', 700, 0.8, 0.09, 0.7); tone('sine', 110, 60, 0.12, 0.45);
+  } else if (kind === 'tick') {
+    noise('highpass', 5200, 1, 0.025, 0.45); tone('square', 3400, 2600, 0.02, 0.08);
+  } else if (kind === 'whoosh') {
+    noise('bandpass', 380, 0.9, 0.22, 0.28, 0, 1600);
+  } else if (kind === 'mitt') {
+    noise('lowpass', 1400, 0.9, 0.05, 0.75); tone('sine', 260, 120, 0.07, 0.35);
+  } else if (kind === 'thump') {
+    noise('lowpass', 400, 0.8, 0.06, 0.25);
+  }
+}
+
+// ============================================================================ simulation
+function step(dt) {
+  const t = now();
+  if (camBlend < 1) camBlend = Math.min(1, camBlend + dt * 2.2);
+  effects.forEach((f) => (f.t += dt)); effects = effects.filter((f) => f.t < 0.5);
+  slash.forEach((q) => (q.a -= dt * 3.2)); slash = slash.filter((q) => q.a > 0);
+  if (shake > 0) shake = Math.max(0, shake - dt);
+  if (phase === 'windup' && t - tPhase > 0.95) { phase = 'pitch'; tRel = t; }
+  if (phase === 'pitch') {
+    if (hit) {
+      if (hitPause > 0) { hitPause -= dt; return; }
+      phase = 'flight'; tPhase = t;
+    } else {
+      const u = (t - tRel) / pitch.T;
+      if (u > 1.06) {  // in the mitt
+        sfx('mitt');
+        if (!swung) {
+          const strike = pitch.inZone;
+          say(`${strike ? 'Strike' : 'Ball'}. ${TYPES[pitch.type].name}.`);
+          tallyPitch(strike ? 'S' : 'B');
+        } else {
+          say(`${swing.kind === 'early' ? 'Way out in front' : swing.kind === 'late' ? 'Too late' : 'Swing and a miss'}. ${TYPES[pitch.type].name}.`);
+          tallyPitch('S');
+        }
+        phase = 'after'; tPhase = t;
+      }
+    }
+  }
+  if (phase === 'flight') {
+    const h = hit;
+    const n = 4;
+    for (let i = 0; i < n; i++) stepHit(h, dt / n);
+    follow = h.how === 'tip' ? null : { p: h.p, k: clamp((t - tPhase) * 1.8, 0, 1) * (h.how === 'jam' ? 0.4 : 1) };
+    if (h.landed && !h.shownAt) h.shownAt = t;
+    if (h.result && h.shownAt && t - h.shownAt > 0.45 && !h.announced) {
+      h.announced = true;
+      const r = h.result;
+      say(`${r.label}${h.how !== 'tip' && !r.foul ? `  ·  ${h.mph} mph, ${h.la}°` : ''}`, 2600);
+      if (r.foul || h.how === 'tip') tallyPitch('F');
+      else tallyPitch(r.base ? 'H' : 'O', r);
+      tPhase = t;
+    }
+    if (h.announced && t - tPhase > 1.5) { phase = 'after'; tPhase = t - 0.6; }
+  }
+  if (phase === 'after' && t - tPhase > 1.2) {
+    follow = null;
+    if (embedPAs && count.pa > embedPAs) { finishEmbed(); phase = 'done'; return; }
+    nextPitch();
+  }
+}
+function tallyPitch(kind, r) {
+  if (S.mode !== 'atbat' && !embedPAs) return;
+  const endPA = (onBase) => { count.done.push(onBase); if (onBase) count.onBase++; count.pa++; count.b = 0; count.s = 0; };
+  if (kind === 'B') { count.b++; if (count.b >= 4) { say('Ball four. Take your base.', 2200); endPA(true); } }
+  else if (kind === 'S') { count.s++; if (count.s >= 3) { say('Strike three.', 2200); endPA(false); } }
+  else if (kind === 'F') { if (count.s < 2) count.s++; }
+  else if (kind === 'H') endPA(true);
+  else if (kind === 'O') endPA(false);
+  updateTop();
+}
+
+// ============================================================================ drawing
+function draw() {
+  const cam = camera();
+  g.save();
+  if (shake > 0) g.translate((Math.random() - 0.5) * shake * 40, (Math.random() - 0.5) * shake * 30);
+  // sky
+  const sky = g.createLinearGradient(0, 0, 0, H * 0.5);
+  sky.addColorStop(0, '#13233f'); sky.addColorStop(1, '#2e5a86');
+  g.fillStyle = sky; g.fillRect(-30, -30, W + 60, H + 60);
+  // grass and the field: kept simple so the ball stands out
+  poly(cam, [[-140, 0, 140], [140, 0, 140], [140, 0, -6], [-140, 0, -6]], '#2f7d4a');
+  for (let i = 0; i < 9; i++) poly(cam, [[-140, 0, 10 + i * 14], [140, 0, 10 + i * 14], [140, 0, 17 + i * 14], [-140, 0, 17 + i * 14]], '#348652');
+  // outfield wall
+  const wall = [];
+  for (let a = -45; a <= 45; a += 5) { const r = FENCE(a); wall.push([Math.sin(a / 57.3) * r, 0, Math.cos(a / 57.3) * r]); }
+  wallStrip(cam, wall, 3.2);
+  // infield dirt
+  poly(cam, arcPts(0, 0, 29, -45, 45, 0).concat([[0, 0, -2]]), '#b98552');
+  poly(cam, [[0, 0, 7.5], [19.4, 0, 19.4 * 0.9 + 1], [0, 0, 36], [-19.4, 0, 19.4 * 0.9 + 1]], '#3a8a55');
+  disc(cam, [0, 0, 18.4], 2.7, '#b98552');
+  // lines
+  g.strokeStyle = 'rgba(255,255,255,0.85)'; g.lineWidth = 2;
+  line3(cam, [0, 0, 0], [-80, 0, 80]); line3(cam, [0, 0, 0], [80, 0, 80]);
+  // home plate
+  poly(cam, [[-0.215, 0.01, 0.2], [0.215, 0.01, 0.2], [0.215, 0.01, 0], [0, 0.01, -0.22], [-0.215, 0.01, 0]], '#f4f4f0');
+  drawPitcher(cam);
+  drawBatter(cam);
+  if (S.training) drawZone(cam);
+  drawBall(cam);
+  drawEffects();
+  g.restore();
+  drawSlash();
+}
+function toCam(cam, p) { const v = V.sub(p, cam.pos); return [V.dot(v, cam.right), V.dot(v, cam.up), V.dot(v, cam.fwd)]; }
+function poly(cam, pts, color) {  // clipped against the near plane, so ground that runs behind the camera still draws right
+  const NEAR = 0.15, cs = pts.map((p) => toCam(cam, p)), out = [];
+  for (let i = 0; i < cs.length; i++) {
+    const a = cs[i], b = cs[(i + 1) % cs.length], ain = a[2] > NEAR, bin = b[2] > NEAR;
+    if (ain) out.push(a);
+    if (ain !== bin) { const t = (NEAR - a[2]) / (b[2] - a[2]); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, NEAR]); }
+  }
+  if (out.length < 3) return;
+  g.fillStyle = color; g.beginPath();
+  out.forEach((c, i) => { const x = W / 2 + F * c[0] / c[2], y = H * cam.cy - F * c[1] / c[2]; i ? g.lineTo(x, y) : g.moveTo(x, y); });
+  g.closePath(); g.fill();
+}
+function arcPts(cx, cz, r, a0, a1, y) { const out = []; for (let a = a0; a <= a1; a += 5) out.push([cx + Math.sin(a / 57.3) * r, y, cz + Math.cos(a / 57.3) * r]); return out; }
+function disc(cam, c, r, color) { poly(cam, arcPts(c[0], c[2], r, 0, 360, 0.01).map((p) => [p[0], 0.02, p[2]]), color); }
+function line3(cam, a, b) { const p = P(cam, a), q = P(cam, b); if (p.z < 0.1 || q.z < 0.1) return; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(q.x, q.y); g.stroke(); }
+function wallStrip(cam, pts, h) {
+  g.fillStyle = '#1f4a39';
+  for (let i = 1; i < pts.length; i++) poly(cam, [pts[i - 1], pts[i], [pts[i][0], h, pts[i][2]], [pts[i - 1][0], h, pts[i - 1][2]]], '#24543f');
+  g.strokeStyle = '#ffd25a'; g.lineWidth = 2;
+  g.beginPath();
+  pts.forEach((p, i) => { const s = P(cam, [p[0], h, p[2]]); i ? g.lineTo(s.x, s.y) : g.moveTo(s.x, s.y); });
+  g.stroke();
+}
+function drawPitcher(cam) {  // small and simple: the ball is the star
+  const base = P(cam, [0.15, 0, 18.4]), top = P(cam, [0.15, 1.85, 18.4]);
+  const s = base.s, hgt = base.y - top.y;
+  const t = now();
+  let arm = 0;
+  if (phase === 'windup') arm = clamp((t - tPhase) / 0.95, 0, 1);
+  else if (phase === 'pitch' && t - tRel < 0.3) arm = 1 + (t - tRel) / 0.3;
+  g.save(); g.translate(base.x, base.y);
+  g.fillStyle = 'rgba(0,0,0,0.25)'; g.beginPath(); g.ellipse(0, 0, 0.45 * s, 0.12 * s, 0, 0, 7); g.fill();
+  g.fillStyle = '#e9edf4'; roundRect(-0.2 * s, -hgt * 0.85, 0.4 * s, hgt * 0.5, 0.08 * s); g.fill();
+  g.fillStyle = '#c9d0db'; g.fillRect(-0.16 * s, -hgt * 0.37, 0.12 * s, hgt * 0.37); g.fillRect(0.04 * s, -hgt * 0.37, 0.12 * s, hgt * 0.37);
+  g.fillStyle = '#d7a27a'; g.beginPath(); g.arc(0, -hgt * 0.92, 0.12 * s, 0, 7); g.fill();
+  g.fillStyle = '#1b3a6b'; g.beginPath(); g.arc(0, -hgt * 0.95, 0.12 * s, Math.PI, 0); g.fill();
+  const ang = -Math.PI / 2 - arm * Math.PI * 1.1;
+  g.strokeStyle = '#e9edf4'; g.lineWidth = 0.1 * s; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(0.18 * s, -hgt * 0.78); g.lineTo(0.18 * s + Math.cos(ang) * 0.6 * s, -hgt * 0.78 + Math.sin(ang) * 0.6 * s); g.stroke();
+  g.restore();
+}
+function drawBatter(cam) {  // a quiet silhouette on the left side of the plate; the bat whips through on a swing
+  const base = P(cam, [-0.85, 0, 0.05]);
+  if (base.z < 0.3) return;
+  const top = P(cam, [-0.85, 1.85, 0.05]);
+  const s = base.s, hgt = base.y - top.y;
+  g.save(); g.translate(base.x, base.y); g.globalAlpha = 0.28;
+  g.fillStyle = '#0c1424';
+  roundRect(-0.22 * s, -hgt * 0.82, 0.44 * s, hgt * 0.5, 0.1 * s); g.fill();
+  g.fillRect(-0.18 * s, -hgt * 0.36, 0.14 * s, hgt * 0.36); g.fillRect(0.04 * s, -hgt * 0.36, 0.14 * s, hgt * 0.36);
+  g.beginPath(); g.arc(0, -hgt * 0.9, 0.14 * s, 0, 7); g.fill();
+  const t = now(), sw = swing ? clamp((t - swing.t) / 0.16, 0, 1) : 0;
+  const a0 = -2.2, a1 = 0.9, a = swing ? a0 + (a1 - a0) * ease(sw) : a0;
+  g.strokeStyle = '#d9b07a'; g.lineWidth = 0.07 * s; g.lineCap = 'round'; g.globalAlpha = 0.6;
+  g.beginPath(); g.moveTo(0.15 * s, -hgt * 0.62); g.lineTo(0.15 * s + Math.cos(a) * 0.95 * s, -hgt * 0.62 + Math.sin(a) * 0.95 * s); g.stroke();
+  g.restore();
+}
+function drawZone(cam) {
+  const c = [[-ZONE.x, ZONE.lo, 0], [ZONE.x, ZONE.lo, 0], [ZONE.x, ZONE.hi, 0], [-ZONE.x, ZONE.hi, 0]].map((p) => P(cam, p));
+  g.strokeStyle = 'rgba(255,255,255,0.55)'; g.lineWidth = 2; g.setLineDash([6, 5]);
+  g.beginPath(); c.forEach((p, i) => (i ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y))); g.closePath(); g.stroke();
+  // the contact plane: where you meet the ball
+  const k = [[-0.6, 0.2, ZC], [0.6, 0.2, ZC], [0.6, 1.45, ZC], [-0.6, 1.45, ZC]].map((p) => P(cam, p));
+  g.setLineDash([]); g.fillStyle = 'rgba(255,207,74,0.08)'; g.strokeStyle = 'rgba(255,207,74,0.4)';
+  g.beginPath(); k.forEach((p, i) => (i ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y))); g.closePath(); g.fill(); g.stroke();
+}
+function drawBall(cam) {
+  const t = now();
+  if (phase === 'pitch' || (phase === 'after' && !hit) || (phase === 'pitch' && hit)) {
+    if (!pitch) return;
+    let u = (t - tRel) / pitch.T;
+    if (hit) u = pitch.uC;  // hit-pause freezes it on the bat
+    if (u < 0 || u > 1.06) return;
+    // trail: earlier positions on the same smooth path (never the future)
+    const n = S.trail === 'strong' ? 10 : S.trail === 'subtle' ? 5 : 0, span = S.trail === 'strong' ? 0.2 : 0.09;
+    for (let i = n; i >= 1; i--) {
+      const uu = u - (span / pitch.T) * (i / n);
+      if (uu < 0) continue;
+      const q = P(cam, ballPos(pitch, uu));
+      g.globalAlpha = (S.trail === 'strong' ? 0.42 : 0.24) * (1 - i / (n + 1));
+      g.fillStyle = '#fff6c9'; g.beginPath(); g.arc(q.x, q.y, ballR(uu) * (0.85 - 0.25 * i / n), 0, 7); g.fill();
+    }
+    g.globalAlpha = 1;
+    const p = ballPos(pitch, u), s = P(cam, p), r = ballR(u);
+    const sh = P(cam, [p[0], 0, p[2]]);
+    g.fillStyle = 'rgba(0,0,0,0.22)'; g.beginPath(); g.ellipse(sh.x, sh.y, r * 0.9, r * 0.28, 0, 0, 7); g.fill();
+    baseball(s.x, s.y, r, t * 30);
+  } else if (hit && phase === 'flight') {
+    const h = hit;
+    h.trail.forEach((q, i) => {
+      const s = P(cam, q); if (s.z < 0.2) return;
+      g.globalAlpha = (i / h.trail.length) * 0.35; g.fillStyle = '#fff6c9';
+      g.beginPath(); g.arc(s.x, s.y, Math.max(2, 0.12 * s.s) * 0.8, 0, 7); g.fill();
+    });
+    g.globalAlpha = 1;
+    const s = P(cam, h.p), sh = P(cam, [h.p[0], 0, h.p[2]]);
+    if (s.z < 0.2) return;
+    const r = Math.max(3.5, Math.min(17 * UI, 0.11 * s.s * 2.4));
+    g.fillStyle = 'rgba(0,0,0,0.25)'; g.beginPath(); g.ellipse(sh.x, sh.y, r * 0.9, r * 0.3, 0, 0, 7); g.fill();
+    baseball(s.x, s.y, r, h.t * 40);
+  }
+}
+function baseball(x, y, r, spin) {
+  const grd = g.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.15, x, y, r);
+  grd.addColorStop(0, '#ffffff'); grd.addColorStop(1, '#e9e3d4');
+  g.shadowColor = 'rgba(255,240,190,0.85)'; g.shadowBlur = r * 0.9;
+  g.fillStyle = grd; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+  g.shadowBlur = 0;
+  g.strokeStyle = '#d6453a'; g.lineWidth = Math.max(1, r * 0.11);
+  const o = (spin % 6.283);
+  g.beginPath(); g.arc(x - r * 0.55, y, r * 0.62, -0.9 + Math.sin(o) * 0.2, 0.9 + Math.sin(o) * 0.2); g.stroke();
+  g.beginPath(); g.arc(x + r * 0.55, y, r * 0.62, Math.PI - 0.9 - Math.sin(o) * 0.2, Math.PI + 0.9 - Math.sin(o) * 0.2); g.stroke();
+}
+function drawEffects() {
+  for (const f of effects) {
+    const k = f.t / 0.5, rad = (f.big ? 70 : f.soft ? 26 : 46) * UI * (0.4 + k);
+    g.globalAlpha = (1 - k) * (f.soft ? 0.5 : 0.95);
+    g.strokeStyle = f.soft ? '#d8d8d8' : '#fff3b0'; g.lineWidth = (f.big ? 5 : 3) * (1 - k) + 1;
+    for (let i = 0; i < (f.big ? 12 : 8); i++) {
+      const a = (i / (f.big ? 12 : 8)) * 6.283 + 0.2;
+      g.beginPath(); g.moveTo(f.x + Math.cos(a) * rad * 0.35, f.y + Math.sin(a) * rad * 0.35); g.lineTo(f.x + Math.cos(a) * rad, f.y + Math.sin(a) * rad); g.stroke();
+    }
+    if (f.t < 0.06 && !f.soft) { g.globalAlpha = 0.6; g.fillStyle = '#fffbe6'; g.beginPath(); g.arc(f.x, f.y, rad * 0.5, 0, 7); g.fill(); }
+  }
+  g.globalAlpha = 1;
+}
+function drawSlash() {
+  if (slash.length < 2) return;
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  for (let i = 1; i < slash.length; i++) {
+    const a = slash[i - 1], b = slash[i], al = Math.max(0, b.a);
+    g.strokeStyle = `rgba(255,255,255,${al * 0.75})`; g.lineWidth = 9 * UI * al;
+    g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
+  }
+}
+function roundRect(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
+// ============================================================================ stats sheet
+function renderStats() {
+  const c = document.getElementById('sl-scatter'), ctx = c.getContext('2d');
+  const w = c.clientWidth, h = c.clientHeight, d = Math.min(2, window.devicePixelRatio || 1);
+  c.width = w * d; c.height = h * d; ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, w, h);
+  const span = 260;  // ms each side
+  ctx.fillStyle = 'rgba(67,211,158,0.16)'; ctx.fillRect(w / 2 - (80 / span) * (w / 2), 0, (160 / span) * (w / 2), h);
+  ctx.strokeStyle = '#9aa3b5'; ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
+  const recent = stats.slice(-60);
+  const color = { barrel: '#14a372', solid: '#43d39e', jam: '#e0a53a', pull_foul: '#e0a53a', tip: '#8c94a8', whiff: '#ff6a55', early: '#ff6a55', late: '#ff6a55' };
+  recent.forEach((s, i) => {
+    const x = w / 2 + clamp(s.dt / span, -1, 1) * (w / 2 - 6), y = h - 8 - (i / Math.max(1, recent.length - 1)) * (h - 16);
+    ctx.fillStyle = color[s.kind] || '#999'; ctx.beginPath(); ctx.arc(x, y, 4.5, 0, 7); ctx.fill();
+  });
+  const contact = (xs) => xs.length ? Math.round(100 * xs.filter((s) => ['barrel', 'solid', 'jam', 'pull_foul'].includes(s.kind)).length / xs.length) + '%' : '-';
+  const miss = (xs) => xs.length ? Math.round(xs.reduce((a, s) => a + Math.abs(s.dt), 0) / xs.length) : null;
+  document.getElementById('sl-s-contact').textContent = contact(stats);
+  const m = miss(stats.slice(-30)); document.getElementById('sl-s-timing').textContent = m == null ? '-' : `${m} ms`;
+  const half = Math.floor(stats.length / 2), a = miss(stats.slice(0, half)), b = miss(stats.slice(half));
+  document.getElementById('sl-s-trend').textContent = stats.length >= 10 && a != null && b != null ? `${a}→${b}` : '-';
+  for (const [id, t] of [['sl-s-fb', 'fastball'], ['sl-s-ch', 'changeup'], ['sl-s-cb', 'curve']]) document.getElementById(id).textContent = contact(stats.filter((s) => s.type === t));
+}
+
+// ============================================================================ LIFE OS (when embedded) and boot
+let embedPAs = 0;
+function finishEmbed() {
+  const n = count.done.length, on = count.onBase;
+  document.getElementById('sl-done-t').textContent = on >= 2 ? 'Clutch.' : on === 1 ? 'You came through once.' : 'Not today.';
+  document.getElementById('sl-done-p').textContent = `${on} for ${n} getting on base.`;
+  document.getElementById('sl-done').hidden = false;
+  document.getElementById('sl-done-btn').onclick = () => LifeOS.finish({ score: on, max: Math.max(1, n), summary: `${on} for ${n}`, stats: { swings: stats.slice(-20) } });
+}
+function start() {
+  document.getElementById('sl-intro').hidden = true;
+  audioUnlock(); resetCount(); nextPitch();
+}
+document.getElementById('sl-start').onclick = start;
+document.getElementById('sl-intro-more').onclick = () => { document.getElementById('sl-settings').hidden = false; };
+document.getElementById('sl-gear').onclick = () => { document.getElementById('sl-settings').hidden = false; };
+document.getElementById('sl-close').onclick = () => { document.getElementById('sl-settings').hidden = true; if (phase === 'intro') start(); };
+document.getElementById('sl-stats-btn').onclick = () => { document.getElementById('sl-statsheet').hidden = false; renderStats(); };
+document.getElementById('sl-stats-close').onclick = () => { document.getElementById('sl-statsheet').hidden = true; };
+document.getElementById('sl-reset').onclick = () => { stats = []; saveStats(); renderStats(); updateTop(); };
+LifeOS.onStart((cfg) => {
+  embedPAs = cfg.play === 'clutch' ? 3 : 5;
+  S.mode = 'atbat';
+  if (cfg.difficulty >= 66) S.speed = 'fast'; else if (cfg.difficulty <= 40) S.speed = 'slow';
+  renderSegs(); updateTop();
+});
+renderSegs(); updateTop();
+window.SwingLab = { get pitch() { return pitch; }, get phase() { return phase; }, get stats() { return stats; }, get hit() { return hit; }, doSwing, camera, P, ballPos, ballR,
+  get tRel() { return tRel; }, set settings(v) { Object.assign(S, v); renderSegs(); }, start, nextPitch };
+
+let last = performance.now();
+function loop(ts) {
+  const dt = Math.min(0.033, (ts - last) / 1000);
+  last = ts;
+  step(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>

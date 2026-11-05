@@ -1,0 +1,1705 @@
+{
+ "version": 1,
+ "notes": "Class games: quick challenges a teacher throws at the class on most school days (a few seconds each). Each setup is one way it can happen: which game, which classes it fits, what the teacher says, and how it lands. {period}, {class_name}, {teacher} and {them_first} (a classmate) are filled in. The games themselves are in data/minigames.json (class: true); the banks below are what the order and odd-one-out games are made of. Facts must be correct.",
+ "rate": {
+  "high_school": 0.6,
+  "college": 0.4
+ },
+ "periods": [
+  "First period",
+  "Second period",
+  "Third period",
+  "Fourth period",
+  "Fifth period",
+  "Sixth period",
+  "Last period"
+ ],
+ "pass_label": [
+  "Let {them_first} take it.",
+  "Nudge {them_first} to go.",
+  "Volunteer {them_first}."
+ ],
+ "sit_label": [
+  "Keep your head down.",
+  "Doodle through it.",
+  "Watch from your seat."
+ ],
+ "pass": [
+  "{them_first} goes for it instead. Close, not quite. They shrug all the way back to their seat.",
+  "{them_first} takes it and nails it, then looks right at you like: your turn next time.",
+  "{them_first} gets up there. The class cheers either way, and {them_first} bows."
+ ],
+ "sit": [
+  "You draw a pretty solid dog in the margin. Class moves on.",
+  "You watch someone else go. Honestly, more relaxing.",
+  "You zone out for a minute. Nobody notices. Probably."
+ ],
+ "setups": [
+  {
+   "id": "beaker",
+   "game": "hold",
+   "skin": "beaker",
+   "subjects": [
+    "chemistry",
+    "biology"
+   ],
+   "title": "Fill it to the line",
+   "text": [
+    "{period}, {class_name}. {teacher} sets a beaker on the front desk. \"Fill it to the line. Closest one skips tonight's worksheet.\"",
+    "{period}, {class_name}. {teacher} holds up a graduated cylinder. \"Twenty-five milliliters. Exactly. Who's got steady hands?\""
+   ],
+   "go": "I got this.",
+   "how": "Hold to pour. Let go on the line.",
+   "great": [
+    "Dead on the line. {teacher} holds it up to the light and nods. \"Worksheet's off for you.\"",
+    "Exactly on the mark. Somebody in the back actually claps."
+   ],
+   "good": [
+    "A hair over. {teacher} squints at it. \"I'll allow it.\"",
+    "Close enough that {teacher} doesn't argue."
+   ],
+   "miss": [
+    "It overflows onto the desk. {them_first} hands you paper towels, cracking up.",
+    "Way short. {teacher}: \"That's a rounding error with ambition.\""
+   ]
+  },
+  {
+   "id": "atoms",
+   "game": "mathdash",
+   "skin": "atoms",
+   "subjects": [
+    "chemistry"
+   ],
+   "title": "How many atoms?",
+   "text": [
+    "{period}, {class_name}. {teacher} writes formulas on the board, fast. \"How many atoms in each one? Call it.\"",
+    "{period}. {teacher} slaps a stack of formula cards on the desk. \"Count the atoms. Beat {them_first} and you pick the lab partners.\""
+   ],
+   "go": "Call them out.",
+   "how": "Count the atoms. Tap the answer.",
+   "great": [
+    "You rattle them off before {teacher} finishes writing. \"Okay. Okay,\" {teacher} says.",
+    "Perfect run. {them_first} turns around in their seat like, how?"
+   ],
+   "good": [
+    "Most of them. Glucose got you, but glucose gets everyone.",
+    "Solid. {teacher} gives you a nod."
+   ],
+   "miss": [
+    "Those little numbers move when you look at them. You swear.",
+    "You count the H's twice and the O's never. Next time."
+   ]
+  },
+  {
+   "id": "elements",
+   "game": "lineup",
+   "skin": "chemistry",
+   "subjects": [
+    "chemistry"
+   ],
+   "title": "Periodic order",
+   "text": [
+    "{period}, {class_name}. {teacher} deals out element cards. \"Atomic number order. Go.\"",
+    "{period}. \"Line these up by atomic number,\" {teacher} says. \"Fastest table gets the good goggles.\""
+   ],
+   "go": "Deal me in.",
+   "how": "Tap them lowest atomic number first.",
+   "great": [
+    "Clean sweep. Your table gets the good goggles.",
+    "{teacher} checks your cards. \"Every one. Nice.\""
+   ],
+   "good": [
+    "Close. One swap off, and {teacher} lets it slide.",
+    "Mostly right. You'll remember iron now."
+   ],
+   "miss": [
+    "You put gold before carbon with total confidence.",
+    "{them_first} quietly fixes your order for you."
+   ]
+  },
+  {
+   "id": "dna",
+   "game": "oddone",
+   "skin": "dna",
+   "subjects": [
+    "biology"
+   ],
+   "title": "Find the mutation",
+   "text": [
+    "{period}, {class_name}. {teacher} projects a wall of DNA. \"One of these has a mutation. Find it before {them_first} does.\"",
+    "{period}. \"Somewhere in here, one base is wrong,\" says {teacher}. \"Eyes up. Go.\""
+   ],
+   "go": "Find it.",
+   "how": "Tap the one that's different.",
+   "great": [
+    "You spot it instantly. {teacher}: \"Somebody's going into genetics.\"",
+    "Three for three, before anyone else even squints."
+   ],
+   "good": [
+    "Got most of them. The last one was sneaky.",
+    "Not bad. {them_first} got one you missed and won't let you forget it."
+   ],
+   "miss": [
+    "They all look the same. They all look exactly the same.",
+    "You tap the wrong one with your whole chest."
+   ]
+  },
+  {
+   "id": "scale",
+   "game": "lineup",
+   "skin": "biology",
+   "subjects": [
+    "biology"
+   ],
+   "title": "Smallest to biggest",
+   "text": [
+    "{period}, {class_name}. {teacher} hands out cards: a virus, a cell, an ant, a whale. \"By size. Smallest first.\"",
+    "{period}. \"Scale check,\" {teacher} says, dealing size cards. \"Smallest first. Fastest table gets the good microscope.\""
+   ],
+   "go": "Line them up.",
+   "how": "Tap them smallest first.",
+   "great": [
+    "Every card in the right place. The good microscope is yours.",
+    "{teacher} nods slowly. \"That's the whole unit, right there.\""
+   ],
+   "good": [
+    "One mix-up. You'll get it on the test.",
+    "Mostly there."
+   ],
+   "miss": [
+    "You put the whale second. You will be hearing about that.",
+    "{them_first} leans over: \"A virus is not bigger than a cell, man.\""
+   ],
+   "set": 0
+  },
+  {
+   "id": "levels",
+   "game": "lineup",
+   "skin": "biology",
+   "subjects": [
+    "biology"
+   ],
+   "title": "Levels of life",
+   "text": [
+    "{period}, {class_name}. \"Levels of life,\" {teacher} says, dealing cards. \"Cell up to biosphere. Go.\"",
+    "{period}. {teacher}: \"Organization, smallest level first. You versus {them_first}.\""
+   ],
+   "go": "Line them up.",
+   "how": "Tap them smallest level first.",
+   "great": [
+    "Every level in place. {teacher}: \"That's the whole unit, right there.\"",
+    "Clean. You beat {them_first} by a full level."
+   ],
+   "good": [
+    "One swap. Community and population are close.",
+    "Mostly there."
+   ],
+   "miss": [
+    "You put the ecosystem inside a cell.",
+    "{them_first} leans over: \"Tissue comes before organ, man.\""
+   ],
+   "set": 1
+  },
+  {
+   "id": "mental",
+   "game": "mathdash",
+   "skin": "math",
+   "subjects": [
+    "math"
+   ],
+   "title": "Mental math race",
+   "text": [
+    "{period}, {class_name}. {teacher} clicks a stopwatch. \"Five problems, no calculators. Beat my time and you're off homework.\"",
+    "{period}. \"Around the world,\" {teacher} says. \"You're up against {them_first}. Go.\""
+   ],
+   "go": "Bring it.",
+   "how": "Tap the right answer. Fast.",
+   "great": [
+    "You beat the stopwatch. {teacher} actually looks impressed.",
+    "You take {them_first} down five straight. Polite applause."
+   ],
+   "good": [
+    "Most of them. Close race.",
+    "Respectable. {teacher} writes your time on the board anyway."
+   ],
+   "miss": [
+    "Seven times eight. You knew it. You KNEW it.",
+    "Your brain buffers. {them_first} wins this one."
+   ]
+  },
+  {
+   "id": "numberline",
+   "game": "lineup",
+   "skin": "math",
+   "subjects": [
+    "math"
+   ],
+   "title": "On the number line",
+   "text": [
+    "{period}, {class_name}. {teacher} sticks cards on the board: fractions, decimals, a square root. \"Number line. Smallest first.\"",
+    "{period}. \"Quick one,\" {teacher} says. \"Put these in order. Negatives count.\""
+   ],
+   "go": "Up to the board.",
+   "how": "Tap them smallest to biggest.",
+   "great": [
+    "Every one in place. {teacher}: \"That's the lesson. We can go home.\"",
+    "Clean. Even the square root."
+   ],
+   "good": [
+    "One swap off. Fractions, man.",
+    "Close."
+   ],
+   "miss": [
+    "Two-thirds and three-quarters swap places in your head every time.",
+    "The negative number gets you. It always gets someone."
+   ]
+  },
+  {
+   "id": "pendulum",
+   "game": "sweep",
+   "skin": "pendulum",
+   "subjects": [
+    "physics"
+   ],
+   "title": "Stop the pendulum",
+   "text": [
+    "{period}, {class_name}. {teacher} sets a pendulum swinging. \"Stop it at the bottom of the swing. Dead center.\"",
+    "{period}. {teacher} hands you the stopwatch trigger. \"Catch it at the lowest point. That's the whole experiment.\""
+   ],
+   "go": "Let me try.",
+   "how": "Tap to stop it in the zone.",
+   "great": [
+    "Right at the bottom, three times. {teacher} writes your data on the board as the example.",
+    "Perfect timing. Your lab data is the cleanest in the room."
+   ],
+   "good": [
+    "Close enough for science.",
+    "A little early, a little late. Averages out."
+   ],
+   "miss": [
+    "Your data looks like a seismograph.",
+    "{them_first} takes the trigger back. \"Let me.\""
+   ]
+  },
+  {
+   "id": "ruler",
+   "game": "reflex",
+   "skin": "ruler",
+   "subjects": [
+    "physics",
+    "psychology"
+   ],
+   "title": "Catch the ruler",
+   "text": [
+    "{period}, {class_name}. Rulers, partners. \"Your partner drops it, you catch it, we figure out your reaction time.\" {them_first} is holding yours.",
+    "{period}. {teacher} demonstrates with a meter stick. \"Thumb and finger ready. When it drops, you grab.\""
+   ],
+   "go": "Drop it.",
+   "how": "Tap the second it drops.",
+   "great": [
+    "You catch it almost before it moves. {them_first}: \"Okay, cheater.\"",
+    "Fastest hands in the room. It goes on the board."
+   ],
+   "good": [
+    "Respectable catch.",
+    "Middle of the pack. Human, basically."
+   ],
+   "miss": [
+    "It hits the floor. Twice. {them_first} is crying laughing.",
+    "You grab air. The ruler grabs nothing."
+   ]
+  },
+  {
+   "id": "planets",
+   "game": "lineup",
+   "skin": "physics",
+   "subjects": [
+    "physics"
+   ],
+   "title": "Planets in order",
+   "text": [
+    "{period}, {class_name}. {teacher} hands out planet cards. \"From the Sun, out. Go.\"",
+    "{period}. \"Solar system speed round,\" {teacher} says. \"Closest to the Sun first.\""
+   ],
+   "go": "Deal me in.",
+   "how": "Tap them closest to the Sun first.",
+   "great": [
+    "Clean. {teacher} gives your table first pick of seats for the video.",
+    "All of them. You didn't even hesitate."
+   ],
+   "good": [
+    "One swap. Close.",
+    "Mostly right."
+   ],
+   "miss": [
+    "You put Saturn next to the Sun. You'll hear about it.",
+    "{them_first} fixes it for you, very slowly, while making eye contact."
+   ],
+   "set": 0
+  },
+  {
+   "id": "speeds",
+   "game": "lineup",
+   "skin": "physics",
+   "subjects": [
+    "physics"
+   ],
+   "title": "Slowest to fastest",
+   "text": [
+    "{period}, {class_name}. \"Speed round,\" {teacher} says, dealing cards. \"Slowest to fastest.\"",
+    "{period}. {teacher}: \"Snail to light. Order them by speed. You versus {them_first}.\""
+   ],
+   "go": "Deal me in.",
+   "how": "Tap them slowest first.",
+   "great": [
+    "Every one in place. Sound before light, obviously.",
+    "Clean. {teacher}: \"Somebody was listening.\""
+   ],
+   "good": [
+    "One swap. The jetliner and sound are close.",
+    "Mostly right."
+   ],
+   "miss": [
+    "You make the cheetah faster than sound. It is not.",
+    "{them_first}: \"Light is the fast one. Always light.\""
+   ],
+   "set": 1
+  },
+  {
+   "id": "typo",
+   "game": "oddone",
+   "skin": "english",
+   "subjects": [
+    "english"
+   ],
+   "title": "Find the typo",
+   "text": [
+    "{period}, {class_name}. {teacher} puts a slide up. \"There's a typo in here. First to find it picks the reading order.\"",
+    "{period}. \"Proofreading drill,\" {teacher} says. \"One's wrong. Find it.\""
+   ],
+   "go": "On it.",
+   "how": "Tap the one that's spelled wrong.",
+   "great": [
+    "Got it before anyone else. You pick the reading order, and you pick yourself last.",
+    "Three for three. {teacher}: \"Editor.\""
+   ],
+   "good": [
+    "Two out of three. The double letters got you.",
+    "Decent eye."
+   ],
+   "miss": [
+    "All of them look wrong now. That's what happens when you stare at a word.",
+    "You tap the right spelling. Confidently."
+   ]
+  },
+  {
+   "id": "abc",
+   "game": "lineup",
+   "skin": "english",
+   "subjects": [
+    "english"
+   ],
+   "title": "ABC order",
+   "text": [
+    "{period}, {class_name}. {teacher} hands out vocab cards. \"Alphabetical. Fast. Winner picks Friday's book.\"",
+    "{period}. \"Warm-up,\" {teacher} says. \"Put these in ABC order. They all start the same, so read carefully.\""
+   ],
+   "go": "Easy.",
+   "how": "Tap them in ABC order.",
+   "great": [
+    "Flawless. You pick Friday's book.",
+    "{teacher} checks it twice. \"Perfect.\""
+   ],
+   "good": [
+    "One out of place.",
+    "Close. Those middle letters."
+   ],
+   "miss": [
+    "You forget how the alphabet goes, briefly, at sixteen.",
+    "{them_first}: \"You good?\""
+   ]
+  },
+  {
+   "id": "timeline",
+   "game": "lineup",
+   "skin": "history",
+   "subjects": [
+    "us_history",
+    "world_history",
+    "government"
+   ],
+   "title": "Timeline",
+   "text": [
+    "{period}, {class_name}. {teacher} deals event cards facedown. \"Oldest to newest. You've got seconds.\"",
+    "{period}. \"Timeline race,\" {teacher} says. \"You versus {them_first}. Flip and go.\""
+   ],
+   "go": "Flip them.",
+   "how": "Tap them oldest first.",
+   "great": [
+    "Every date in place. {teacher}: \"You've been reading.\"",
+    "You beat {them_first} by a mile."
+   ],
+   "good": [
+    "One swap. The middle ones are always close.",
+    "Pretty good. {teacher} nods."
+   ],
+   "miss": [
+    "You put the Moon landing before the Civil War. Bold.",
+    "Centuries are just numbers. Big ones."
+   ]
+  },
+  {
+   "id": "buzzer",
+   "game": "reflex",
+   "skin": "hand",
+   "subjects": [
+    "us_history",
+    "world_history",
+    "government",
+    "english",
+    "economics"
+   ],
+   "title": "Hand up first",
+   "text": [
+    "{period}, {class_name}. {teacher}: \"First hand up after I finish the question gets to answer.\"",
+    "{period}. Review game. Fastest hand gets the point. {them_first} is already leaning forward."
+   ],
+   "go": "Hand ready.",
+   "how": "Wait for it. Tap the instant it goes.",
+   "great": [
+    "Your hand's up before the question ends. Fastest in the room, three times.",
+    "You beat {them_first} every time. They're furious. It's great."
+   ],
+   "good": [
+    "You get one in. Good enough.",
+    "Quick, not the quickest."
+   ],
+   "miss": [
+    "You jump the gun. {teacher}: \"I hadn't asked anything yet.\"",
+    "{them_first} is faster. Every time."
+   ]
+  },
+  {
+   "id": "accents",
+   "game": "oddone",
+   "skin": "spanish",
+   "subjects": [
+    "spanish"
+   ],
+   "title": "¿Dónde está el acento?",
+   "text": [
+    "{period}, {class_name}. {teacher} flashes the same word over and over. \"¿Cuál no tiene acento?\"",
+    "{period}. \"Uno está mal,\" says {teacher}. \"Find the one missing its accent.\""
+   ],
+   "go": "Vamos.",
+   "how": "Tap the one missing its accent.",
+   "great": [
+    "¡Perfecto! {teacher} gives you a sticker. You're keeping the sticker.",
+    "Three for three. \"Muy bien,\" says {teacher}."
+   ],
+   "good": [
+    "Two of three. Not bad.",
+    "Bien."
+   ],
+   "miss": [
+    "The accents all blur together.",
+    "{teacher}: \"Casi.\" You'll take casi."
+   ]
+  },
+  {
+   "id": "numeros",
+   "game": "lineup",
+   "skin": "spanish",
+   "subjects": [
+    "spanish"
+   ],
+   "title": "Números",
+   "text": [
+    "{period}, {class_name}. \"Del más pequeño al más grande,\" says {teacher}, tossing number cards on your desk.",
+    "{period}. {teacher} holds up number words. \"In order. Rápido.\""
+   ],
+   "go": "Vamos.",
+   "how": "Tap them smallest to biggest.",
+   "great": [
+    "¡Perfecto! Even quince.",
+    "{teacher}: \"Excelente.\""
+   ],
+   "good": [
+    "One swap. Doce and dos are a trap.",
+    "Casi perfecto."
+   ],
+   "miss": [
+    "Cincuenta and cinco look like the same number when you panic.",
+    "{them_first} whispers \"veinte es twenty\" one second too late."
+   ]
+  },
+  {
+   "id": "catch",
+   "game": "reflex",
+   "skin": "catch",
+   "subjects": [
+    "health"
+   ],
+   "title": "Quick hands",
+   "text": [
+    "{period}, {class_name}. Reaction drills. {teacher} holds a tennis ball at shoulder height. \"When I drop it, you grab it.\"",
+    "{period}. Gym. {teacher} lines everyone up. \"Grab it before it bounces twice. Ready.\""
+   ],
+   "go": "Ready.",
+   "how": "Tap the second it drops.",
+   "great": [
+    "You snatch it every time. {teacher}: \"Somebody's been training.\"",
+    "Fastest hands in the gym."
+   ],
+   "good": [
+    "Got most of them.",
+    "Decent hands."
+   ],
+   "miss": [
+    "The ball bounces off your wrist and rolls under the bleachers.",
+    "{them_first} catches yours too. Rude."
+   ]
+  },
+  {
+   "id": "throw",
+   "game": "hold",
+   "skin": "throw",
+   "subjects": [
+    "health"
+   ],
+   "title": "Power throw",
+   "text": [
+    "{period}, {class_name}. {teacher} rolls out the medicine balls. \"Wind up, let it go at the right moment. Distance counts.\"",
+    "{period}. Throw test. Hold the wind-up, let it go in the sweet spot. {them_first} went first and set the mark."
+   ],
+   "go": "Step up.",
+   "how": "Hold to wind up. Let go in the green.",
+   "great": [
+    "It sails past the cone. {teacher} has to go get it.",
+    "You beat {them_first}'s mark. They want a rematch."
+   ],
+   "good": [
+    "Solid throw.",
+    "Not your best, not bad."
+   ],
+   "miss": [
+    "It goes about four feet. Straight down.",
+    "You let go way too early. Everyone ducks."
+   ]
+  },
+  {
+   "id": "rope",
+   "game": "sweep",
+   "skin": "jump",
+   "subjects": [
+    "health"
+   ],
+   "title": "Jump in",
+   "text": [
+    "{period}, {class_name}. Double-dutch day. {them_first} is turning. You have to jump in at the right moment.",
+    "{period}. Jump rope relay. Time it right or eat the rope."
+   ],
+   "go": "Jump in.",
+   "how": "Tap when it's in the zone.",
+   "great": [
+    "You jump in like you've done this your whole life.",
+    "Perfect rhythm. {them_first} speeds it up just to mess with you, and you still make it."
+   ],
+   "good": [
+    "You make it in. Eventually.",
+    "Clipped once, kept going."
+   ],
+   "miss": [
+    "The rope wins.",
+    "You stop it with your face. Gently. Mostly."
+   ]
+  },
+  {
+   "id": "shade",
+   "game": "oddone",
+   "skin": "color",
+   "subjects": [
+    "art"
+   ],
+   "title": "Off by a shade",
+   "text": [
+    "{period}, {class_name}. {teacher} holds up a swatch card. \"One of these is mixed wrong. Find it.\"",
+    "{period}. Color theory. \"Train your eye,\" says {teacher}. \"One's off.\""
+   ],
+   "go": "Show me.",
+   "how": "Tap the shade that's off.",
+   "great": [
+    "You see it instantly. {teacher}: \"Good eye.\"",
+    "Three for three. Even the subtle one."
+   ],
+   "good": [
+    "Two of three. The last one was mean.",
+    "Pretty good eye."
+   ],
+   "miss": [
+    "Every square is the same square. You'd swear to it.",
+    "You pick the right color. The one that was right, that is."
+   ]
+  },
+  {
+   "id": "stroke",
+   "game": "hold",
+   "skin": "brush",
+   "subjects": [
+    "art"
+   ],
+   "title": "One steady stroke",
+   "text": [
+    "{period}, {class_name}. {teacher}: \"One brushstroke. Start to finish. Stop right on the line.\"",
+    "{period}. Ink warm-up. One pull of the brush, and you have to stop on the mark."
+   ],
+   "go": "Pick up the brush.",
+   "how": "Hold to draw. Let go on the line.",
+   "great": [
+    "Clean line, clean stop. {teacher} pins it up.",
+    "Perfect. You'd frame it."
+   ],
+   "good": [
+    "A little long, but it's got character.",
+    "Pretty good line."
+   ],
+   "miss": [
+    "Your line goes off the page and onto the table.",
+    "{them_first}: \"It's abstract.\""
+   ]
+  },
+  {
+   "id": "rainbow",
+   "game": "lineup",
+   "skin": "art",
+   "subjects": [
+    "art"
+   ],
+   "title": "Color order",
+   "text": [
+    "{period}, {class_name}. Paint cups everywhere. \"Rainbow order,\" says {teacher}. \"Go.\"",
+    "{period}. {teacher} scatters swatches. \"In order, like the rainbow.\""
+   ],
+   "go": "Easy.",
+   "how": "Tap them in rainbow order.",
+   "great": [
+    "Clean. Even indigo.",
+    "Perfect."
+   ],
+   "good": [
+    "Indigo and violet swapped. Everyone does that.",
+    "Close."
+   ],
+   "miss": [
+    "You put green first. Bold choice.",
+    "{them_first}: \"Roy G. Biv, man.\""
+   ]
+  },
+  {
+   "id": "beat",
+   "game": "sweep",
+   "skin": "beat",
+   "subjects": [
+    "music"
+   ],
+   "title": "On the beat",
+   "text": [
+    "{period}, {class_name}. {teacher} starts the metronome. \"Hit the downbeat. Not before, not after.\"",
+    "{period}. Rhythm check. One at a time, you hit the beat while everyone listens."
+   ],
+   "go": "Count me in.",
+   "how": "Tap when it's in the zone.",
+   "great": [
+    "Right in the pocket. {teacher} points at you with the baton.",
+    "Perfect time. Even {them_first} nods."
+   ],
+   "good": [
+    "Mostly on it. One rushed.",
+    "Pretty steady."
+   ],
+   "miss": [
+    "You rush it. Then you drag it. Then you rush it.",
+    "{teacher}: \"Feel it, don't think it.\""
+   ]
+  },
+  {
+   "id": "playback",
+   "game": "flash",
+   "skin": "music",
+   "subjects": [
+    "music"
+   ],
+   "title": "Play it back",
+   "text": [
+    "{period}, {class_name}. {teacher} plays a short pattern on the keys. \"Play it back.\"",
+    "{period}. Ear training. {teacher} plays it once. Only once."
+   ],
+   "go": "Play it back.",
+   "how": "Watch the pattern, then tap it back.",
+   "great": [
+    "Every note. {teacher}: \"You've got an ear.\"",
+    "Perfect playback. The room goes quiet for a second."
+   ],
+   "good": [
+    "Most of it. Lost the last note.",
+    "Close."
+   ],
+   "miss": [
+    "You play something. It is not what {teacher} played.",
+    "Your hands forget halfway through."
+   ]
+  },
+  {
+   "id": "tempo",
+   "game": "lineup",
+   "skin": "music",
+   "subjects": [
+    "music"
+   ],
+   "title": "Slow to fast",
+   "text": [
+    "{period}, {class_name}. {teacher} holds up tempo cards. \"Slowest to fastest. Go.\"",
+    "{period}. Music theory sprint. \"Largo to presto,\" {teacher} says. \"In order.\""
+   ],
+   "go": "Deal them.",
+   "how": "Tap them slowest first.",
+   "great": [
+    "Perfect. {teacher}: \"Allegro.\"",
+    "Every one."
+   ],
+   "good": [
+    "One swap. Andante and adagio look alike.",
+    "Close."
+   ],
+   "miss": [
+    "Presto first. Sure.",
+    "{them_first}: \"Largo means slow, dude.\""
+   ],
+   "set": 0
+  },
+  {
+   "id": "notes",
+   "game": "lineup",
+   "skin": "music",
+   "subjects": [
+    "music"
+   ],
+   "title": "Longest to shortest",
+   "text": [
+    "{period}, {class_name}. Note values. \"Longest first,\" says {teacher}.",
+    "{period}. Theory sprint: whole notes down to sixteenths. Longest first."
+   ],
+   "go": "Deal them.",
+   "how": "Tap them longest first.",
+   "great": [
+    "Perfect. {teacher} taps the music stand twice. Approval.",
+    "Every one."
+   ],
+   "good": [
+    "One swap. Eighths and sixteenths blur.",
+    "Close."
+   ],
+   "miss": [
+    "You make the sixteenth note the long one.",
+    "{them_first}: \"Whole note. Four beats. Come on.\""
+   ],
+   "set": 1
+  },
+  {
+   "id": "binary",
+   "game": "lineup",
+   "skin": "tech",
+   "subjects": [
+    "tech"
+   ],
+   "title": "Binary",
+   "text": [
+    "{period}, {class_name}. {teacher} puts binary numbers on the board. \"Smallest to largest. No converting out loud.\"",
+    "{period}. \"Warm-up,\" {teacher} says. \"These are in binary. Order them.\""
+   ],
+   "go": "Compile.",
+   "how": "Tap them smallest first. They're binary.",
+   "great": [
+    "Clean. {teacher}: \"Zero bugs.\"",
+    "Every one, first try."
+   ],
+   "good": [
+    "One off by a bit. Literally.",
+    "Close."
+   ],
+   "miss": [
+    "Ones and zeros. So many ones and zeros.",
+    "{them_first}: \"It's base two, bro.\""
+   ]
+  },
+  {
+   "id": "pattern",
+   "game": "flash",
+   "skin": "tech",
+   "subjects": [
+    "tech",
+    "psychology"
+   ],
+   "title": "Repeat the pattern",
+   "text": [
+    "{period}, {class_name}. {teacher} lights up a pattern on the board. \"Repeat it. Exactly.\"",
+    "{period}. Memory test. \"The average person holds about seven things at once,\" says {teacher}. \"Let's see.\""
+   ],
+   "go": "Show me.",
+   "how": "Watch the pattern, then tap it back.",
+   "great": [
+    "Every square. {teacher} raises an eyebrow.",
+    "Perfect recall. Above average, officially."
+   ],
+   "good": [
+    "Most of it.",
+    "Pretty good memory."
+   ],
+   "miss": [
+    "It's gone the second it stops.",
+    "You remember the first two. Great first two."
+   ]
+  },
+  {
+   "id": "signal",
+   "game": "sweep",
+   "skin": "signal",
+   "subjects": [
+    "tech"
+   ],
+   "title": "Time the signal",
+   "text": [
+    "{period}, {class_name}. {teacher}'s demo: \"Tap when the signal's in the window. Too early or late and the packet drops.\"",
+    "{period}. Timing lab. Hit the window, three times."
+   ],
+   "go": "Run it.",
+   "how": "Tap to stop it in the zone.",
+   "great": [
+    "Zero packets dropped.",
+    "Perfect timing, three for three."
+   ],
+   "good": [
+    "One dropped. Acceptable latency.",
+    "Close."
+   ],
+   "miss": [
+    "Connection lost.",
+    "{them_first}: \"Have you tried turning it off and on?\""
+   ]
+  },
+  {
+   "id": "reaction",
+   "game": "reflex",
+   "skin": "test",
+   "subjects": [
+    "psychology"
+   ],
+   "title": "Reaction test",
+   "text": [
+    "{period}, {class_name}. Today's experiment: reaction time. \"Tap the instant it turns green,\" says {teacher}.",
+    "{period}. Lab day. You're the subject. {them_first} is recording."
+   ],
+   "go": "Test me.",
+   "how": "Wait for green. Then tap.",
+   "great": [
+    "Your times are the fastest in the class. You're an outlier, scientifically.",
+    "Lightning. {them_first} checks the timer twice."
+   ],
+   "good": [
+    "Right around average.",
+    "Normal. Statistically."
+   ],
+   "miss": [
+    "You jump early. That's a data point too.",
+    "Slow. You blame the coffee you didn't have."
+   ]
+  },
+  {
+   "id": "change",
+   "game": "mathdash",
+   "skin": "money",
+   "subjects": [
+    "economics"
+   ],
+   "title": "Make change",
+   "text": [
+    "{period}, {class_name}. {teacher} runs a register drill. \"Customer pays, you make change. Fast.\"",
+    "{period}. Price check. \"Tips, change, discounts. Go,\" says {teacher}."
+   ],
+   "go": "Open the register.",
+   "how": "Tap the right amount. Fast.",
+   "great": [
+    "Every one to the cent. {teacher}: \"Hired.\"",
+    "Perfect. You'd make a great cashier and a better accountant."
+   ],
+   "good": [
+    "Most of them.",
+    "Pretty good. One customer got shorted a quarter."
+   ],
+   "miss": [
+    "You give someone eleven dollars in change for a ten.",
+    "The math is easy. The pressure isn't."
+   ]
+  },
+  {
+   "id": "lightning",
+   "game": "trivia",
+   "skin": "quiz",
+   "subjects": [
+    "english",
+    "biology",
+    "chemistry",
+    "physics",
+    "us_history",
+    "world_history",
+    "government",
+    "spanish",
+    "health",
+    "art",
+    "music",
+    "tech",
+    "psychology",
+    "economics",
+    "math"
+   ],
+   "title": "Lightning round",
+   "text": [
+    "{period}, {class_name}. Ten minutes left. {teacher} pulls out a stack of questions. \"Lightning round. Three questions.\"",
+    "{period}. \"Pop review,\" {teacher} says. \"Three quick ones. You versus {them_first}.\""
+   ],
+   "go": "Ask me.",
+   "how": "Three questions, ten seconds each.",
+   "great": [
+    "Three for three. {teacher} gives you the nod.",
+    "You beat {them_first} clean."
+   ],
+   "good": [
+    "Two of three. Respectable.",
+    "Not bad."
+   ],
+   "miss": [
+    "Your mind goes completely blank. Like, white noise.",
+    "{them_first} gets every one you miss."
+   ],
+   "hint": "you answer · three quick questions"
+  }
+ ],
+ "banks": {
+  "lineup": {
+   "us_history": {
+    "how": "Oldest first.",
+    "show": "year",
+    "items": [
+     [
+      "Columbus reaches the Americas",
+      1492
+     ],
+     [
+      "Jamestown is founded",
+      1607
+     ],
+     [
+      "The Declaration of Independence",
+      1776
+     ],
+     [
+      "The Constitution is signed",
+      1787
+     ],
+     [
+      "The Louisiana Purchase",
+      1803
+     ],
+     [
+      "The Civil War begins",
+      1861
+     ],
+     [
+      "The Wright brothers fly",
+      1903
+     ],
+     [
+      "The stock market crash",
+      1929
+     ],
+     [
+      "Pearl Harbor",
+      1941
+     ],
+     [
+      "Brown v. Board of Education",
+      1954
+     ],
+     [
+      "The first Moon landing",
+      1969
+     ],
+     [
+      "The Berlin Wall falls",
+      1989
+     ]
+    ]
+   },
+   "world_history": {
+    "how": "Oldest first.",
+    "show": "year",
+    "items": [
+     [
+      "The Great Pyramid is built",
+      -2560
+     ],
+     [
+      "Rome's Western Empire falls",
+      476
+     ],
+     [
+      "The Magna Carta",
+      1215
+     ],
+     [
+      "The printing press",
+      1440
+     ],
+     [
+      "Columbus reaches the Americas",
+      1492
+     ],
+     [
+      "The French Revolution",
+      1789
+     ],
+     [
+      "World War I begins",
+      1914
+     ],
+     [
+      "World War II ends",
+      1945
+     ],
+     [
+      "India's independence",
+      1947
+     ],
+     [
+      "The Berlin Wall falls",
+      1989
+     ],
+     [
+      "Mandela elected president",
+      1994
+     ]
+    ]
+   },
+   "government": {
+    "how": "Oldest first.",
+    "show": "year",
+    "items": [
+     [
+      "Articles of Confederation ratified",
+      1781
+     ],
+     [
+      "The Constitution ratified",
+      1788
+     ],
+     [
+      "The Bill of Rights ratified",
+      1791
+     ],
+     [
+      "The 13th Amendment",
+      1865
+     ],
+     [
+      "The 19th Amendment",
+      1920
+     ],
+     [
+      "The 26th Amendment",
+      1971
+     ]
+    ]
+   },
+   "chemistry": {
+    "how": "Lowest atomic number first.",
+    "show": "value",
+    "items": [
+     [
+      "Hydrogen",
+      1
+     ],
+     [
+      "Helium",
+      2
+     ],
+     [
+      "Lithium",
+      3
+     ],
+     [
+      "Carbon",
+      6
+     ],
+     [
+      "Nitrogen",
+      7
+     ],
+     [
+      "Oxygen",
+      8
+     ],
+     [
+      "Neon",
+      10
+     ],
+     [
+      "Sodium",
+      11
+     ],
+     [
+      "Aluminum",
+      13
+     ],
+     [
+      "Chlorine",
+      17
+     ],
+     [
+      "Iron",
+      26
+     ],
+     [
+      "Copper",
+      29
+     ],
+     [
+      "Silver",
+      47
+     ],
+     [
+      "Gold",
+      79
+     ],
+     [
+      "Lead",
+      82
+     ],
+     [
+      "Uranium",
+      92
+     ]
+    ]
+   },
+   "biology": {
+    "how": "Smallest first.",
+    "show": "none",
+    "sets": [
+     [
+      [
+       "A protein",
+       1
+      ],
+      [
+       "A virus",
+       2
+      ],
+      [
+       "A bacterium",
+       3
+      ],
+      [
+       "A red blood cell",
+       4
+      ],
+      [
+       "A human egg cell",
+       5
+      ],
+      [
+       "An ant",
+       6
+      ],
+      [
+       "A mouse",
+       7
+      ],
+      [
+       "A person",
+       8
+      ],
+      [
+       "A blue whale",
+       9
+      ]
+     ],
+     [
+      [
+       "Cell",
+       1
+      ],
+      [
+       "Tissue",
+       2
+      ],
+      [
+       "Organ",
+       3
+      ],
+      [
+       "Organ system",
+       4
+      ],
+      [
+       "Organism",
+       5
+      ],
+      [
+       "Population",
+       6
+      ],
+      [
+       "Community",
+       7
+      ],
+      [
+       "Ecosystem",
+       8
+      ],
+      [
+       "Biosphere",
+       9
+      ]
+     ]
+    ]
+   },
+   "physics": {
+    "how": "In order.",
+    "show": "none",
+    "sets": [
+     [
+      [
+       "Mercury",
+       1
+      ],
+      [
+       "Venus",
+       2
+      ],
+      [
+       "Earth",
+       3
+      ],
+      [
+       "Mars",
+       4
+      ],
+      [
+       "Jupiter",
+       5
+      ],
+      [
+       "Saturn",
+       6
+      ],
+      [
+       "Uranus",
+       7
+      ],
+      [
+       "Neptune",
+       8
+      ]
+     ],
+     [
+      [
+       "A snail",
+       1
+      ],
+      [
+       "Walking",
+       2
+      ],
+      [
+       "A sprinter",
+       3
+      ],
+      [
+       "A cheetah",
+       4
+      ],
+      [
+       "A jetliner",
+       5
+      ],
+      [
+       "Sound",
+       6
+      ],
+      [
+       "Light",
+       7
+      ]
+     ]
+    ],
+    "set_how": [
+     "Closest to the Sun first.",
+     "Slowest first."
+    ]
+   },
+   "english": {
+    "how": "ABC order.",
+    "show": "none",
+    "words": [
+     [
+      "stack",
+      "stain",
+      "stair",
+      "stake",
+      "stale",
+      "stamp",
+      "stand",
+      "start"
+     ],
+     [
+      "brain",
+      "brake",
+      "brand",
+      "brass",
+      "brave",
+      "bread",
+      "brick",
+      "bride"
+     ],
+     [
+      "plain",
+      "plane",
+      "plank",
+      "plant",
+      "plate",
+      "plaza",
+      "pleat",
+      "plush"
+     ],
+     [
+      "chair",
+      "chalk",
+      "champ",
+      "chant",
+      "chaos",
+      "charm",
+      "chart",
+      "chase"
+     ]
+    ]
+   },
+   "spanish": {
+    "how": "Smallest first.",
+    "show": "value",
+    "items": [
+     [
+      "uno",
+      1
+     ],
+     [
+      "dos",
+      2
+     ],
+     [
+      "tres",
+      3
+     ],
+     [
+      "cinco",
+      5
+     ],
+     [
+      "siete",
+      7
+     ],
+     [
+      "ocho",
+      8
+     ],
+     [
+      "diez",
+      10
+     ],
+     [
+      "doce",
+      12
+     ],
+     [
+      "quince",
+      15
+     ],
+     [
+      "veinte",
+      20
+     ],
+     [
+      "treinta",
+      30
+     ],
+     [
+      "cincuenta",
+      50
+     ],
+     [
+      "cien",
+      100
+     ]
+    ]
+   },
+   "art": {
+    "how": "Rainbow order.",
+    "show": "none",
+    "color": true,
+    "items": [
+     [
+      "Red",
+      1,
+      "#e5484d"
+     ],
+     [
+      "Orange",
+      2,
+      "#f76b15"
+     ],
+     [
+      "Yellow",
+      3,
+      "#ffc53d"
+     ],
+     [
+      "Green",
+      4,
+      "#30a46c"
+     ],
+     [
+      "Blue",
+      5,
+      "#0090ff"
+     ],
+     [
+      "Indigo",
+      6,
+      "#3e63dd"
+     ],
+     [
+      "Violet",
+      7,
+      "#8e4ec6"
+     ]
+    ]
+   },
+   "music": {
+    "how": "In order.",
+    "show": "none",
+    "sets": [
+     [
+      [
+       "Largo",
+       1
+      ],
+      [
+       "Adagio",
+       2
+      ],
+      [
+       "Andante",
+       3
+      ],
+      [
+       "Moderato",
+       4
+      ],
+      [
+       "Allegro",
+       5
+      ],
+      [
+       "Presto",
+       6
+      ]
+     ],
+     [
+      [
+       "Whole note",
+       1
+      ],
+      [
+       "Half note",
+       2
+      ],
+      [
+       "Quarter note",
+       3
+      ],
+      [
+       "Eighth note",
+       4
+      ],
+      [
+       "Sixteenth note",
+       5
+      ]
+     ]
+    ],
+    "set_how": [
+     "Slowest first.",
+     "Longest first."
+    ]
+   }
+  },
+  "oddone": {
+   "english": {
+    "pairs": [
+     [
+      "receive",
+      "recieve"
+     ],
+     [
+      "definitely",
+      "definately"
+     ],
+     [
+      "separate",
+      "seperate"
+     ],
+     [
+      "necessary",
+      "neccessary"
+     ],
+     [
+      "tomorrow",
+      "tommorow"
+     ],
+     [
+      "believe",
+      "beleive"
+     ],
+     [
+      "weird",
+      "wierd"
+     ],
+     [
+      "calendar",
+      "calender"
+     ],
+     [
+      "argument",
+      "arguement"
+     ],
+     [
+      "library",
+      "libary"
+     ],
+     [
+      "February",
+      "Febuary"
+     ],
+     [
+      "occasion",
+      "ocassion"
+     ]
+    ]
+   },
+   "spanish": {
+    "pairs": [
+     [
+      "también",
+      "tambien"
+     ],
+     [
+      "rápido",
+      "rapido"
+     ],
+     [
+      "música",
+      "musica"
+     ],
+     [
+      "lápiz",
+      "lapiz"
+     ],
+     [
+      "árbol",
+      "arbol"
+     ],
+     [
+      "fácil",
+      "facil"
+     ],
+     [
+      "teléfono",
+      "telefono"
+     ],
+     [
+      "sábado",
+      "sabado"
+     ],
+     [
+      "canción",
+      "cancion"
+     ],
+     [
+      "mañana",
+      "manana"
+     ],
+     [
+      "niño",
+      "nino"
+     ],
+     [
+      "miércoles",
+      "miercoles"
+     ]
+    ]
+   },
+   "general": {
+    "pairs": [
+     [
+      "b",
+      "d"
+     ],
+     [
+      "p",
+      "q"
+     ],
+     [
+      "O",
+      "Q"
+     ],
+     [
+      "E",
+      "F"
+     ],
+     [
+      "M",
+      "N"
+     ],
+     [
+      "8",
+      "B"
+     ],
+     [
+      "S",
+      "5"
+     ],
+     [
+      "C",
+      "G"
+     ],
+     [
+      "m",
+      "n"
+     ],
+     [
+      "u",
+      "v"
+     ]
+    ]
+   }
+  }
+ }
+}

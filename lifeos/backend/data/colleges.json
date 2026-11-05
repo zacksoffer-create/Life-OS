@@ -1,0 +1,560 @@
+{
+ "version": 2,
+ "notes": "Real colleges. programs = how strong each sport's program is (0-100); it sets the recruiting bar (52 + 0.36 x program) and how good the team plays (58 + 0.2 x program). academic_rank feeds path choices. Regular admission: P = admit_cap x sigmoid((GPA - min_gpa) / 0.12). Recruited athletes need athlete_min_gpa (NCAA D1 minimum is 2.3). Southern CT State and Gateway are local options for classmates who don't go to the big schools. Program numbers are design values for the simulation, not rankings. programs: 0-100 strength per team. A key ending in _w is the women's team (basketball_w, soccer_w); softball is women's, football and baseball men's; plain basketball and soccer are the men's teams. A school without a key has no team on that side.",
+ "colleges": [
+  {
+   "id": "uconn",
+   "name": "University of Connecticut",
+   "short": "UConn",
+   "mascot": "Huskies",
+   "location": "Storrs, CT",
+   "conference": "Big East",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 58,
+    "basketball": 96,
+    "baseball": 78,
+    "basketball_w": 99,
+    "soccer": 70,
+    "soccer_w": 62,
+    "softball": 55
+   },
+   "academic_rank": 75,
+   "min_gpa": 3.3,
+   "admit_cap": 0.7,
+   "athlete_min_gpa": 2.5,
+   "opponents": {
+    "default": [
+     "Butler",
+     "Creighton",
+     "DePaul",
+     "Georgetown",
+     "Marquette",
+     "Providence",
+     "Seton Hall",
+     "St. John's",
+     "Villanova",
+     "Xavier"
+    ],
+    "football": [
+     "UMass",
+     "Boston College",
+     "Syracuse",
+     "Rutgers",
+     "Army",
+     "Duke",
+     "Wake Forest",
+     "Temple"
+    ]
+   },
+   "home_state": true
+  },
+  {
+   "id": "stanford",
+   "name": "Stanford University",
+   "short": "Stanford",
+   "mascot": "Cardinal",
+   "location": "Stanford, CA",
+   "conference": "ACC",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 72,
+    "basketball": 74,
+    "baseball": 88,
+    "basketball_w": 88,
+    "soccer": 84,
+    "soccer_w": 95,
+    "softball": 82
+   },
+   "academic_rank": 98,
+   "min_gpa": 3.95,
+   "admit_cap": 0.12,
+   "athlete_min_gpa": 3.4,
+   "opponents": {
+    "default": [
+     "Boston College",
+     "Cal",
+     "Clemson",
+     "Duke",
+     "Georgia Tech",
+     "Louisville",
+     "NC State",
+     "Notre Dame",
+     "Pitt",
+     "SMU",
+     "Syracuse",
+     "Virginia",
+     "Virginia Tech",
+     "Wake Forest",
+     "North Carolina",
+     "Florida State",
+     "Miami"
+    ]
+   }
+  },
+  {
+   "id": "ucla",
+   "name": "University of California, Los Angeles",
+   "short": "UCLA",
+   "mascot": "Bruins",
+   "location": "Los Angeles, CA",
+   "conference": "Big Ten",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 76,
+    "basketball": 88,
+    "baseball": 86,
+    "basketball_w": 86,
+    "soccer": 80,
+    "soccer_w": 92,
+    "softball": 96
+   },
+   "academic_rank": 92,
+   "min_gpa": 3.85,
+   "admit_cap": 0.25,
+   "athlete_min_gpa": 3.0,
+   "opponents": {
+    "default": [
+     "Illinois",
+     "Indiana",
+     "Iowa",
+     "Maryland",
+     "Michigan State",
+     "Minnesota",
+     "Nebraska",
+     "Northwestern",
+     "Ohio State",
+     "Oregon",
+     "Penn State",
+     "Purdue",
+     "Rutgers",
+     "USC",
+     "Washington",
+     "Wisconsin",
+     "Michigan"
+    ]
+   }
+  },
+  {
+   "id": "lsu",
+   "name": "Louisiana State University",
+   "short": "LSU",
+   "mascot": "Tigers",
+   "location": "Baton Rouge, LA",
+   "conference": "SEC",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 90,
+    "basketball": 74,
+    "baseball": 95,
+    "basketball_w": 92,
+    "soccer_w": 70,
+    "softball": 90
+   },
+   "academic_rank": 66,
+   "min_gpa": 3.1,
+   "admit_cap": 0.8,
+   "athlete_min_gpa": 2.4,
+   "opponents": {
+    "default": [
+     "Alabama",
+     "Arkansas",
+     "Auburn",
+     "Florida",
+     "Georgia",
+     "Kentucky",
+     "Ole Miss",
+     "Mississippi State",
+     "Missouri",
+     "South Carolina",
+     "Tennessee",
+     "Texas A&M",
+     "Vanderbilt",
+     "Texas",
+     "Oklahoma"
+    ]
+   }
+  },
+  {
+   "id": "unc",
+   "name": "University of North Carolina",
+   "short": "UNC",
+   "mascot": "Tar Heels",
+   "location": "Chapel Hill, NC",
+   "conference": "ACC",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 76,
+    "basketball": 92,
+    "baseball": 87,
+    "basketball_w": 76,
+    "soccer": 84,
+    "soccer_w": 98,
+    "softball": 72
+   },
+   "academic_rank": 90,
+   "min_gpa": 3.8,
+   "admit_cap": 0.3,
+   "athlete_min_gpa": 2.9,
+   "opponents": {
+    "default": [
+     "Boston College",
+     "Cal",
+     "Clemson",
+     "Duke",
+     "Georgia Tech",
+     "Louisville",
+     "NC State",
+     "Notre Dame",
+     "Pitt",
+     "SMU",
+     "Syracuse",
+     "Virginia",
+     "Virginia Tech",
+     "Wake Forest",
+     "Stanford",
+     "Florida State",
+     "Miami"
+    ]
+   }
+  },
+  {
+   "id": "texas",
+   "name": "University of Texas at Austin",
+   "short": "Texas",
+   "mascot": "Longhorns",
+   "location": "Austin, TX",
+   "conference": "SEC",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 92,
+    "basketball": 82,
+    "baseball": 88,
+    "basketball_w": 90,
+    "soccer_w": 78,
+    "softball": 94
+   },
+   "academic_rank": 85,
+   "min_gpa": 3.7,
+   "admit_cap": 0.35,
+   "athlete_min_gpa": 2.6,
+   "opponents": {
+    "default": [
+     "Alabama",
+     "Arkansas",
+     "Auburn",
+     "Florida",
+     "Georgia",
+     "Kentucky",
+     "Ole Miss",
+     "Mississippi State",
+     "Missouri",
+     "South Carolina",
+     "Tennessee",
+     "Texas A&M",
+     "Vanderbilt",
+     "LSU",
+     "Oklahoma"
+    ]
+   }
+  },
+  {
+   "id": "oklahoma",
+   "name": "University of Oklahoma",
+   "short": "Oklahoma",
+   "mascot": "Sooners",
+   "location": "Norman, OK",
+   "conference": "SEC",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 88,
+    "basketball": 72,
+    "baseball": 80,
+    "basketball_w": 80,
+    "soccer_w": 62,
+    "softball": 99
+   },
+   "academic_rank": 68,
+   "min_gpa": 3.2,
+   "admit_cap": 0.8,
+   "athlete_min_gpa": 2.4,
+   "opponents": {
+    "default": [
+     "Alabama",
+     "Arkansas",
+     "Auburn",
+     "Florida",
+     "Georgia",
+     "Kentucky",
+     "Ole Miss",
+     "Mississippi State",
+     "Missouri",
+     "South Carolina",
+     "Tennessee",
+     "Texas A&M",
+     "Vanderbilt",
+     "LSU",
+     "Texas"
+    ]
+   }
+  },
+  {
+   "id": "fsu",
+   "name": "Florida State University",
+   "short": "Florida State",
+   "mascot": "Seminoles",
+   "location": "Tallahassee, FL",
+   "conference": "ACC",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 85,
+    "basketball": 76,
+    "baseball": 88,
+    "basketball_w": 80,
+    "soccer_w": 96,
+    "softball": 92
+   },
+   "academic_rank": 75,
+   "min_gpa": 3.5,
+   "admit_cap": 0.55,
+   "athlete_min_gpa": 2.5,
+   "opponents": {
+    "default": [
+     "Boston College",
+     "Cal",
+     "Clemson",
+     "Duke",
+     "Georgia Tech",
+     "Louisville",
+     "NC State",
+     "Notre Dame",
+     "Pitt",
+     "SMU",
+     "Syracuse",
+     "Virginia",
+     "Virginia Tech",
+     "Wake Forest",
+     "North Carolina",
+     "Stanford",
+     "Miami"
+    ]
+   }
+  },
+  {
+   "id": "miami",
+   "name": "University of Miami",
+   "short": "Miami",
+   "mascot": "Hurricanes",
+   "location": "Coral Gables, FL",
+   "conference": "ACC",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer"
+   ],
+   "programs": {
+    "football": 86,
+    "basketball": 78,
+    "baseball": 85,
+    "basketball_w": 74,
+    "soccer_w": 58
+   },
+   "academic_rank": 82,
+   "min_gpa": 3.6,
+   "admit_cap": 0.45,
+   "athlete_min_gpa": 2.6,
+   "opponents": {
+    "default": [
+     "Boston College",
+     "Cal",
+     "Clemson",
+     "Duke",
+     "Georgia Tech",
+     "Louisville",
+     "NC State",
+     "Notre Dame",
+     "Pitt",
+     "SMU",
+     "Syracuse",
+     "Virginia",
+     "Virginia Tech",
+     "Wake Forest",
+     "North Carolina",
+     "Stanford",
+     "Florida State"
+    ]
+   }
+  },
+  {
+   "id": "michigan",
+   "name": "University of Michigan",
+   "short": "Michigan",
+   "mascot": "Wolverines",
+   "location": "Ann Arbor, MI",
+   "conference": "Big Ten",
+   "tier": "D1",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 93,
+    "basketball": 82,
+    "baseball": 76,
+    "basketball_w": 80,
+    "soccer": 74,
+    "soccer_w": 72,
+    "softball": 86
+   },
+   "academic_rank": 92,
+   "min_gpa": 3.8,
+   "admit_cap": 0.35,
+   "athlete_min_gpa": 3.0,
+   "opponents": {
+    "default": [
+     "Illinois",
+     "Indiana",
+     "Iowa",
+     "Maryland",
+     "Michigan State",
+     "Minnesota",
+     "Nebraska",
+     "Northwestern",
+     "Ohio State",
+     "Oregon",
+     "Penn State",
+     "Purdue",
+     "Rutgers",
+     "USC",
+     "Washington",
+     "Wisconsin",
+     "UCLA"
+    ]
+   }
+  },
+  {
+   "id": "scsu",
+   "name": "Southern Connecticut State University",
+   "short": "Southern CT State",
+   "mascot": "Owls",
+   "location": "New Haven, CT",
+   "conference": "NE10",
+   "tier": "D2",
+   "sports": [
+    "football",
+    "basketball",
+    "baseball",
+    "soccer",
+    "softball"
+   ],
+   "programs": {
+    "football": 40,
+    "basketball": 40,
+    "baseball": 40,
+    "basketball_w": 40,
+    "soccer": 40,
+    "soccer_w": 40,
+    "softball": 40
+   },
+   "academic_rank": 45,
+   "min_gpa": 2.3,
+   "admit_cap": 0.95,
+   "athlete_min_gpa": 2.2,
+   "opponents": {
+    "default": [
+     "Assumption",
+     "Bentley",
+     "Saint Anselm",
+     "Franklin Pierce",
+     "Pace",
+     "Southern New Hampshire",
+     "American International",
+     "Saint Michael's"
+    ]
+   },
+   "home_state": true,
+   "local": true
+  },
+  {
+   "id": "gateway",
+   "name": "Gateway Community College",
+   "short": "Gateway",
+   "mascot": "",
+   "location": "New Haven, CT",
+   "conference": "",
+   "tier": "CC",
+   "sports": [],
+   "programs": {},
+   "academic_rank": 30,
+   "min_gpa": 0.0,
+   "admit_cap": 1.0,
+   "athlete_min_gpa": 0.0,
+   "opponents": {
+    "default": []
+   },
+   "home_state": true,
+   "local": true
+  }
+ ]
+}

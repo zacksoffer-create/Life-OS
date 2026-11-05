@@ -1,0 +1,551 @@
+{
+ "version": 1,
+ "notes": "Procedural narrative templates. Keys are '<event type>.<outcome>'. One variant is picked by a presentation-only random stream, so editing text never changes simulation outcomes. Placeholders: {a} actor, {b} target, {place}, {group}, {skill}, {verb}, {n}, {members}, {score}, {event}, {pet}, {label}, {about}, {topic}.",
+ "templates": {
+  "study.focused": [
+   "{a} put in a real study session and it stuck.",
+   "{a} worked through a stack of practice problems.",
+   "{a} studied hard {where}."
+  ],
+  "study.distracted": [
+   "{a} tried to study but kept drifting to their phone.",
+   "{a} opened the textbook and mostly stared at it."
+  ],
+  "study_at_lunch.focused": [
+   "{a} skipped the cafeteria noise and studied through lunch."
+  ],
+  "study_at_lunch.distracted": [
+   "{a} studied through lunch without getting much done."
+  ],
+  "practice_skill.focused": [
+   "{a} put in extra {skill} work on their own and felt it click.",
+   "{a} got in a long solo {skill} session.",
+   "{a} ran {skill} drills until dark."
+  ],
+  "practice_skill.distracted": [
+   "{a} went to practice {skill} alone but couldn't find a rhythm.",
+   "{a} half-heartedly worked on {skill}."
+  ],
+  "hobby.focused": [
+   "{a} {verb}.",
+   "{a} {verb} and lost track of time."
+  ],
+  "hobby.distracted": [
+   "{a} {verb}, without much joy."
+  ],
+  "rest.focused": [
+   "{a} took it easy and recharged.",
+   "{a} napped, then did nothing at all, gloriously."
+  ],
+  "rest.distracted": [
+   "{a} tried to rest but couldn't switch off."
+  ],
+  "sit_alone.focused": [
+   "{a} ate lunch alone with earbuds in.",
+   "{a} found a quiet corner for lunch."
+  ],
+  "sit_alone.distracted": [
+   "{a} ate alone and kept glancing at the crowded tables."
+  ],
+  "pet_time.focused": [
+   "{a} spent a while with {pet}, which helped more than anything else that day.",
+   "{a} took {pet} out and came back calmer."
+  ],
+  "pet_time.distracted": [
+   "{a} hung out with {pet} but stayed in their head."
+  ],
+  "interact.introduce.great": [
+   "{a} introduced themself to {b} and they clicked right away.",
+   "{a} struck up a conversation with {b}. It turned out they had a lot in common."
+  ],
+  "interact.introduce.good": [
+   "{a} said hi to {b} for the first real time. It went fine.",
+   "{a} and {b} finally talked. Nice enough."
+  ],
+  "interact.introduce.awkward": [
+   "{a} tried to introduce themself to {b}. It was awkward.",
+   "{a} said hello to {b}, who gave a polite, short answer."
+  ],
+  "interact.introduce.bad": [
+   "{a} introduced themself to {b} and it went badly.",
+   "{a} tried to talk to {b}, who clearly wasn't interested."
+  ],
+  "interact.chat.great": [
+   "{a} and {b} messaged back and forth until late.",
+   "{a} and {b} had one of those conversations that goes on for hours."
+  ],
+  "interact.chat.good": [
+   "{a} messaged {b}. They caught up.",
+   "{a} and {b} texted for a while."
+  ],
+  "interact.chat.awkward": [
+   "{a} messaged {b} and got one-word answers.",
+   "{a} texted {b}; the conversation fizzled."
+  ],
+  "interact.chat.bad": [
+   "{a} messaged {b} and it turned into a misunderstanding.",
+   "{a} texted {b} something that landed wrong."
+  ],
+  "interact.hang_out.great": [
+   "{a} and {b} hung out at {place} and had a genuinely great time.",
+   "{a} and {b} spent the afternoon at {place} and lost track of time."
+  ],
+  "interact.hang_out.good": [
+   "{a} and {b} hung out at {place}.",
+   "{a} and {b} spent the afternoon at {place}."
+  ],
+  "interact.hang_out.awkward": [
+   "{a} and {b} went to {place}. There were some long silences.",
+   "{a} and {b} hung out at {place} but it never quite got going."
+  ],
+  "interact.hang_out.bad": [
+   "{a} and {b} went to {place} and ended up getting on each other's nerves.",
+   "{a} and {b} hung out at {place}. It went sideways."
+  ],
+  "interact.hang_out.declined": [
+   "{a} asked {b} to hang out. {b} passed this time.",
+   "{a} invited {b} out; {b} passed."
+  ],
+  "interact.hang_out.busy": [
+   "{a} wanted to hang out with {b}, but {b} already had plans."
+  ],
+  "interact.support.great": [
+   "{a} checked in on {b}, who'd been having a hard time. It really helped.",
+   "{a} sat with {b} through a rough patch. {b} won't forget it."
+  ],
+  "interact.support.good": [
+   "{a} checked in on {b}.",
+   "{a} asked {b} how they were really doing."
+  ],
+  "interact.support.awkward": [
+   "{a} tried to help {b}, who didn't want to talk about it."
+  ],
+  "interact.support.bad": [
+   "{a} tried to cheer up {b} and said the wrong thing."
+  ],
+  "interact.flirt.great": [
+   "{a} flirted with {b}, and {b} flirted right back.",
+   "{a} made {b} laugh. Twice."
+  ],
+  "interact.flirt.good": [
+   "{a} flirted a little with {b}.",
+   "{a} found an excuse to talk to {b}."
+  ],
+  "interact.flirt.awkward": [
+   "{a} tried to flirt with {b}. It did not land.",
+   "{a} worked up the nerve to talk to {b} and blanked."
+  ],
+  "interact.flirt.bad": [
+   "{a} flirted with {b}, who looked uncomfortable."
+  ],
+  "interact.date.great": [
+   "{a} and {b} went to {place} together. A good one.",
+   "{a} and {b} had a great date at {place}."
+  ],
+  "interact.date.good": [
+   "{a} and {b} spent time together at {place}."
+  ],
+  "interact.date.awkward": [
+   "{a} and {b} went out to {place}; something felt off."
+  ],
+  "interact.date.bad": [
+   "{a} and {b} went to {place} and argued the whole time."
+  ],
+  "interact.date.declined": [
+   "{a} wanted to go out; {b} wasn't up for it."
+  ],
+  "interact.date.busy": [
+   "{a} wanted to see {b}, but {b} had other plans."
+  ],
+  "interact.family.great": [
+   "{a} and {b} spent a good afternoon together at home.",
+   "{a} and {b} cooked dinner together and laughed a lot."
+  ],
+  "interact.family.good": [
+   "{a} and {b} hung around the house together."
+  ],
+  "interact.family.awkward": [
+   "{a} and {b} were in the same room and mostly ignored each other."
+  ],
+  "interact.family.bad": [
+   "{a} and {b} got into a sibling squabble."
+  ],
+  "interact.chat.declined": [
+   "{a} messaged {b} and got left on read."
+  ],
+  "lunch_table.good": [
+   "{members} sat together at lunch.",
+   "Lunch table: {members}."
+  ],
+  "lunch_table.great": [
+   "{members} had a loud, happy lunch together.",
+   "{members} took over a table and were the loudest in the cafeteria."
+  ],
+  "lunch_table.flat": [
+   "{members} sat together at lunch without much to say."
+  ],
+  "exclusion.excluded": [
+   "{a} tried to sit with {b} and the table froze them out.",
+   "{a} went to join {b}'s table and someone said the seat was saved. It wasn't."
+  ],
+  "ask_out.yes": [
+   "{a} asked {b} out. {b} said yes!",
+   "{a} finally asked {b} out, and {b} said yes."
+  ],
+  "ask_out.no": [
+   "{a} asked {b} out. {b} said no.",
+   "{a} worked up the courage to ask {b} out. {b} let them down gently."
+  ],
+  "ask_out.no_harsh": [
+   "{a} asked {b} out in front of people. {b} laughed. Not kindly."
+  ],
+  "ask_to_dance.yes": [
+   "{a} asked {b} to {event}. {b} said yes.",
+   "{a} and {b} are going to {event} together."
+  ],
+  "ask_to_dance.no": [
+   "{a} asked {b} to {event}. {b} said they already had plans.",
+   "{a} asked {b} to {event} and got a no."
+  ],
+  "break_up.mutual": [
+   "{a} and {b} broke up. It was mostly mutual.",
+   "{a} ended things with {b}. Both of them saw it coming."
+  ],
+  "break_up.messy": [
+   "{a} broke up with {b}. {b} did not see it coming.",
+   "{a} dumped {b}. Word got around fast."
+  ],
+  "confront.cleared_air": [
+   "{a} confronted {b}. It got tense, but they talked it through.",
+   "{a} called {b} out and, surprisingly, they cleared the air."
+  ],
+  "confront.argument": [
+   "{a} confronted {b} and it turned into a real argument.",
+   "{a} and {b} had it out {place}."
+  ],
+  "confront.falling_out": [
+   "{a} confronted {b}. Things were said that can't be unsaid.",
+   "{a} and {b} had a blowout. People heard."
+  ],
+  "apologize.forgiven": [
+   "{a} apologized to {b}. {b} accepted.",
+   "{a} said sorry to {b}, and meant it. They're okay now."
+  ],
+  "apologize.partial": [
+   "{a} apologized to {b}. {b} said they needed time."
+  ],
+  "apologize.rebuffed": [
+   "{a} tried to apologize to {b}. {b} wasn't having it."
+  ],
+  "gossip.spread": [
+   "{a} told {b} that {about}.",
+   "{a} leaned over to {b}: \"Did you hear {about}?\""
+  ],
+  "gossip.known": [
+   "{a} tried to tell {b} that {about}. {b} had already heard."
+  ],
+  "gossip.doubted": [
+   "{a} told {b} that {about}. {b} didn't buy it."
+  ],
+  "spread_rumor.started": [
+   "{a} started a rumor that {about}.",
+   "{a} quietly told {b} that {about}. It wasn't true."
+  ],
+  "rumor_reached.hurt": [
+   "Word got back to {a}: people are saying {about}.",
+   "{a} found out what people have been saying about them."
+  ],
+  "rumor_reached.source": [
+   "{a} found out {b} started the rumor about them."
+  ],
+  "tease.landed": [
+   "{a} mocked {b} in front of the whole table. Some people laughed.",
+   "{a} made a joke at {b}'s expense at lunch. It got a laugh. {b} didn't laugh."
+  ],
+  "tease.backfired": [
+   "{a} tried to mock {b} at lunch and it fell flat. People looked at {a} instead.",
+   "{a} went after {b} at lunch; nobody laughed."
+  ],
+  "prank.legend": [
+   "{a} pulled off a prank people will be talking about for weeks.",
+   "{a} rigged every locker in the east hall to play the school song. Legendary."
+  ],
+  "prank.caught": [
+   "{a} got caught pulling a prank and landed in detention.",
+   "{a}'s prank went wrong and an assistant principal walked right into it."
+  ],
+  "prank.dud": [
+   "{a} tried a prank. Nobody noticed."
+  ],
+  "sneak_out.fine": [
+   "{a} snuck out while grounded and got away with it.",
+   "{a} climbed out a window and spent the night at Jacobs Beach."
+  ],
+  "sneak_out.caught": [
+   "{a} snuck out while grounded and got caught coming back in."
+  ],
+  "practice.session": [
+   "{group} practiced. {n} showed up.",
+   "{group} held practice with {n} there."
+  ],
+  "practice.dropped": [
+   "{a} was dropped from {group} for missing too many practices.",
+   "{group}'s advisor took {a} off the roster after one too many no-shows."
+  ],
+  "practice.called_up": [
+   "{a} got a call: a spot opened up on {group}.",
+   "{a} got called up to {group} after someone left."
+  ],
+  "practice.drifted": [
+   "{a} quietly stopped showing up to {group}."
+  ],
+  "tryout.held": [
+   "{group} held tryouts. {n} tried out."
+  ],
+  "tryout.made": [
+   "{a} made {group}!",
+   "{a}'s name was on the {group} list."
+  ],
+  "tryout.cut": [
+   "{a} was cut from {group}.",
+   "{a} checked the {group} list twice. Not on it."
+  ],
+  "tryout.no_show": [
+   "{a} signed up for {group} tryouts and didn't show."
+  ],
+  "audition.made": [
+   "{a} was cast in {event}.",
+   "{a} got a part in {event}."
+  ],
+  "audition.lead": [
+   "{a} landed the lead in {event}!"
+  ],
+  "audition.cut": [
+   "{a} auditioned for {event} and didn't get a part."
+  ],
+  "game.win": [
+   "{group} won, {score}.",
+   "{group} took the win, {score}."
+  ],
+  "game.loss": [
+   "{group} lost, {score}.",
+   "{group} came up short, {score}."
+  ],
+  "game.star": [
+   "{a} was the standout for {group}.",
+   "{a} carried {group} tonight."
+  ],
+  "show.performed": [
+   "{group} performed {event}. The review: {label}."
+  ],
+  "show.star": [
+   "{a} stole the show in {event}."
+  ],
+  "election.result": [
+   "Student council results are in. {members} won seats."
+  ],
+  "election.won": [
+   "{a} won a seat on Student Council.",
+   "{a} was elected to Student Council."
+  ],
+  "election.president": [
+   "{a} was elected Student Council president."
+  ],
+  "election.lost": [
+   "{a} ran for Student Council and lost."
+  ],
+  "dance.held": [
+   "{event} happened. {n} students went."
+  ],
+  "dance.moment": [
+   "{a} and {b} danced together at {event}.",
+   "{a} and {b} spent most of {event} together."
+  ],
+  "dance.alone": [
+   "{a} went to {event} and spent most of it by the wall."
+  ],
+  "party.thrown": [
+   "{a} threw a party. {n} people came.",
+   "{a}'s parents were away, so: party. {n} people showed."
+  ],
+  "party.flop": [
+   "{a} threw a party and almost nobody came."
+  ],
+  "party.kiss": [
+   "{a} and {b} kissed at the party. People saw.",
+   "{a} and {b} were found together on the back porch at the party."
+  ],
+  "party.fight": [
+   "{a} and {b} got into it at the party.",
+   "A shouting match broke out at the party between {a} and {b}."
+  ],
+  "party.busted": [
+   "Neighbors called it in. {a}'s party got broken up by the police."
+  ],
+  "party.not_invited": [
+   "{a} found out about {b}'s party after the fact. They weren't invited."
+  ],
+  "exam.result": [
+   "{event}: {a} scored {score}."
+  ],
+  "exam.aced": [
+   "{a} aced {event} with a {score}.",
+   "{a} got a {score} on {event}."
+  ],
+  "exam.bombed": [
+   "{a} bombed {event}: {score}.",
+   "{a} got a {score} on {event} and went very quiet."
+  ],
+  "household.support": [
+   "{a}'s family noticed they were struggling and made space for them.",
+   "{label} sat {a} down for a real talk. It helped."
+  ],
+  "household.pressure": [
+   "{label} pushed {a} hard about grades.",
+   "{a} got a lecture about grades from {label}."
+  ],
+  "household.grounded": [
+   "{a} got grounded.",
+   "{label} grounded {a} for {n} days."
+  ],
+  "household.argument": [
+   "{a} had a big fight with {label}.",
+   "{a} and {label} got into it at dinner."
+  ],
+  "household.proud": [
+   "{label} were proud of {a}'s report card.",
+   "{a}'s report card went on the fridge."
+  ],
+  "job.hired": [
+   "{a} got hired at {group}.",
+   "{a} starts at {group} next week."
+  ],
+  "job.rejected": [
+   "{a} applied at {group} and didn't get the job."
+  ],
+  "job.fired": [
+   "{a} got fired from {group} for missing shifts."
+  ],
+  "job.shift": [
+   "{a} worked a shift at {group}."
+  ],
+  "job.missed": [
+   "{a} skipped a shift at {group}."
+  ],
+  "sign_up.club": [
+   "{a} joined {group}.",
+   "{a} signed up for {group}."
+  ],
+  "sign_up.tryout": [
+   "{a} signed up for {group} tryouts.",
+   "{a} put their name on the {group} tryout sheet."
+  ],
+  "sign_up.audition": [
+   "{a} signed up to audition for {event}."
+  ],
+  "sign_up.election": [
+   "{a} is running for Student Council."
+  ],
+  "sign_up.job": [
+   "{a} applied for a job at {group}."
+  ],
+  "quit_group.quit": [
+   "{a} quit {group}.",
+   "{a} walked away from {group}."
+  ],
+  "mentor.great": [
+   "{a} took {b} aside and gave them advice that stuck.",
+   "{a} spent extra time working with {b}."
+  ],
+  "mentor.good": [
+   "{a} checked in with {b} after class."
+  ],
+  "mentor.awkward": [
+   "{a} tried to mentor {b}, who wasn't receptive."
+  ],
+  "mentor.bad": [
+   "{a} tried to give {b} advice; it came out as criticism."
+  ],
+  "milestone.friends": [
+   "{a} now counts {b} as a friend.",
+   "Somewhere along the way, {a} started thinking of {b} as a friend."
+  ],
+  "milestone.close_friends": [
+   "{a} and {b} have become close.",
+   "{a} now thinks of {b} as one of their closest friends."
+  ],
+  "milestone.best_friends": [
+   "{a} considers {b} their best friend."
+  ],
+  "milestone.rivals": [
+   "{a} now sees {b} as a rival."
+  ],
+  "milestone.dislike": [
+   "{a} has started to really dislike {b}."
+  ],
+  "milestone.crush": [
+   "{a} has developed a crush on {b}."
+  ],
+  "milestone.drifted": [
+   "{a} and {b} have drifted apart."
+  ],
+  "milestone.dating": [
+   "{a} and {b} are officially together."
+  ],
+  "clique.formed": [
+   "A new circle has formed: {label} ({members})."
+  ],
+  "clique.dissolved": [
+   "{label} has broken apart."
+  ],
+  "clique.joined": [
+   "{a} has become part of {label}."
+  ],
+  "clique.left": [
+   "{a} has drifted out of {label}."
+  ],
+  "goal.created": [
+   "{a} set a new goal: {label}."
+  ],
+  "goal.achieved": [
+   "{a} achieved a goal: {label}."
+  ],
+  "goal.failed": [
+   "{a} fell short of a goal: {label}."
+  ],
+  "goal.abandoned": [
+   "{a} gave up on: {label}."
+  ],
+  "graduation.graduated": [
+   "{a} graduated from {school}."
+  ],
+  "new_year.arrived": [
+   "{a} started at {school} as a freshman."
+  ],
+  "lab.edit": [
+   "Lab edit: {label}."
+  ],
+  "lab.rules": [
+   "Rules changed: {label}."
+  ],
+  "lab.created": [
+   "{a} was added to the world from the lab."
+  ],
+  "birthday.birthday": [
+   "{a} turned {n}."
+  ],
+  "interact.hang_out.invited": [
+   "{a} asked {b} to hang out.",
+   "{a} texted {b}: want to hang out?"
+  ],
+  "interact.date.invited": [
+   "{a} asked {b} out on a date."
+  ],
+  "ask_out.pending": [
+   "{a} asked {b} out. Waiting on an answer."
+  ],
+  "ask_to_dance.pending": [
+   "{a} asked {b} to {event}. Waiting on an answer."
+  ]
+ }
+}
