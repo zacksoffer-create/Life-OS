@@ -14,7 +14,8 @@ LIFE OS: a life-simulation game. You play one person from the first day of high 
 - `lifeos/` - the game: the Python engine (`backend/`), the screens (`frontend/`), tools and tests.
 - `fantasy/` - Rolling 10, fantasy basketball numbers (rolling windows, points per minute, advanced stats). Separate
   from the game; see [fantasy/README.md](fantasy/README.md). On the phone at
-  https://zacksoffer-create.github.io/Life-OS/fantasy/, refreshed every morning by the "Rolling 10 data" workflow.
+  https://zacksoffer-create.github.io/Life-OS/fantasy/, refreshed every morning by the "Rolling 10 data" workflow. The
+  whole 2025-26 season, replayed: https://zacksoffer-create.github.io/Life-OS/fantasy/2025-26/.
 - `docs/play/` - the built phone app, published by GitHub Pages (Settings > Pages: deploy from the `main` branch, the
   `/docs` folder). Rebuild it with `python3 lifeos/tools/build_phone_app.py`.
 
