@@ -1,6 +1,7 @@
 """Import a finished season of the ESPN league, once, into fantasy/seasons/<season>/espn/ (committed to the repo).
 
     python3 fantasy/tools/import_season.py 2026        # 2026 = the 2025-26 season
+    python3 fantasy/tools/import_season.py 2020-2025   # several seasons; ESPN keeps the league's history from 2020
 
 A finished season never changes, so this runs one time per season (from the Actions tab: Rolling 10 data > Run
 workflow > import_season). It needs ESPN's fantasy API, which the GitHub job can reach.
@@ -14,6 +15,7 @@ What it saves (compact JSON, no league members' names):
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
@@ -26,6 +28,7 @@ from hoops import config  # noqa: E402
 
 GAME = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/{season}"
 LEAGUE = GAME + "/segments/0/leagues/{league}"
+HISTORY = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/leagueHistory/{league}?seasonId={season}&"
 UA = {"User-Agent": "Mozilla/5.0 (rolling10 season import)", "Accept": "application/json"}
 
 
@@ -49,19 +52,53 @@ def side(s: dict | None) -> dict | None:
             "byDay": s.get("pointsByScoringPeriod") or {}}
 
 
+def owner_key(t: dict) -> str | None:
+    """An opaque key for whoever runs a team, to follow a manager across seasons without storing who they are."""
+    who = t.get("primaryOwner") or (t.get("owners") or [None])[0]
+    return hashlib.sha256(str(who).encode()).hexdigest()[:10] if who else None
+
+
+def reader(season: int, lid: int):
+    """ESPN serves recent seasons at seasons/<year>; older ones only through leagueHistory. Use whichever answers."""
+    base = LEAGUE.format(season=season, league=lid) + "?"
+    hist = HISTORY.format(season=season, league=lid)
+    probe = get(base + "view=mTeam")
+    if probe and probe.get("teams"):
+        return lambda q: get(base + q)
+
+    def from_history(q):
+        d = get(hist + q)
+        return d[0] if isinstance(d, list) and d else d
+    probe = from_history("view=mTeam")
+    if probe and probe.get("teams"):
+        print("  (reading this season from ESPN's league history)")
+        return from_history
+    return None
+
+
 def main() -> int:
-    season = int(sys.argv[1])
+    seasons = []
+    for arg in sys.argv[1:]:
+        for part in arg.split(","):
+            a, _, b = part.partition("-")
+            seasons += list(range(int(a), int(b or a) + 1))
+    failed = [s for s in seasons if import_season(s) != 0]
+    if failed:
+        print(f"Couldn't import: {failed}")
+    return 1 if len(failed) == len(seasons) else 0
+
+
+def import_season(season: int) -> int:
     lid = config.ESPN_LEAGUE_ID
     out = os.path.join(HERE, "..", "seasons", str(season), "espn")
-    os.makedirs(out, exist_ok=True)
-    base = LEAGUE.format(season=season, league=lid)
     names: dict[int, str] = {}
-
-    lg = get(base + "?view=mTeam&view=mSettings&view=mStatus&view=mDraftDetail&view=mMatchupScore&view=mStandings"
-             "&view=mRoster")
-    if not lg:
-        print("Couldn't read the league")
+    read = reader(season, lid)
+    lg = read("view=mTeam&view=mSettings&view=mStatus&view=mDraftDetail&view=mMatchupScore&view=mStandings"
+              "&view=mRoster") if read else None
+    if not lg or not lg.get("teams"):
+        print(f"Season {season}: couldn't read the league")
         return 1
+    os.makedirs(out, exist_ok=True)
     st, se = lg.get("status") or {}, lg.get("settings") or {}
     print(f"League {lid}, season {season}: {se.get('name')!r}; status "
           f"{ {k: st.get(k) for k in ('firstScoringPeriod', 'finalScoringPeriod', 'latestScoringPeriod')} }")
@@ -81,8 +118,9 @@ def main() -> int:
             rows.append([pid, e.get("lineupSlotId"), e.get("acquisitionType"), ppe.get("keeperValue")])
         return rows
 
-    teams = [{k: t.get(k) for k in ("id", "abbrev", "name", "location", "nickname", "record", "playoffSeed",
-                                    "rankCalculatedFinal", "rankFinal", "points", "divisionId")} for t in lg.get("teams") or []]
+    teams = [{**{k: t.get(k) for k in ("id", "abbrev", "name", "location", "nickname", "record", "playoffSeed",
+                                       "rankCalculatedFinal", "rankFinal", "points", "divisionId")},
+              "owner": owner_key(t)} for t in lg.get("teams") or []]
     final_rosters = {t["id"]: roster(t) for t in lg.get("teams") or []}
     schedule = [{"id": m.get("id"), "mp": m.get("matchupPeriodId"), "home": side(m.get("home")),
                  "away": side(m.get("away")), "winner": m.get("winner"), "tier": m.get("playoffTierType")}
@@ -125,7 +163,7 @@ def main() -> int:
     last = int(st.get("latestScoringPeriod") or st.get("finalScoringPeriod") or 0)
     days = {}
     for sp in range(1, last + 1):
-        d = get(base + f"?view=mRoster&scoringPeriodId={sp}")
+        d = read(f"view=mRoster&scoringPeriodId={sp}")
         if not d:
             continue
         days[sp] = [[t["id"], r[0], r[1]] for t in d.get("teams") or [] for r in roster(t)]
