@@ -63,7 +63,7 @@ button { font: inherit; color: inherit; }
 .search::placeholder { color: var(--muted); }
 .seg { display: inline-flex; background: var(--raised); border-radius: 9px; padding: 3px; gap: 2px; }
 .seg button {
-  border: 0; background: transparent; padding: 5px 10px; border-radius: 7px; font-size: 0.8rem; font-weight: 600;
+  border: 0; background: transparent; padding: 5px 9px; border-radius: 7px; font-size: 0.8rem; font-weight: 600;
   color: var(--muted); cursor: pointer; white-space: nowrap;
 }
 .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
@@ -74,8 +74,21 @@ button { font: inherit; color: inherit; }
   font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;
 }
 .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); cursor: pointer; }
-.toggle input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+.pick {
+  flex: none; max-width: 48%; height: 36px; border-radius: 9px; border: 1px solid var(--line); background-color: var(--surface);
+  color: var(--ink); font: inherit; font-size: 0.85rem; font-weight: 600; padding: 0 30px 0 11px; cursor: pointer;
+  -webkit-appearance: none; appearance: none; text-overflow: ellipsis;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%; background-size: 5px 5px; background-repeat: no-repeat;
+}
+.row .seg + .pick { height: 32px; }
+.tag { font-size: 0.66rem; font-weight: 700; padding: 1px 6px; border-radius: 5px; background: var(--raised); color: var(--muted); letter-spacing: 0.03em; }
+.tag.mine { background: var(--accent); color: var(--accent-ink); }
+.tag.fa { background: transparent; color: var(--up); box-shadow: inset 0 0 0 1px var(--up); }
+.tag.kept { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.note { margin: -2px 0 0; font-size: 0.75rem; color: var(--warn); background: var(--warn-soft); border-radius: 8px; padding: 5px 9px; }
+.cut td { background: var(--bg) !important; color: var(--accent); font-size: 0.72rem; font-weight: 700; text-align: left; letter-spacing: 0.03em; padding: 5px 0; cursor: default; border-top: 2px solid var(--accent); }
+.cut td span { position: sticky; left: 0; display: inline-block; padding-left: var(--gutter-l); }
 
 .board { flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch; }
 table.grid { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; }
@@ -192,13 +205,14 @@ h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); fo
       <span class="through" id="through"></span>
       <button class="iconbtn" id="howbtn" type="button" aria-label="How the numbers work">?</button>
     </div>
+    <p class="note" id="leaguenote" hidden></p>
     <div class="row">
       <input class="search" id="q" type="search" placeholder="Find a player" autocomplete="off" aria-label="Find a player">
-      <div class="seg" id="pos" role="group" aria-label="Position"></div>
+      <select class="pick" id="roster" aria-label="Whose players"></select>
     </div>
     <div class="row">
       <div class="seg" id="win" role="group" aria-label="Window"></div>
-      <label class="toggle"><input type="checkbox" id="active" checked> <span id="activelbl">Played this season</span></label>
+      <select class="pick" id="pos" aria-label="Position"></select>
     </div>
     <div class="chips" id="presets" role="group" aria-label="Views"></div>
   </header>
@@ -253,6 +267,16 @@ function start(DATA) {
   }
 
   // ---- one row per player ------------------------------------------------------------------------------------------
+  // ---- the fantasy league (absent if ESPN couldn't be read on the last build) ---------------------------------------
+  const LG = M.league;
+  const FT = {};
+  if (LG) for (const [id, abbrev, name] of LG.teams) FT[id] = { id, abbrev, name, mine: id === LG.me };
+  const MINE = LG && FT[LG.me];
+  const INJ = { OUT: "Out", DTD: "Day-to-day", Q: "Questionable", D: "Doubtful", SUSP: "Suspended" };
+  // Before the new season's draft is on ESPN, teams are their final rosters from last season (keeper candidates)
+  const PRE = !!(LG && LG.mode === "predraft");
+  const RS = LG ? seasonLabel(LG.rosterSeason) : "";
+
   const posGroup = (p) => (p === "C" ? "C" : /F/.test(p) ? "F" : /G/.test(p) ? "G" : "");
   const ROWS = DATA.players.map((p) => {
     const l10 = p.w.l10, base = p.w.base, season = p.w.season;
@@ -263,15 +287,22 @@ function start(DATA) {
       dFp: trend ? l10[F.fpg] - base[F.fpg] : null,
       dMin: trend ? l10[F.mpg] - base[F.mpg] : null,
       dFpm: trend && isNum(l10[F.fpm]) && isNum(base[F.fpm]) ? l10[F.fpm] - base[F.fpm] : null,
+      ft: LG ? FT[p.ft] || null : undefined, // a fantasy team, null = available, undefined = no league data
+      kv: p.kv,
     };
-    r.proj = l10 && r.active && !(p.miss >= 2) ? l10[F.fpg] * r.gl : null;
+    r.out = p.inj === "OUT" || p.inj === "SUSP" || (!p.inj && p.miss >= 2);
+    r.proj = l10 && r.active && !r.out ? l10[F.fpg] * r.gl : null;
     return r;
   });
   const W = (r, win, f) => { const w = r.p.w[win]; return w ? w[F[f]] : null; };
 
   // ---- state -------------------------------------------------------------------------------------------------------
   const WINS = [["l5", "L5"], ["l10", "L10"], ["l20", "L20"], ["season", seasonLabel(M.season)], ["last", seasonLabel(M.season - 1)]];
-  const POS = [["", "All"], ["G", "G"], ["F", "F"], ["C", "C"]];
+  const POS = [["", "All pos"], ["G", "G only"], ["F", "F only"], ["C", "C only"]];
+  const suffix = PRE ? ` (${RS})` : "";
+  const ROSTERS = [["all", "All players"]].concat(LG ? [["fa", PRE ? `Not on a ${RS} roster` : "Available"]] : [],
+    MINE ? [["t" + MINE.id, MINE.name + (PRE ? ` (you, ${RS})` : " (you)")]] : [],
+    LG ? LG.teams.filter((t) => t[0] !== LG.me).sort((a, b) => a[2].localeCompare(b[2])).map((t) => ["t" + t[0], t[2] + suffix]) : []);
   const PRESETS = [
     { id: "top", label: "L10 leaders", win: "l10", sort: "fpg", dir: -1 },
     { id: "rate", label: "Per minute", win: "l10", sort: "fpm", dir: -1, need: (r) => W(r, "l10", "gp") >= 5 && W(r, "l10", "mpg") >= 12 },
@@ -280,13 +311,15 @@ function start(DATA) {
     { id: "mins", label: "Minutes up", sort: "dMin", dir: -1 },
     { id: "ratechg", label: "Per-minute up", sort: "dFpm", dir: -1, need: (r) => W(r, "l10", "mpg") >= 12 },
     { id: "week", label: "Rest of week", win: "l10", sort: "proj", dir: -1 },
+    { id: "keep", label: "Keepers", sort: "kv", dir: -1 },
   ];
   const state = {
     win: store.get("win", "l10"), sort: store.get("sort", "fpg"), dir: store.get("dir", -1), preset: store.get("preset", "top"),
-    pos: store.get("pos", ""), active: store.get("active", true), q: "", limit: 100,
+    pos: store.get("pos", ""), roster: store.get("roster", "all"), q: "", limit: 100,
   };
   if (!WINS.some((w) => w[0] === state.win)) state.win = "l10";
-  const save = () => ["win", "sort", "dir", "preset", "pos", "active"].forEach((k) => store.set(k, state[k]));
+  if (!ROSTERS.some((x) => x[0] === state.roster)) state.roster = "all";
+  const save = () => ["win", "sort", "dir", "preset", "pos", "roster"].forEach((k) => store.set(k, state[k]));
 
   // ---- the board ---------------------------------------------------------------------------------------------------
   const COLS = [
@@ -300,24 +333,41 @@ function start(DATA) {
     { key: "ts", label: "TS%", win: true, cell: (r) => f1(W(r, state.win, "ts")) },
     { key: "gp", label: "GP", win: true, cell: (r) => f0(W(r, state.win, "gp")) },
     { key: "proj", label: "Wk", cell: (r) => `${r.gl}<span class="sub">${isNum(r.proj) ? "≈" + Math.round(r.proj) : "–"}</span>` },
+    { key: "kv", label: "Keep", cell: (r) => `${f1(r.kv)}<span class="sub">${isNum(r.p.age) ? "age " + r.p.age : "&nbsp;"}</span>` },
   ];
   const sortVal = (r, key) => {
     const c = COLS.find((c) => c.key === key);
     return c && c.win ? W(r, state.win, key) : r[key];
   };
 
+  function tag(r) {
+    if (r.ft === undefined) return "";
+    const kept = r.p.kept ? `<span class="tag kept" title="Entered as a keeper for ${seasonLabel(M.season)}">KEPT R${r.p.kept}</span>` : "";
+    if (r.ft) return `<span class="tag${r.ft.mine ? " mine" : ""}" title="${esc(r.ft.name)}">${esc(r.ft.abbrev)}</span>${kept}`;
+    return PRE ? "" : `<span class="tag fa">${r.p.wv ? "WAIVERS" : "FA"}</span>`;
+  }
+
   function flags(r) {
     const p = r.p, out = [];
+    if (p.inj) out.push(`<span class="flag">${p.inj}</span>`);
     if (!r.active) out.push(`<span class="flag">No games this season</span>`);
     else if (p.miss >= 2) out.push(`<span class="flag" title="${esc(p.why || "")}">Missed ${p.miss}</span>`);
     if (r.active && p.now <= 5 && p.w.l10 && p.w.l10[F.gp] >= TREND_N) out.push(`<span class="flag soft">${p.now}/10 this season</span>`);
     return out.join("");
   }
 
+  function inRoster(r) {
+    if (state.roster === "all") return true;
+    if (state.roster === "fa") return r.ft === null;
+    return !!r.ft && "t" + r.ft.id === state.roster;
+  }
+
   function visible() {
     const preset = PRESETS.find((x) => x.id === state.preset);
     const q = norm(state.q.trim());
-    let rows = ROWS.filter((r) => (!state.active || r.active) && (!state.pos || r.grp === state.pos) && (!q || r.key.includes(q)));
+    // On a fantasy team's list everyone shows; elsewhere, players without a game this season only show when searched for
+    const team = state.roster.startsWith("t");
+    let rows = ROWS.filter((r) => inRoster(r) && (team || q || r.active) && (!state.pos || r.grp === state.pos) && (!q || r.key.includes(q)));
     if (preset && preset.need && preset.sort === state.sort) rows = rows.filter(preset.need);
     const k = state.sort, dir = state.dir;
     return rows.sort((a, b) => {
@@ -330,9 +380,22 @@ function start(DATA) {
 
   function renderControls() {
     document.getElementById("win").innerHTML = WINS.map(([k, l]) => `<button type="button" data-win="${k}" aria-pressed="${state.win === k}">${l}</button>`).join("");
-    document.getElementById("pos").innerHTML = POS.map(([k, l]) => `<button type="button" data-pos="${k}" aria-pressed="${state.pos === k}">${l}</button>`).join("");
+    document.getElementById("pos").innerHTML = POS.map(([k, l]) => `<option value="${k}"${state.pos === k ? " selected" : ""}>${l}</option>`).join("");
+    const roster = document.getElementById("roster");
+    roster.innerHTML = ROSTERS.map(([k, l]) => `<option value="${k}"${state.roster === k ? " selected" : ""}>${esc(l)}</option>`).join("");
+    roster.hidden = ROSTERS.length < 2;
     document.getElementById("presets").innerHTML = PRESETS.map((x) => `<button type="button" class="chip" data-preset="${x.id}" aria-pressed="${state.preset === x.id}">${x.label}</button>`).join("");
-    document.getElementById("active").checked = state.active;
+  }
+
+  // In the Keepers view, the line where the kept players end: 6 on one team's list, 60 across the league
+  function cutAfter(rows) {
+    if (!LG || state.sort !== "kv" || state.dir !== -1 || state.q || state.pos) return -1;
+    const k = LG.keepers, n = LG.teams.length;
+    if (state.roster.startsWith("t")) return rows.length > k ? k - 1 : -1;
+    if (state.roster !== "all") return -1;
+    let seen = 0;
+    for (let i = 0; i < rows.length; i++) if (rows[i].ft && ++seen === k * n) return i;
+    return -1;
   }
 
   function renderBoard() {
@@ -342,19 +405,24 @@ function start(DATA) {
       const sorted = state.sort === c.key;
       return `<th${sorted ? ` aria-sort="${state.dir < 0 ? "descending" : "ascending"}"` : ""}><button type="button" data-sort="${c.key}">${c.label}</button></th>`;
     };
+    const cut = cutAfter(rows);
+    if (cut >= state.limit) state.limit = cut + 21;
     const shown = rows.slice(0, state.limit);
+    const cutLabel = !LG ? "" : state.roster.startsWith("t") ? `▲ Keeper line: top ${LG.keepers}`
+      : `▲ Keeper line: top ${LG.keepers * LG.teams.length} rostered players (${LG.teams.length} teams × ${LG.keepers})`;
     const body = shown.map((r, i) => {
       const p = r.p;
       return `<tr data-id="${p.id}"><td class="lead"><div class="pname"><span class="rank">${i + 1}</span><div class="who"><strong>${esc(p.n)}</strong>`
-        + `<div class="meta"><span>${esc(r.team)} · ${esc(p.pos || "–")}</span>${flags(r)}</div></div></div></td>`
-        + COLS.map((c) => `<td class="${state.sort === c.key ? "sorted" : ""}">${c.cell(r)}</td>`).join("") + `</tr>`;
+        + `<div class="meta">${tag(r)}<span>${esc(r.team)} · ${esc(p.pos || "–")}</span>${flags(r)}</div></div></div></td>`
+        + COLS.map((c) => `<td class="${state.sort === c.key ? "sorted" : ""}">${c.cell(r)}</td>`).join("") + `</tr>`
+        + (i === cut ? `<tr class="cut"><td colspan="${COLS.length + 1}"><span>${cutLabel}</span></td></tr>` : "");
     }).join("");
     const winCols = COLS.filter((c) => c.win && c.key !== "usg" && c.key !== "ts" && c.key !== "gp");
     const html = `<table class="grid"><thead>
-      <tr class="group"><th class="lead"></th><th colspan="${winCols.length}"><span>${winLabel}</span></th><th colspan="3"><span>L${TREND_N} vs prev ${BASE_N}</span></th><th colspan="3"><span>${winLabel}</span></th><th><span>Left</span></th></tr>
+      <tr class="group"><th class="lead"></th><th colspan="${winCols.length}"><span>${winLabel}</span></th><th colspan="3"><span>L${TREND_N} vs prev ${BASE_N}</span></th><th colspan="3"><span>${winLabel}</span></th><th><span>Left</span></th><th><span>Keeper</span></th></tr>
       <tr class="cols"><th class="lead" style="text-align:left">Player</th>${COLS.map(th).join("")}</tr></thead>
       <tbody>${body}</tbody></table>`
-      + (rows.length === 0 ? `<p class="empty">No players match. Clear the search, switch position to All, or untick "Played this season".</p>` : "")
+      + (rows.length === 0 ? `<p class="empty">No players match. Clear the search or set position back to All pos.</p>` : "")
       + (rows.length > shown.length ? `<button type="button" class="more" id="more">Show all ${rows.length}</button>` : "");
     const board = document.getElementById("board");
     board.innerHTML = html;
@@ -467,9 +535,18 @@ function start(DATA) {
     const roll = rolling(log, TREND_N);
     const width = Math.max(280, Math.min(760, el.clientWidth || 360) - 32);
 
-    const status = !r.active ? `Hasn't played this season. Last game ${md(p.last)}, ${dateOf(p.last).getUTCFullYear()}.`
+    const fantasy = r.ft === undefined ? ""
+      : (r.ft ? `${PRE ? "Finished " + RS + " on" : "On"} ${esc(r.ft.name)}${r.ft.mine ? " (you)" : ""}.`
+          + (p.kept ? ` Entered as a ${seasonLabel(M.season)} keeper (round ${p.kept}).` : "")
+        : PRE ? `Not on a ${RS} roster.` : p.wv ? "Available (on waivers)." : "Available (free agent).")
+        + (isNum(p.own) ? ` ${p.own}% owned across ESPN.` : "")
+        + (p.inj ? ` ESPN injury status: ${INJ[p.inj] || p.inj}.` : "")
+        + (isNum(p.age) ? ` Age ${p.age}.` : "")
+        + (isNum(p.kv) ? ` Keeper score ${f1(p.kv)}.` : "") + " ";
+    const status = fantasy + (p.last == null ? "No NBA games in the last two seasons."
+      : !r.active ? `Hasn't played this season. Last game ${md(p.last)}, ${dateOf(p.last).getUTCFullYear()}.`
       : p.miss >= 1 ? `Last played ${md(p.last)}, missed his team's last ${p.miss === 1 ? "game" : p.miss + " games"}${p.why ? " (" + esc(p.why) + ")" : ""}.`
-      : `Last played ${md(p.last)}.`;
+      : `Last played ${md(p.last)}.`);
     const window = l10 ? `${Math.min(p.now, l10[F.gp])} of his last ${l10[F.gp]} games are from ${seasonLabel(M.season)}.` : "";
 
     const tiles = `<div class="tiles">
@@ -515,7 +592,7 @@ function start(DATA) {
 
     el.innerHTML = `<div class="sheet-bar"><button type="button" class="back" data-close>← Board</button><span class="title">${esc(p.n)}</span></div>
       <div class="sheet-body">
-        <div class="hero"><h2>${esc(p.n)}</h2><div class="meta"><span>${esc(r.team)} · ${esc(p.pos || "–")}</span>${flags(r)}</div><p class="say">${status} ${window}</p></div>
+        <div class="hero"><h2>${esc(p.n)}</h2><div class="meta">${tag(r)}<span>${esc(r.team)} · ${esc(p.pos || "–")}</span>${flags(r)}</div><p class="say">${status} ${window}</p></div>
         ${tiles}
         <div><h3>What's moving his number <small>last ${TREND_N} vs the ${BASE_N} before</small></h3>${drivers(p)}</div>
         ${charts}
@@ -531,19 +608,26 @@ function start(DATA) {
   function renderHow() {
     const S = M.scoring;
     const names = [["points", "Point"], ["rebounds", "Rebound"], ["assists", "Assist"], ["steals", "Steal"], ["blocks", "Block"], ["turnovers", "Turnover"],
-      ["fg_made", "Made FG"], ["fg_missed", "Missed FG"], ["ft_made", "Made FT"], ["ft_missed", "Missed FT"]];
+      ["fgm", "FGM"], ["fga", "FGA"], ["ftm", "FTM"], ["fta", "FTA"]];
     document.getElementById("how").innerHTML = `<div class="sheet-bar"><button type="button" class="back" data-close>← Board</button><span class="title">How the numbers work</span></div>
       <div class="sheet-body how">
-        <div><h3>Scoring</h3><div class="formula">${names.map(([k, l]) => `<span class="${S[k] < 0 ? "neg" : ""}">${l} ${S[k] > 0 ? "+" : "−"}${Math.abs(S[k])}</span>`).join("")}</div></div>
+        <div><h3>Scoring</h3><div class="formula">${names.filter(([k]) => S[k]).map(([k, l]) => `<span class="${S[k] < 0 ? "neg" : ""}">${l} ${S[k] > 0 ? "+" : "−"}${Math.abs(S[k])}</span>`).join("")}</div>
+          <p class="say">As on ESPN, an attempt is every shot, made or missed: a made field goal or free throw nets 0 (FGM +1, FGA −1) and a miss costs 1. The numbers here match ESPN's own fantasy averages for the league.</p></div>
         <div><h3>Windows</h3><ul>
           <li><b>L5, L10, L20</b> are his last 5, 10 or 20 games played. Games he sat out are skipped, not counted as zeros.</li>
           <li>Early in a season, a window reaches back into last season to fill up. The "x/10 this season" tag shows when most of it is old.</li>
           <li>Regular season only: no playoffs, play-in, All-Star game or NBA Cup final.</li>
-          <li>"Played in ${seasonLabel(M.season)}" hides anyone without a game this season. Untick it to see injured players and last season's numbers for them.</li>
+          <li>All players and Available leave out anyone without a game this season (search for a name to find him anyway). A fantasy team's list always shows its whole roster.</li>
         </ul></div>
+        ${LG ? `<div><h3>Your league</h3><ul>
+          <li>Team tags, Available (free agents and waivers), ESPN's injury tags and % owned come from ESPN league "${esc(LG.name)}", read with each refresh.</li>
+          ${PRE ? `<li>The ${seasonLabel(M.season)} draft isn't on ESPN yet, so each team shows its final ${RS} roster: its keeper candidates. KEPT R2 means a team has entered him as a keeper, costing its round-2 pick. Once the draft is entered on ESPN, the teams switch to the live rosters on the next refresh.</li>` : ""}
+          <li><b>Keep</b> is a keeper score: FP/G over this season and last, with each of last season's games counting ${LG.lastWeight} of a game this season. Early in the year it leans on last season; by spring it's mostly this one.</li>
+          <li>The <b>Keepers</b> view sorts by it and draws the keeper line: after ${LG.keepers} on a team's list, and after the top ${LG.keepers * LG.teams.length} rostered players on All players. Available players above that line are better than some likely keepers.</li>
+        </ul></div>` : ""}
         <div><h3>FP per minute</h3><p>Fantasy points divided by minutes, over the whole window (total points over total minutes, so a 40-minute game counts more than a 6-minute one). Minutes are the circumstantial part of a player's line; points per minute is the talent part.</p></div>
         <div><h3>L${TREND_N} vs prev ${BASE_N}</h3><p>His last ${TREND_N} games compared with the ${BASE_N} he played before them, across seasons if needed. On a player's card, the change in FP/G is split into what came from minutes and what came from points per minute; the two add up to the total.</p></div>
-        <div><h3>Wk (rest of week)</h3><p>Games his team has left this week (Monday to Sunday) that aren't in the box scores yet. The small number is that times his L10 FP/G, a rough guide for weekly lineups. It's blank for players who've missed 2+ straight games.</p></div>
+        <div><h3>Wk (rest of week)</h3><p>Games his team has left this week (Monday to Sunday) that aren't in the box scores yet. The small number is that times his L10 FP/G, a rough guide for weekly lineups. It's blank for players ESPN lists as out, or who've missed 2+ straight games.</p></div>
         <div><h3>Advanced stats</h3><p>Calculated from the box scores with Basketball-Reference's formulas: TS% and eFG% (shooting), Usage% (share of team plays he finishes while on the floor), and AST%, REB%, TOV%, STL%, BLK% (rates while on the floor). Ratings like offensive rating and NBA.com's tracking stats aren't in here yet.</p></div>
         <div><h3>Data</h3><p>ESPN box scores, republished daily by the sportsdataverse hoopR project, ${seasonLabel(M.firstSeason)} through ${md(M.through)}, ${dateOf(M.through).getUTCFullYear()}. Built ${new Date(M.built).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.</p></div>
       </div>`;
@@ -561,16 +645,25 @@ function start(DATA) {
   const close = () => { if (location.hash) location.hash = ""; route(); };
 
   // ---- wiring ------------------------------------------------------------------------------------------------------
-  document.getElementById("activelbl").textContent = `Played in ${seasonLabel(M.season)}`;
   document.getElementById("through").textContent = `${seasonLabel(M.season)} · box scores through ${fmt(M.through, { weekday: "short" })} ${md(M.through)}`;
+  if (PRE) {
+    const note = document.getElementById("leaguenote");
+    note.textContent = `Your league's ${seasonLabel(M.season)} draft isn't on ESPN yet, so teams show their ${RS} rosters. KEPT = keepers already entered.`;
+    note.hidden = false;
+  }
   document.getElementById("howbtn").addEventListener("click", () => { location.hash = "how"; });
   document.getElementById("q").addEventListener("input", (e) => { state.q = e.target.value; state.limit = 100; renderBoard(); });
-  document.getElementById("active").addEventListener("change", (e) => { state.active = e.target.checked; save(); renderBoard(); });
+  for (const id of ["roster", "pos"]) {
+    document.getElementById(id).addEventListener("change", (e) => {
+      state[id] = e.target.value; state.limit = 100; save();
+      document.getElementById("board").scrollTop = 0;
+      renderBoard();
+    });
+  }
   document.querySelector(".top").addEventListener("click", (e) => {
     const b = e.target.closest("button");
     if (!b) return;
     if (b.dataset.win) { state.win = b.dataset.win; }
-    else if (b.dataset.pos !== undefined) { state.pos = b.dataset.pos; }
     else if (b.dataset.preset) {
       const x = PRESETS.find((p) => p.id === b.dataset.preset);
       state.preset = x.id; state.sort = x.sort; state.dir = x.dir; if (x.win) state.win = x.win;

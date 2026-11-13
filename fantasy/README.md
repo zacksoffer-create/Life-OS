@@ -38,6 +38,7 @@ same for the claude.ai Artifact.
 |---|---|
 | `hoops/config.py` | The scoring formula, the window sizes and the trend baseline. Change it here and rebuild. |
 | `hoops/fetch.py` | Downloads ESPN box scores and schedules (one parquet file per season). |
+| `hoops/espn.py` | Reads the ESPN fantasy league (rosters, free agents and waivers, injury tags, % owned) and NBA rosters (ages). |
 | `hoops/model.py` | Regular-season filter, fantasy points, advanced-stat pieces, windows, seasons. |
 | `hoops/page.py` | Packs what the page needs into JSON and writes the page. |
 | `web/template.html` | The page itself (layout, board, player card, charts). |
@@ -61,6 +62,15 @@ same for the claude.ai Artifact.
   STL%, BLK%), summed over the window rather than averaged game by game.
 - **Wk** on the board counts the team's games left this week (Monday to Sunday); the small number is that times L10
   FP/G.
+- **The league** (ESPN league 24493685, public, so no login): every player is tagged with his fantasy team, FA or
+  WAIVERS, plus ESPN's injury tag. The picker at the top shows All players, Available, your team (The Process) or any
+  other team. League members' names are never stored; only team names and abbreviations.
+- **Keeper score (Keep):** FP/G over this season and last, where each of last season's games counts half a game. The
+  Keepers view sorts by it and draws the keeper line (6 per team, 60 across the league). Ages come from ESPN's NBA
+  rosters.
+- If ESPN can't be read on a run, the page still builds, with the last league data downloaded or without the league
+  columns, and the build log says so. The log also prints every team's roster count and the league's own scoring
+  settings, to check against `SCORING`.
 
 ## Data
 

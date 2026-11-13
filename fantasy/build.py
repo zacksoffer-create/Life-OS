@@ -27,7 +27,7 @@ import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from hoops import config, fetch, model, page  # noqa: E402
+from hoops import config, espn, fetch, model, page  # noqa: E402
 
 
 def load(raw_dir: str, first: int, last: int) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -36,6 +36,47 @@ def load(raw_dir: str, first: int, last: int) -> tuple[pd.DataFrame, pd.DataFram
         boxes.append(pd.read_parquet(fetch.local_path(raw_dir, "player_box", season)))
         scheds.append(pd.read_parquet(fetch.local_path(raw_dir, "schedule", season)))
     return pd.concat(boxes, ignore_index=True), pd.concat(scheds, ignore_index=True)
+
+
+def report_league(league: dict | None, df: pd.DataFrame, season: int) -> None:
+    """What came back from ESPN, in the build log, so a bad read is easy to spot."""
+    if not league:
+        print("  No league data this run; the page builds without the league columns")
+        return
+    mine = next((t for t in league["teams"] if t["id"] == league["me"]), None)
+    print(f"  \"{league['name']}\": {len(league['teams'])} teams; yours: "
+          + (f"{mine['name']} (team {mine['id']})" if mine else "NOT FOUND - check MY_TEAM in hoops/config.py"))
+    if league["mode"] == "predraft":
+        when = (dt.datetime.fromtimestamp(league["draft_date"] / 1000, dt.timezone.utc).strftime("%b %d, %Y")
+                if league.get("draft_date") else "no date set")
+        kept = sum(1 for x in league["players"].values() if x.get("kept"))
+        print(f"  The {season - 1}-{str(season)[2:]} draft isn't on ESPN yet (draft date in settings: {when}). "
+              f"Teams are last season's final rosters; {kept} keepers entered so far.")
+    known = set(df[df.played].player_id.unique())
+    rostered = {pid: x for pid, x in league["players"].items() if x.get("team")}
+    for t in league["teams"]:
+        n = sum(1 for x in rostered.values() if x["team"] == t["id"])
+        k = sum(1 for x in rostered.values() if x["team"] == t["id"] and x.get("kept"))
+        print(f"    {t['abbrev']:>5}  {t['name']}: {n} players" + (f", {k} kept" if k else ""))
+    missing = [x.get("name") or str(pid) for pid, x in rostered.items() if pid not in known]
+    print(f"  Rostered: {len(rostered)}; with box scores: {len(rostered) - len(missing)}"
+          + (f"; no games on record: {', '.join(missing)}" if missing else ""))
+    ages = sum(1 for x in league["players"].values() if "age" in x)
+    inj = sum(1 for x in league["players"].values() if x.get("inj"))
+    print(f"  Ages: {ages} players; injury tags: {inj}; keepers per team: {league.get('keepers') or config.KEEPERS}")
+    if league["scoring"]:
+        same = espn.scoring_matches(league["scoring_items"], config.SCORING)
+        print("  League scoring: " + ", ".join(f"{name} {pts:+g}" for name, pts in league["scoring"])
+              + ("  (matches SCORING)" if same else "  ** DIFFERS from SCORING in hoops/config.py **"))
+    # Our fantasy points against ESPN's own, this season, for everyone with a few games
+    ours = df[df.played & (df.season == season)].groupby("player_id").fp.agg(["mean", "size"])
+    pairs = [(x["name"], x["espn_fpg"], ours.at[pid, "mean"]) for pid, x in league["players"].items()
+             if "espn_fpg" in x and pid in ours.index and ours.at[pid, "size"] >= 3]
+    if pairs:
+        off = [(n, e, o) for n, e, o in pairs if abs(e - o) > 0.5]
+        print(f"  FP/G vs ESPN's own, this season: {len(pairs) - len(off)} of {len(pairs)} players within 0.5"
+              + ("; biggest gaps: " + ", ".join(f"{n} {o:.1f} vs ESPN {e:.1f}" for n, e, o in
+                                                 sorted(off, key=lambda t: -abs(t[1] - t[2]))[:5]) if off else ""))
 
 
 def main(argv=None) -> int:
@@ -70,8 +111,14 @@ def main(argv=None) -> int:
     df.to_parquet(os.path.join(wh, "player_games.parquet"), index=False)
     model.seasons(df).to_parquet(os.path.join(wh, "player_seasons.parquet"), index=False)
 
+    league = None
+    if config.ESPN_LEAGUE_ID:
+        print(f"ESPN league {config.ESPN_LEAGUE_ID}")
+        league = espn.parse(espn.download(raw, season, config.ESPN_LEAGUE_ID, offline=args.offline), config.MY_TEAM)
+        report_league(league, df, season)
+
     cur_sched = sched[sched.season == season]
-    payload = page.build_payload(df, cur_sched, season)
+    payload = page.build_payload(df, cur_sched, season, league)
     paths = page.render(payload, os.path.join(HERE, "web", "template.html"), args.out, args.pages, args.data_url)
     size = os.path.getsize(paths[0]) / 1e6
     print(f"Page: {len(payload['players'])} players, {size:.1f} MB -> {os.path.relpath(paths[0])}")

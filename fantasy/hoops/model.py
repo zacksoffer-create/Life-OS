@@ -44,8 +44,7 @@ def fantasy_points(df: pd.DataFrame, scoring: dict | None = None) -> pd.Series:
     s = scoring or config.SCORING
     return (s["points"] * df.pts + s["rebounds"] * df.reb + s["assists"] * df.ast + s["steals"] * df.stl
             + s["blocks"] * df.blk + s["turnovers"] * df.tov
-            + s["fg_made"] * df.fgm + s["fg_missed"] * (df.fga - df.fgm)
-            + s["ft_made"] * df.ftm + s["ft_missed"] * (df.fta - df.ftm))
+            + s["fgm"] * df.fgm + s["fga"] * df.fga + s["ftm"] * df.ftm + s["fta"] * df.fta)
 
 
 def regular_season(box: pd.DataFrame, sched: pd.DataFrame) -> pd.DataFrame:
