@@ -1,7 +1,9 @@
 """The knobs. Change a number here, run build.py again, and everything downstream follows."""
 from __future__ import annotations
 
-# The league's scoring: points per stat. A missed shot is an attempt that didn't go in.
+# The league's scoring, as ESPN's league settings list it. On ESPN an attempt is every shot, made or missed, so with
+# FGM +1 and FGA -1 a made shot nets 0 and a miss costs 1 (same for free throws). ESPN's own fantasy averages for the
+# league match this exactly; the build log compares them every run.
 SCORING = {
     "points": 1,
     "rebounds": 1,
@@ -9,10 +11,10 @@ SCORING = {
     "steals": 1,
     "blocks": 1,
     "turnovers": -1,
-    "fg_made": 1,
-    "fg_missed": -1,
-    "ft_made": 1,
-    "ft_missed": -1,
+    "fgm": 1,
+    "fga": -1,
+    "ftm": 1,
+    "fta": -1,
 }
 
 # Seasons are named by the year they end (ESPN's convention): 2018 is 2017-18.

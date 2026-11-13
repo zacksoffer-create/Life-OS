@@ -27,8 +27,6 @@ jobs:
         run: pip install -r fantasy/requirements.txt
       - name: Check the scoring and window rules
         run: pip install pytest && python -m pytest -q fantasy/tests
-      - name: ESPN probe (temporary, for debugging the league read)
-        run: python fantasy/tools/espn_probe.py
       - name: Download box scores and rebuild
         run: python fantasy/build.py
       - name: Publish data.json on the fantasy-data branch

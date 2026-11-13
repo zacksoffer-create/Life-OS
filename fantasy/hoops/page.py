@@ -112,7 +112,7 @@ def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int, league: di
             p["ft"] = x.get("team", 0)  # fantasy team id; 0 = available
             if x.get("waivers"):
                 p["wv"] = 1
-            for k in ("inj", "own", "age"):
+            for k in ("inj", "own", "age", "kept"):
                 if x.get(k) is not None:
                     p[k] = x[k]
         league_meta = {
@@ -121,6 +121,8 @@ def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int, league: di
             "me": league["me"],
             "keepers": league.get("keepers") or config.KEEPERS,
             "lastWeight": config.KEEPER_LAST_SEASON_WEIGHT,
+            "mode": league.get("mode", "season"),  # "predraft": teams are last season's rosters
+            "rosterSeason": league.get("roster_season") or season,
         }
 
     start_of_week = through.normalize() - pd.Timedelta(days=through.weekday())

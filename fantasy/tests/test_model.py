@@ -25,10 +25,10 @@ def box_row(game_id, date, season=2027, player=1, team=1, opp=2, minutes=30.0, d
 
 
 def test_scoring_matches_the_league_formula():
-    # 27 pts, 11 reb, 8 ast, 1 stl, 1 blk, 1 TO, 10-16 FG, 6-8 FT:
-    # 27 + 11 + 8 + 1 + 1 - 1 + 10 made - 6 missed + 6 made - 2 missed = 55
+    # ESPN: FGM +1, FGA -1, FTM +1, FTA -1, where an attempt is every shot. 27 pts, 11 reb, 8 ast, 1 stl, 1 blk, 1 TO,
+    # 10-16 FG, 6-8 FT: 27 + 11 + 8 + 1 + 1 - 1 + (10 - 16) + (6 - 8) = 39 (each miss costs 1, a make nets 0)
     df = pd.DataFrame([box_row(1, "2026-11-11", pts=27, reb=11, ast=8, stl=1, blk=1, tov=1, fgm=10, fga=16, ftm=6, fta=8)])
-    assert model.clean(df).fp.iloc[0] == 55
+    assert model.clean(df).fp.iloc[0] == 39
 
 
 def test_scoring_reads_the_config():

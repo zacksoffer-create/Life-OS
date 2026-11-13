@@ -51,6 +51,46 @@ def test_league_members_names_stay_out():
     assert "Private" not in repr(lg) and "Person" not in repr(lg)
 
 
+def test_before_the_draft_teams_are_last_seasons_rosters():
+    raw = sample()
+    raw["season"] = 2027
+    kept = {"playerId": 99, "playerPoolEntry": {"keeperValue": 2, "player": {"id": 99, "fullName": "Kept Guy"}}}
+    raw["league"]["draftDetail"] = {"drafted": False, "inProgress": False}
+    raw["league"]["teams"][0]["roster"]["entries"] = []
+    raw["league"]["teams"][1]["roster"]["entries"] = [kept]
+    raw["prev"] = {"teams": [
+        {"id": 1, "roster": {"entries": [{"playerId": 3112335, "playerPoolEntry": {"player": {"id": 3112335, "injuryStatus": "OUT"}}}]}},
+        {"id": 2, "roster": {"entries": [{"playerId": 99, "playerPoolEntry": {"player": {"id": 99}}}]}},
+    ]}
+    raw["pool"]["players"].append({"id": 3112335, "onTeamId": 0, "status": "FREEAGENT", "player": {
+        "id": 3112335, "stats": [{"seasonId": 2027, "statSourceId": 0, "statSplitTypeId": 0, "appliedAverage": 33.5},
+                                 {"seasonId": 2026, "statSourceId": 0, "statSplitTypeId": 0, "appliedAverage": 40.0}]}})
+    lg = espn.parse(raw, "The Process")
+    p = lg["players"]
+    assert lg["mode"] == "predraft" and lg["roster_season"] == 2026
+    assert p[3112335]["team"] == 1 and "kept" not in p[3112335]  # his team last season, not kept yet
+    assert "inj" not in p[3112335]  # last season's injury tag is stale
+    assert p[3112335]["espn_fpg"] == 33.5  # this season's ESPN average, for the build check
+    assert p[99]["team"] == 2 and p[99]["kept"] == 2  # entered as a keeper, costing a round-2 pick
+    assert p[7].get("team") is None
+
+
+def test_after_the_draft_teams_are_live():
+    raw = sample()
+    raw["league"]["draftDetail"] = {"drafted": True}
+    raw["prev"] = {"teams": [{"id": 2, "roster": {"entries": [{"playerId": 3112335, "playerPoolEntry": {"player": {}}}]}}]}
+    lg = espn.parse(raw, "The Process")
+    assert lg["mode"] == "season"
+    assert lg["players"][3112335]["team"] == 1 and "kept" not in lg["players"][3112335]
+
+
+def test_scoring_matches_config():
+    from hoops import config
+    league = [(0, 1.0), (6, 1.0), (3, 1.0), (2, 1.0), (1, 1.0), (11, -1.0), (13, 1.0), (14, -1.0), (15, 1.0), (16, -1.0)]
+    assert espn.scoring_matches(league, config.SCORING)
+    assert not espn.scoring_matches(league + [(17, 1.0)], config.SCORING)  # a 3PM bonus we don't count
+
+
 def test_no_league_data():
     assert espn.parse({"league": None, "pool": None, "rosters": None}) is None
 

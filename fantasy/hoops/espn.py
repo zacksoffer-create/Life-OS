@@ -52,6 +52,9 @@ def download(raw_dir: str, season: int, league_id: int, offline: bool = False, l
     base = API.format(season=season, league=league_id)
     league = _cached(os.path.join(raw_dir, "espn_league.json"),
                      lambda: _get(base + "?view=mTeam&view=mRoster&view=mSettings&view=mStatus"), offline, log)
+    # Last season's final rosters: until the new season's draft is on ESPN, those are each team's keeper candidates
+    prev = _cached(os.path.join(raw_dir, "espn_league_prev.json"),
+                   lambda: _get(API.format(season=season - 1, league=league_id) + "?view=mTeam&view=mRoster"), offline, log)
     pool_filter = {"players": {"filterStatus": {"value": ["FREEAGENT", "WAIVERS", "ONTEAM"]}, "limit": 1500,
                                "sortPercOwned": {"sortPriority": 1, "sortAsc": False}}}
     pool = _cached(os.path.join(raw_dir, "espn_players.json"),
@@ -70,16 +73,38 @@ def download(raw_dir: str, season: int, league_id: int, offline: bool = False, l
         return out
 
     rosters = _cached(os.path.join(raw_dir, "espn_nba_rosters.json"), nba_rosters, offline, log)
-    return {"league": league, "pool": pool, "rosters": rosters}
+    return {"league": league, "prev": prev, "pool": pool, "rosters": rosters, "season": season}
 
 
 def _team_name(t: dict) -> str:
     return (t.get("name") or f"{t.get('location', '')} {t.get('nickname', '')}").strip() or t.get("abbrev", "")
 
 
+# How the league's ESPN scoring items line up with SCORING in config.py
+CONFIG_STAT = {"points": 0, "rebounds": 6, "assists": 3, "steals": 2, "blocks": 1, "turnovers": 11, "fgm": 13,
+               "fga": 14, "ftm": 15, "fta": 16}
+
+
+def scoring_matches(league_items: list[tuple[int, float]], scoring: dict) -> bool:
+    ours = {CONFIG_STAT[k]: float(v) for k, v in scoring.items() if v}
+    return ours == {sid: float(pts) for sid, pts in league_items if pts}
+
+
+def _entries(league: dict | None):
+    for t in (league or {}).get("teams") or []:
+        for e in (t.get("roster") or {}).get("entries") or []:
+            ppe = e.get("playerPoolEntry") or {}
+            yield int(t["id"]), e, ppe, ppe.get("player") or {}
+
+
 def parse(raw: dict, my_team: str | int | None = None) -> dict | None:
-    """Boil the raw JSON down to what the page needs. None when there's no league data at all."""
-    league, pool, rosters = raw.get("league"), raw.get("pool"), raw.get("rosters")
+    """Boil the raw JSON down to what the page needs. None when there's no league data at all.
+
+    Before the new season's draft is on ESPN ("predraft"), teams are their final rosters from last season and players
+    a team has already entered as keepers are marked kept. After it ("season"), teams are the live rosters.
+    """
+    league, prev, pool, rosters = raw.get("league"), raw.get("prev"), raw.get("pool"), raw.get("rosters")
+    season = raw.get("season")
     if not league or not league.get("teams"):
         return None
     teams = [{"id": int(t["id"]), "abbrev": t.get("abbrev", ""), "name": _team_name(t)} for t in league["teams"]]
@@ -89,24 +114,36 @@ def parse(raw: dict, my_team: str | int | None = None) -> dict | None:
             me = t["id"]
     if me is None and isinstance(my_team, int):
         me = my_team
+    drafted = bool((league.get("draftDetail") or {}).get("drafted"))
+    predraft = not drafted and bool((prev or {}).get("teams"))
 
     players: dict[int, dict] = {}
 
-    def entry(pid: int) -> dict:
+    def entry(pid) -> dict:
         return players.setdefault(int(pid), {})
 
-    for t in league["teams"]:
-        for e in (t.get("roster") or {}).get("entries", []):
-            pl = (e.get("playerPoolEntry") or {}).get("player") or {}
+    def info(p: dict, pl: dict, fresh: bool) -> None:
+        p.setdefault("name", pl.get("fullName"))
+        p.setdefault("pro", pl.get("proTeamId"))
+        if not fresh:
+            return  # last season's roster: its injury tags and ownership are stale
+        if pl.get("injuryStatus") and "inj" not in p:
+            p["inj"] = INJURY.get(pl["injuryStatus"])
+        own = (pl.get("ownership") or {}).get("percentOwned")
+        if own is not None and "own" not in p:
+            p["own"] = round(float(own), 1)
+
+    if predraft:
+        for tid, e, ppe, pl in _entries(prev):
             p = entry(e.get("playerId") or pl.get("id"))
-            p["team"] = int(t["id"])
-            p["name"] = pl.get("fullName")
-            p["pro"] = pl.get("proTeamId")
-            if pl.get("injuryStatus"):
-                p["inj"] = INJURY.get(pl["injuryStatus"])
-            own = (pl.get("ownership") or {}).get("percentOwned")
-            if own is not None:
-                p["own"] = round(float(own), 1)
+            info(p, pl, fresh=False)
+            p["team"] = tid
+    for tid, e, ppe, pl in _entries(league):
+        p = entry(e.get("playerId") or pl.get("id"))
+        info(p, pl, fresh=True)
+        p["team"] = tid
+        if predraft:  # on a roster before the draft = entered as a keeper; keeperValue is the round he costs
+            p["kept"] = int(ppe.get("keeperValue") or 0) or 1
 
     for e in (pool or {}).get("players", []):
         pl = e.get("player") or {}
@@ -114,17 +151,15 @@ def parse(raw: dict, my_team: str | int | None = None) -> dict | None:
         if pid is None:
             continue
         p = entry(pid)
-        p.setdefault("name", pl.get("fullName"))
-        p.setdefault("pro", pl.get("proTeamId"))
+        info(p, pl, fresh=True)
         if e.get("status") == "WAIVERS":
             p["waivers"] = True
-        if pl.get("injuryStatus") and "inj" not in p:
-            p["inj"] = INJURY.get(pl["injuryStatus"])
-        own = (pl.get("ownership") or {}).get("percentOwned")
-        if own is not None and "own" not in p:
-            p["own"] = round(float(own), 1)
-        if "team" not in p and e.get("onTeamId"):
+        if not predraft and "team" not in p and e.get("onTeamId"):
             p["team"] = int(e["onTeamId"])
+        for s in pl.get("stats") or []:
+            if (s.get("seasonId") == season and s.get("statSourceId") == 0 and s.get("statSplitTypeId") == 0
+                    and s.get("appliedAverage") is not None):
+                p["espn_fpg"] = float(s["appliedAverage"])  # ESPN's own fantasy points per game, for the build check
 
     for team_json in (rosters or {}).values():
         for a in team_json.get("athletes", []):
@@ -134,8 +169,9 @@ def parse(raw: dict, my_team: str | int | None = None) -> dict | None:
                     entry(x["id"])["age"] = int(x["age"])
 
     settings = league.get("settings") or {}
-    scoring = [(STAT_NAMES.get(i.get("statId"), f"stat {i.get('statId')}"), i.get("points"))
-               for i in (settings.get("scoringSettings") or {}).get("scoringItems", [])]
-    keepers = (settings.get("draftSettings") or {}).get("keeperCount")
-    return {"name": settings.get("name", ""), "teams": teams, "me": me, "players": players, "scoring": scoring,
-            "keepers": keepers}
+    items = [(i.get("statId"), i.get("points")) for i in (settings.get("scoringSettings") or {}).get("scoringItems", [])]
+    draft = settings.get("draftSettings") or {}
+    return {"name": settings.get("name", ""), "teams": teams, "me": me, "players": players,
+            "scoring": [(STAT_NAMES.get(sid, f"stat {sid}"), pts) for sid, pts in items], "scoring_items": items,
+            "keepers": draft.get("keeperCount"), "mode": "predraft" if predraft else "season",
+            "draft_date": draft.get("date"), "roster_season": (season - 1) if (predraft and season) else season}
