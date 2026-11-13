@@ -28,3 +28,7 @@ BASELINE_GAMES = 30
 
 # The page lists anyone who played in the current or the previous regular season.
 PAGE_SEASONS_BACK = 1
+
+# Where the GitHub Pages copy of the page (docs/fantasy/) reads its numbers. The "Rolling 10 data" workflow rewrites this
+# file every morning on the fantasy-data branch, a branch that only ever holds the latest copy.
+DATA_URL = "https://raw.githubusercontent.com/zacksoffer-create/Life-OS/fantasy-data/data.json"

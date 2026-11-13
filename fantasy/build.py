@@ -8,8 +8,11 @@ What it writes (all under fantasy/, none of it committed; rebuild any time):
 - data/raw/          ESPN box scores and schedules as downloaded, one file per season
 - data/warehouse/    player_games.parquet (every regular-season player-game since 2017-18 with fantasy points, the
                      advanced-stat pieces and rolling 10s) and player_seasons.parquet. Open them with pandas or DuckDB.
-- site/rolling10.html  the phone page (published as a claude.ai Artifact)
+- site/rolling10.html  the phone page with the numbers inside (the claude.ai Artifact)
 - site/index.html      the same page as a standalone file you can open in a browser
+- site/data.json       the numbers alone; the "Rolling 10 data" workflow publishes this every morning
+- ../docs/fantasy/     the GitHub Pages copy (committed): it loads data.json when it opens, so it never needs rebuilding
+                       for new games, only when the page itself changes
 """
 from __future__ import annotations
 
@@ -40,6 +43,9 @@ def main(argv=None) -> int:
     ap.add_argument("--offline", action="store_true", help="don't download; use the files already in data/raw")
     ap.add_argument("--data", default=os.path.join(HERE, "data"))
     ap.add_argument("--out", default=os.path.join(HERE, "site"))
+    ap.add_argument("--pages", default=os.path.join(HERE, "..", "docs", "fantasy"),
+                    help="where the GitHub Pages copy goes (it fetches its numbers from --data-url)")
+    ap.add_argument("--data-url", default=config.DATA_URL)
     args = ap.parse_args(argv)
 
     t0 = time.time()
@@ -66,7 +72,7 @@ def main(argv=None) -> int:
 
     cur_sched = sched[sched.season == season]
     payload = page.build_payload(df, cur_sched, season)
-    paths = page.render(payload, os.path.join(HERE, "web", "template.html"), args.out)
+    paths = page.render(payload, os.path.join(HERE, "web", "template.html"), args.out, args.pages, args.data_url)
     size = os.path.getsize(paths[0]) / 1e6
     print(f"Page: {len(payload['players'])} players, {size:.1f} MB -> {os.path.relpath(paths[0])}")
     print(f"Done in {time.time() - t0:.1f}s")

@@ -111,22 +111,79 @@ def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int) -> dict:
     }
 
 
-def render(payload: dict, template_path: str, out_dir: str) -> list[str]:
-    """Write the page twice: as an Artifact page (no document wrapper) and as a standalone index.html."""
+DATA_MARK, URL_MARK = "/*__DATA__*/null", "/*__DATA_URL__*/null"
+
+# What an Artifact viewer adds around a page, for the copies that are whole documents of their own
+HEAD = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
+        '<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Rolling 10">'
+        '<meta name="theme-color" content="#F2F4F8" media="(prefers-color-scheme: light)">'
+        '<meta name="theme-color" content="#0C1423" media="(prefers-color-scheme: dark)">'
+        '<link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="apple-touch-icon.png">'
+        '<style>html{box-sizing:border-box;-webkit-text-size-adjust:100%}'
+        ':root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}'
+        'body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>')
+
+
+def _document(page: str) -> str:
+    """The page as a whole HTML document: its title, fonts and styles go in the head."""
+    cut = page.index('<div id="app">')
+    return HEAD + page[:cut] + "</head><body>" + page[cut:] + "</body></html>"
+
+
+def render(payload: dict, template_path: str, out_dir: str, pages_dir: str | None = None,
+           data_url: str | None = None) -> list[str]:
+    """Write every form of the page.
+
+    out_dir/rolling10.html  the Artifact page, numbers baked in
+    out_dir/index.html      the same as a whole document, to open from disk
+    out_dir/data.json       the numbers alone, which the workflow publishes on the fantasy-data branch
+    pages_dir/index.html    the GitHub Pages copy: no numbers inside, it fetches data_url when it opens
+    """
     with open(template_path, encoding="utf-8") as f:
         template = f.read()
-    blob = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
-    marker = "/*__DATA__*/null"
-    if marker not in template:
-        raise ValueError(f"{template_path} has no {marker} placeholder")
-    page = template.replace(marker, blob)
+    for mark in (DATA_MARK, URL_MARK):
+        if mark not in template:
+            raise ValueError(f"{template_path} has no {mark} placeholder")
+    data = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
+    baked = template.replace(DATA_MARK, data.replace("</", "<\\/"))
     os.makedirs(out_dir, exist_ok=True)
-    artifact = os.path.join(out_dir, "rolling10.html")
-    standalone = os.path.join(out_dir, "index.html")
-    with open(artifact, "w", encoding="utf-8") as f:
-        f.write(page)
-    with open(standalone, "w", encoding="utf-8") as f:
-        f.write('<!doctype html><html lang="en"><head><meta charset="utf-8">'
-                '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>'
-                + page + "</body></html>")
-    return [artifact, standalone]
+    files = {
+        os.path.join(out_dir, "rolling10.html"): baked,
+        os.path.join(out_dir, "index.html"): _document(baked),
+        os.path.join(out_dir, "data.json"): data,
+    }
+    if pages_dir and data_url:
+        os.makedirs(pages_dir, exist_ok=True)
+        files[os.path.join(pages_dir, "index.html")] = _document(template.replace(URL_MARK, json.dumps(data_url)))
+    for path, text in files.items():
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+    if pages_dir and data_url:
+        icon(os.path.join(pages_dir, "apple-touch-icon.png"))
+        files[os.path.join(pages_dir, "apple-touch-icon.png")] = None
+    return list(files)
+
+
+def icon(path: str) -> None:
+    """A home-screen icon: a basketball-orange tile with a big 10. Drawn once; kept if it's already there."""
+    if os.path.exists(path):
+        return
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        return
+    size = 180
+    img = Image.new("RGB", (size, size), (210, 86, 27))
+    d = ImageDraw.Draw(img)
+    d.ellipse([15, 15, size - 15, size - 15], outline=(240, 160, 120), width=5)
+    font = None
+    for name in ("DejaVuSans-Bold.ttf", "Arial Bold.ttf", "Helvetica-Bold.ttf"):
+        try:
+            font = ImageFont.truetype(name, 92)
+            break
+        except OSError:
+            continue
+    font = font or ImageFont.load_default()
+    d.text((size / 2, size / 2 + 2), "10", fill=(255, 255, 255), font=font, anchor="mm")
+    img.save(path)

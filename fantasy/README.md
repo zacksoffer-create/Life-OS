@@ -4,7 +4,23 @@ Fantasy basketball numbers for a season-long, head-to-head points keeper league:
 2017-18, scored with the league's formula, with rolling windows, fantasy points per minute and box-score advanced stats.
 The output is one phone page.
 
-## Run it
+**On your phone:** https://zacksoffer-create.github.io/Life-OS/fantasy/ (Safari, then Share > Add to Home Screen).
+
+## How it stays current
+
+The **Rolling 10 data** workflow (`.github/workflows/fantasy-data.yml`) runs every morning at 6:37 Eastern and again at
+11:37: it downloads last night's box scores, runs the tests, rebuilds, and puts `data.json` on the `fantasy-data` branch
+(replaced each time, so that branch is always one file and one commit). The page in `docs/fantasy/` loads that file
+when it opens, so new games never need a commit to main.
+
+- **Refresh now:** Actions tab > Rolling 10 data > Run workflow.
+- **The header date stops moving:** open the latest Rolling 10 data run on the Actions tab to see which step failed.
+  GitHub also pauses scheduled workflows in a repository that's had no activity for 60 days; the Actions tab shows a
+  button to turn it back on.
+- **Changed the page or the scoring?** Run `python3 fantasy/build.py` and commit `docs/fantasy/` (the page) along with
+  the code; the next workflow run picks up the new scoring.
+
+## Run it yourself
 
 ```
 pip install -r fantasy/requirements.txt
@@ -13,8 +29,8 @@ python3 fantasy/build.py --offline  # rebuild from what's already downloaded
 python3 -m pytest fantasy/tests     # the scoring and window rules
 ```
 
-Then publish `fantasy/site/rolling10.html` as the Artifact again (same URL), or open `fantasy/site/index.html` in a
-browser.
+`fantasy/site/index.html` is the page with the numbers inside, to open from disk; `fantasy/site/rolling10.html` is the
+same for the claude.ai Artifact.
 
 ## Where things are
 
@@ -25,6 +41,8 @@ browser.
 | `hoops/model.py` | Regular-season filter, fantasy points, advanced-stat pieces, windows, seasons. |
 | `hoops/page.py` | Packs what the page needs into JSON and writes the page. |
 | `web/template.html` | The page itself (layout, board, player card, charts). |
+| `../docs/fantasy/` | The GitHub Pages copy of the page, built from the template (committed). |
+| `../.github/workflows/fantasy-data.yml` | The twice-daily refresh. |
 | `data/raw/` | Downloads (not committed). |
 | `data/warehouse/` | `player_games.parquet`, one row per player per game with fantasy points, every advanced-stat piece and the rolling 10s; `player_seasons.parquet`, one row per player per season. Not committed; open with pandas or DuckDB. |
 | `site/` | The built page (not committed). |

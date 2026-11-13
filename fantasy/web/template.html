@@ -209,8 +209,10 @@ h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); fo
 <section class="sheet" id="how" hidden aria-label="How the numbers work"></section>
 
 <script>
-const DATA = /*__DATA__*/null;
-(function () {
+// The numbers are either baked into the page (the Artifact) or fetched fresh (the GitHub Pages copy).
+const EMBEDDED = /*__DATA__*/null;
+const DATA_URL = /*__DATA_URL__*/null;
+function start(DATA) {
   "use strict";
   const M = DATA.meta;
   const idx = (list) => Object.fromEntries(list.map((f, i) => [f, i]));
@@ -608,5 +610,21 @@ const DATA = /*__DATA__*/null;
   renderControls();
   renderBoard();
   route();
+}
+
+(function load() {
+  if (EMBEDDED) { start(EMBEDDED); return; }
+  const board = document.getElementById("board"), through = document.getElementById("through");
+  through.textContent = "Loading the numbers…";
+  board.innerHTML = `<p class="empty">Loading the latest box scores…</p>`;
+  const fail = () => {
+    through.textContent = "";
+    board.innerHTML = `<div class="empty"><p>Couldn't load the numbers. Check your connection, then try again.</p>`
+      + `<button type="button" class="back" id="retry">Try again</button></div>`;
+    document.getElementById("retry").addEventListener("click", load);
+  };
+  fetch(DATA_URL, { cache: "no-cache" })
+    .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(start, fail);
 })();
 </script>
