@@ -1,0 +1,42 @@
+# Rolling 10: rebuild the fantasy basketball numbers from last night's box scores and publish them for the phone page
+# (https://zacksoffer-create.github.io/Life-OS/fantasy/). The numbers go to data.json on the fantasy-data branch, which
+# is replaced on every run, so it never grows and main never gets a daily commit.
+# To refresh by hand: Actions tab > Rolling 10 data > Run workflow.
+name: Rolling 10 data
+on:
+  schedule:
+    - cron: "37 11 * * *" # 6:37am Eastern (7:37 in summer)
+    - cron: "37 16 * * *" # 11:37am Eastern, in case the overnight box scores landed late
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: fantasy-data
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: fantasy/requirements.txt
+      - name: Install
+        run: pip install -r fantasy/requirements.txt
+      - name: Check the scoring and window rules
+        run: pip install pytest && python -m pytest -q fantasy/tests
+      - name: Download box scores and rebuild
+        run: python fantasy/build.py
+      - name: Publish data.json on the fantasy-data branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir pub && cp fantasy/site/data.json pub/ && cd pub
+          git init -q -b fantasy-data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git commit -q -m "Rolling 10 numbers, built $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" fantasy-data

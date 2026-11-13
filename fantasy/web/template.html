@@ -1,0 +1,630 @@
+<title>Rolling 10</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a scorer's table. One dense, sortable stat sheet under a fixed header; tap a player and his card slides over it. */
+:root {
+  --bg: #F2F4F8;
+  --surface: #FFFFFF;
+  --raised: #E9EDF4;
+  --ink: #15213A;
+  --muted: #5E6B82;
+  --line: #DAE0EA;
+  --accent: #D2561B;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #FBE6DA;
+  --up: #1B7C45;
+  --down: #BC3A2F;
+  --warn: #8E6210;
+  --warn-soft: #FAEED3;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1423; --surface: #121D31; --raised: #1A2740; --ink: #E6EBF4; --muted: #92A0B7; --line: #233049;
+    --accent: #FF7D3C; --accent-ink: #1B0E05; --accent-soft: #3B2316; --up: #4DC58B; --down: #FF7268;
+    --warn: #E9B14C; --warn-soft: #382B12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1423; --surface: #121D31; --raised: #1A2740; --ink: #E6EBF4; --muted: #92A0B7; --line: #233049;
+  --accent: #FF7D3C; --accent-ink: #1B0E05; --accent-soft: #3B2316; --up: #4DC58B; --down: #FF7268;
+  --warn: #E9B14C; --warn-soft: #382B12; color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 14px; line-height: 1.4; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+#app { height: 100%; display: flex; flex-direction: column; }
+.top {
+  flex: none; display: grid; gap: 10px; background: var(--bg); border-bottom: 1px solid var(--line);
+  padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 12px 10px;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.brand h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.75rem; letter-spacing: 0.01em; line-height: 1; }
+.brand h1 b { color: var(--accent); font-weight: 700; }
+.through { color: var(--muted); font-size: 0.8rem; flex: 1; min-width: 0; }
+.iconbtn {
+  flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
+  font-weight: 700; cursor: pointer; align-self: center;
+}
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.search {
+  flex: 1 1 8rem; min-width: 0; height: 36px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface);
+  padding: 0 12px; font: inherit; color: var(--ink);
+}
+.search::placeholder { color: var(--muted); }
+.seg { display: inline-flex; background: var(--raised); border-radius: 9px; padding: 3px; gap: 2px; }
+.seg button {
+  border: 0; background: transparent; padding: 5px 10px; border-radius: 7px; font-size: 0.8rem; font-weight: 600;
+  color: var(--muted); cursor: pointer; white-space: nowrap;
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-right: calc(-1 * var(--gutter-r)); padding-right: var(--gutter-r); }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); cursor: pointer; }
+.toggle input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+
+.board { flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch; }
+table.grid { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; }
+.grid th, .grid td { padding: 7px 9px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.grid thead th {
+  position: sticky; top: 0; z-index: 2; background: var(--bg); font-size: 0.7rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; vertical-align: bottom; padding-block: 8px 6px;
+}
+.grid thead tr.group th { padding-block: 6px 0; border-bottom: 0; text-align: center; font-size: 0.62rem; letter-spacing: 0.08em; }
+.grid thead tr.group th span { display: block; border-bottom: 1px solid var(--line); padding-bottom: 3px; }
+.grid thead tr.cols th { top: var(--grouph, 22px); }
+.grid th button { border: 0; background: none; padding: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.grid th[aria-sort] { color: var(--accent); }
+.grid th[aria-sort] button::after { content: " ▾"; }
+.grid th[aria-sort="ascending"] button::after { content: " ▴"; }
+.grid tbody tr { background: var(--surface); cursor: pointer; }
+.grid tbody tr:hover td { background: var(--raised); }
+.grid td { font-variant-numeric: tabular-nums; font-size: 0.86rem; }
+.grid .lead { position: sticky; left: 0; z-index: 1; text-align: left; background: var(--surface); padding-left: var(--gutter-l); border-right: 1px solid var(--line); }
+.grid thead .lead { z-index: 3; background: var(--bg); }
+.grid td.sorted { font-weight: 700; }
+.grid td:last-child, .grid th:last-child { padding-right: var(--gutter-r); }
+.pname { display: flex; gap: 8px; align-items: baseline; }
+.rank { color: var(--muted); font-size: 0.72rem; width: 1.6em; text-align: right; flex: none; }
+.who { min-width: 0; max-width: 9.5rem; white-space: normal; }
+.who strong { font-weight: 600; display: block; line-height: 1.2; }
+.meta { color: var(--muted); font-size: 0.72rem; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+.flag { font-size: 0.66rem; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); letter-spacing: 0.02em; }
+.flag.soft { background: var(--raised); color: var(--muted); }
+.up { color: var(--up); }
+.down { color: var(--down); }
+.dim { color: var(--muted); }
+.sub { display: block; font-size: 0.68rem; color: var(--muted); font-weight: 500; }
+.more { position: sticky; left: 0; display: block; margin: 14px var(--gutter-r) 24px var(--gutter-l); padding: 10px 16px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; cursor: pointer; }
+.empty { padding: 32px var(--gutter-r) 32px var(--gutter-l); color: var(--muted); position: sticky; left: 0; max-width: 36rem; }
+
+/* Player card and the notes: full-screen sheets over the board */
+.sheet { position: fixed; inset: 0; z-index: 20; background: var(--bg); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.sheet-bar {
+  position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 10px; background: var(--bg);
+  border-bottom: 1px solid var(--line); padding-top: calc(env(safe-area-inset-top, 0px) + 8px); padding-bottom: 8px;
+  padding-left: var(--gutter-l); padding-right: var(--gutter-r);
+}
+.back { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; padding: 6px 12px; font-weight: 600; cursor: pointer; }
+.sheet-bar .title { font-family: var(--display); font-weight: 600; font-size: 1.15rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet-body {
+  max-width: 760px; margin: 0 auto; display: grid; gap: 22px;
+  padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 16px calc(env(safe-area-inset-bottom, 0px) + 32px);
+}
+.sheet-body > * { min-width: 0; }
+.hero h2 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 2.3rem; line-height: 1; text-wrap: balance; }
+.hero .meta { font-size: 0.85rem; margin-top: 6px; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 560px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.tile .k { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.tile .v { font-family: var(--display); font-weight: 700; font-size: 2rem; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.tile.key .v { color: var(--accent); }
+.tile .d { font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+h3 { margin: 0 0 8px; font-family: var(--display); font-weight: 600; font-size: 1.2rem; letter-spacing: 0.01em; text-wrap: balance; }
+h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); font-weight: 500; letter-spacing: 0; margin-left: 6px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.drivers { display: grid; gap: 10px; }
+.drv { display: grid; grid-template-columns: 7.5rem 1fr 3.6rem; gap: 10px; align-items: center; font-size: 0.85rem; }
+.drv .lbl { color: var(--muted); }
+.drv .val { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 12px; background: var(--raised); border-radius: 6px; }
+.track::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--muted); opacity: 0.5; }
+.bar { position: absolute; top: 0; bottom: 0; border-radius: 6px; }
+.bar.pos { left: 50%; background: var(--up); }
+.bar.neg { right: 50%; background: var(--down); }
+.say { margin: 2px 0 0; color: var(--muted); font-size: 0.85rem; max-width: 65ch; }
+.charts { display: grid; gap: 4px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart .cap { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.ax { fill: var(--muted); font-size: 10px; font-family: var(--body); }
+.gridln { stroke: var(--line); stroke-width: 1; }
+.boundary { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
+.ln { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ln.ink { stroke: var(--ink); }
+.area { fill: var(--accent); opacity: 0.1; stroke: none; }
+.dot { fill: var(--muted); opacity: 0.35; }
+.endpt { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.endlbl { fill: var(--ink); font-size: 11px; font-weight: 700; font-family: var(--body); }
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 6px; }
+.game { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; padding: 6px 10px; font-size: 0.82rem; }
+.game .dt { color: var(--muted); font-size: 0.72rem; }
+.game.thisweek { border-color: var(--accent); }
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.mini { border-collapse: collapse; width: 100%; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.mini th, .mini td { padding: 6px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.mini tr:last-child td { border-bottom: 0; }
+.mini th { font-size: 0.66rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; background: var(--raised); }
+.mini td:first-child, .mini th:first-child { text-align: left; padding-left: 12px; }
+.mini td:last-child, .mini th:last-child { padding-right: 12px; }
+.mini .hl { font-weight: 700; }
+.mini tr.cur td { background: var(--accent-soft); }
+.how { display: grid; gap: 14px; max-width: 65ch; }
+.how p, .how li { margin: 0; color: var(--ink); }
+.how ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; }
+.how .formula { display: flex; flex-wrap: wrap; gap: 6px; }
+.how .formula span { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.how .formula span.neg { color: var(--down); }
+@media (prefers-reduced-motion: no-preference) {
+  .sheet:not([hidden]) { animation: slide 0.18s ease-out; }
+  @keyframes slide { from { transform: translateY(12px); opacity: 0.6; } to { transform: none; opacity: 1; } }
+}
+</style>
+
+<div id="app">
+  <header class="top">
+    <div class="brand">
+      <h1>Rolling <b>10</b></h1>
+      <span class="through" id="through"></span>
+      <button class="iconbtn" id="howbtn" type="button" aria-label="How the numbers work">?</button>
+    </div>
+    <div class="row">
+      <input class="search" id="q" type="search" placeholder="Find a player" autocomplete="off" aria-label="Find a player">
+      <div class="seg" id="pos" role="group" aria-label="Position"></div>
+    </div>
+    <div class="row">
+      <div class="seg" id="win" role="group" aria-label="Window"></div>
+      <label class="toggle"><input type="checkbox" id="active" checked> <span id="activelbl">Played this season</span></label>
+    </div>
+    <div class="chips" id="presets" role="group" aria-label="Views"></div>
+  </header>
+  <main class="board" id="board"></main>
+</div>
+
+<section class="sheet" id="player" hidden aria-label="Player"></section>
+<section class="sheet" id="how" hidden aria-label="How the numbers work"></section>
+
+<script>
+// The numbers are either baked into the page (the Artifact) or fetched fresh (the GitHub Pages copy).
+const EMBEDDED = /*__DATA__*/null;
+const DATA_URL = /*__DATA_URL__*/null;
+function start(DATA) {
+  "use strict";
+  const M = DATA.meta;
+  const idx = (list) => Object.fromEntries(list.map((f, i) => [f, i]));
+  const F = idx(M.fields), SF = idx(M.seasonFields), LF = idx(M.logFields);
+  const EPOCH = Date.UTC(2017, 0, 1), DAY = 86400000;
+  const [TREND_N, BASE_N] = M.trend;
+  const TEAM = DATA.teams;
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const dateOf = (d) => new Date(EPOCH + d * DAY);
+  const fmt = (d, opts) => dateOf(d).toLocaleDateString("en-US", Object.assign({ timeZone: "UTC" }, opts));
+  const md = (d) => fmt(d, { month: "short", day: "numeric" });
+  const seasonLabel = (s) => `${String(s - 1).slice(2)}-${String(s).slice(2)}`;
+  const isNum = (v) => typeof v === "number" && isFinite(v);
+  const f1 = (v) => (isNum(v) ? v.toFixed(1) : "–");
+  const f2 = (v) => (isNum(v) ? v.toFixed(2) : "–");
+  const f0 = (v) => (isNum(v) ? String(Math.round(v)) : "–");
+  const signed = (v, d = 1) => (isNum(v) ? (v > 0 ? "+" : v < 0 ? "−" : "±") + Math.abs(v).toFixed(d) : "–");
+  const tone = (v, eps = 0.05) => (!isNum(v) ? "dim" : v > eps ? "up" : v < -eps ? "down" : "dim");
+  const arrow = (v, eps = 0.05) => (!isNum(v) ? "" : v > eps ? "▲ " : v < -eps ? "▼ " : "");
+  const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("r10:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem("r10:" + k, JSON.stringify(v)); } catch (e) { /* storage off */ } },
+  };
+
+  // ---- the calendar: this fantasy week runs Monday to Sunday --------------------------------------------------------
+  const now = new Date();
+  const TODAY = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - EPOCH) / DAY);
+  const FROM = Math.max(TODAY, M.through + 1); // the first day whose games aren't in the box scores yet
+  const WEEK_END = TODAY - ((dateOf(TODAY).getUTCDay() + 6) % 7) + 6;
+  const left = {}, next = {}, upcoming = {};
+  for (const [day, home, away] of DATA.schedule) {
+    for (const [tm, opp, at] of [[home, away, "vs"], [away, home, "@"]]) {
+      if (day >= FROM && day <= WEEK_END) left[tm] = (left[tm] || 0) + 1;
+      if (day > WEEK_END && day <= WEEK_END + 7) next[tm] = (next[tm] || 0) + 1;
+      if (day >= FROM) (upcoming[tm] = upcoming[tm] || []).push([day, opp, at]);
+    }
+  }
+
+  // ---- one row per player ------------------------------------------------------------------------------------------
+  const posGroup = (p) => (p === "C" ? "C" : /F/.test(p) ? "F" : /G/.test(p) ? "G" : "");
+  const ROWS = DATA.players.map((p) => {
+    const l10 = p.w.l10, base = p.w.base, season = p.w.season;
+    const trend = l10 && base && l10[F.gp] >= TREND_N && base[F.gp] >= 15;
+    const r = {
+      p, key: norm(p.n), team: TEAM[p.tm] || "", grp: posGroup(p.pos), active: !!(season && season[F.gp] > 0),
+      gl: left[p.tm] || 0, gn: next[p.tm] || 0,
+      dFp: trend ? l10[F.fpg] - base[F.fpg] : null,
+      dMin: trend ? l10[F.mpg] - base[F.mpg] : null,
+      dFpm: trend && isNum(l10[F.fpm]) && isNum(base[F.fpm]) ? l10[F.fpm] - base[F.fpm] : null,
+    };
+    r.proj = l10 && r.active && !(p.miss >= 2) ? l10[F.fpg] * r.gl : null;
+    return r;
+  });
+  const W = (r, win, f) => { const w = r.p.w[win]; return w ? w[F[f]] : null; };
+
+  // ---- state -------------------------------------------------------------------------------------------------------
+  const WINS = [["l5", "L5"], ["l10", "L10"], ["l20", "L20"], ["season", seasonLabel(M.season)], ["last", seasonLabel(M.season - 1)]];
+  const POS = [["", "All"], ["G", "G"], ["F", "F"], ["C", "C"]];
+  const PRESETS = [
+    { id: "top", label: "L10 leaders", win: "l10", sort: "fpg", dir: -1 },
+    { id: "rate", label: "Per minute", win: "l10", sort: "fpm", dir: -1, need: (r) => W(r, "l10", "gp") >= 5 && W(r, "l10", "mpg") >= 12 },
+    { id: "hot", label: "Heating up", sort: "dFp", dir: -1 },
+    { id: "cold", label: "Cooling off", sort: "dFp", dir: 1, need: (r) => W(r, "base", "fpg") >= 22 },
+    { id: "mins", label: "Minutes up", sort: "dMin", dir: -1 },
+    { id: "ratechg", label: "Per-minute up", sort: "dFpm", dir: -1, need: (r) => W(r, "l10", "mpg") >= 12 },
+    { id: "week", label: "Rest of week", win: "l10", sort: "proj", dir: -1 },
+  ];
+  const state = {
+    win: store.get("win", "l10"), sort: store.get("sort", "fpg"), dir: store.get("dir", -1), preset: store.get("preset", "top"),
+    pos: store.get("pos", ""), active: store.get("active", true), q: "", limit: 100,
+  };
+  if (!WINS.some((w) => w[0] === state.win)) state.win = "l10";
+  const save = () => ["win", "sort", "dir", "preset", "pos", "active"].forEach((k) => store.set(k, state[k]));
+
+  // ---- the board ---------------------------------------------------------------------------------------------------
+  const COLS = [
+    { key: "fpg", label: "FP/G", win: true, cell: (r) => f1(W(r, state.win, "fpg")) },
+    { key: "mpg", label: "Min", win: true, cell: (r) => f1(W(r, state.win, "mpg")) },
+    { key: "fpm", label: "FP/Min", win: true, cell: (r) => f2(W(r, state.win, "fpm")) },
+    { key: "dFp", label: "FP/G", group: "t", cell: (r) => `<span class="${tone(r.dFp, 0.5)}">${arrow(r.dFp, 0.5)}${signed(r.dFp)}</span>` },
+    { key: "dMin", label: "Min", group: "t", cell: (r) => `<span class="${tone(r.dMin, 0.5)}">${signed(r.dMin)}</span>` },
+    { key: "dFpm", label: "FP/Min", group: "t", cell: (r) => `<span class="${tone(r.dFpm, 0.02)}">${signed(r.dFpm, 2)}</span>` },
+    { key: "usg", label: "Usg%", win: true, cell: (r) => f1(W(r, state.win, "usg")) },
+    { key: "ts", label: "TS%", win: true, cell: (r) => f1(W(r, state.win, "ts")) },
+    { key: "gp", label: "GP", win: true, cell: (r) => f0(W(r, state.win, "gp")) },
+    { key: "proj", label: "Wk", cell: (r) => `${r.gl}<span class="sub">${isNum(r.proj) ? "≈" + Math.round(r.proj) : "–"}</span>` },
+  ];
+  const sortVal = (r, key) => {
+    const c = COLS.find((c) => c.key === key);
+    return c && c.win ? W(r, state.win, key) : r[key];
+  };
+
+  function flags(r) {
+    const p = r.p, out = [];
+    if (!r.active) out.push(`<span class="flag">No games this season</span>`);
+    else if (p.miss >= 2) out.push(`<span class="flag" title="${esc(p.why || "")}">Missed ${p.miss}</span>`);
+    if (r.active && p.now <= 5 && p.w.l10 && p.w.l10[F.gp] >= TREND_N) out.push(`<span class="flag soft">${p.now}/10 this season</span>`);
+    return out.join("");
+  }
+
+  function visible() {
+    const preset = PRESETS.find((x) => x.id === state.preset);
+    const q = norm(state.q.trim());
+    let rows = ROWS.filter((r) => (!state.active || r.active) && (!state.pos || r.grp === state.pos) && (!q || r.key.includes(q)));
+    if (preset && preset.need && preset.sort === state.sort) rows = rows.filter(preset.need);
+    const k = state.sort, dir = state.dir;
+    return rows.sort((a, b) => {
+      const va = sortVal(a, k), vb = sortVal(b, k);
+      const na = !isNum(va), nb = !isNum(vb);
+      if (na || nb) return na - nb;
+      return dir * (va - vb) || a.p.n.localeCompare(b.p.n);
+    });
+  }
+
+  function renderControls() {
+    document.getElementById("win").innerHTML = WINS.map(([k, l]) => `<button type="button" data-win="${k}" aria-pressed="${state.win === k}">${l}</button>`).join("");
+    document.getElementById("pos").innerHTML = POS.map(([k, l]) => `<button type="button" data-pos="${k}" aria-pressed="${state.pos === k}">${l}</button>`).join("");
+    document.getElementById("presets").innerHTML = PRESETS.map((x) => `<button type="button" class="chip" data-preset="${x.id}" aria-pressed="${state.preset === x.id}">${x.label}</button>`).join("");
+    document.getElementById("active").checked = state.active;
+  }
+
+  function renderBoard() {
+    const rows = visible();
+    const winLabel = WINS.find((w) => w[0] === state.win)[1];
+    const th = (c) => {
+      const sorted = state.sort === c.key;
+      return `<th${sorted ? ` aria-sort="${state.dir < 0 ? "descending" : "ascending"}"` : ""}><button type="button" data-sort="${c.key}">${c.label}</button></th>`;
+    };
+    const shown = rows.slice(0, state.limit);
+    const body = shown.map((r, i) => {
+      const p = r.p;
+      return `<tr data-id="${p.id}"><td class="lead"><div class="pname"><span class="rank">${i + 1}</span><div class="who"><strong>${esc(p.n)}</strong>`
+        + `<div class="meta"><span>${esc(r.team)} · ${esc(p.pos || "–")}</span>${flags(r)}</div></div></div></td>`
+        + COLS.map((c) => `<td class="${state.sort === c.key ? "sorted" : ""}">${c.cell(r)}</td>`).join("") + `</tr>`;
+    }).join("");
+    const winCols = COLS.filter((c) => c.win && c.key !== "usg" && c.key !== "ts" && c.key !== "gp");
+    const html = `<table class="grid"><thead>
+      <tr class="group"><th class="lead"></th><th colspan="${winCols.length}"><span>${winLabel}</span></th><th colspan="3"><span>L${TREND_N} vs prev ${BASE_N}</span></th><th colspan="3"><span>${winLabel}</span></th><th><span>Left</span></th></tr>
+      <tr class="cols"><th class="lead" style="text-align:left">Player</th>${COLS.map(th).join("")}</tr></thead>
+      <tbody>${body}</tbody></table>`
+      + (rows.length === 0 ? `<p class="empty">No players match. Clear the search, switch position to All, or untick "Played this season".</p>` : "")
+      + (rows.length > shown.length ? `<button type="button" class="more" id="more">Show all ${rows.length}</button>` : "");
+    const board = document.getElementById("board");
+    board.innerHTML = html;
+    const g = board.querySelector("tr.group");
+    if (g) board.style.setProperty("--grouph", g.getBoundingClientRect().height + "px");
+    if (reveal) {
+      // On a phone most columns are off to the right: slide over so the column a view sorts by is in sight
+      reveal = false;
+      const th = board.querySelector("tr.cols th[aria-sort]"), lead = board.querySelector("tr.cols th.lead");
+      if (th && lead) {
+        const seen = th.offsetLeft >= board.scrollLeft + lead.offsetWidth && th.offsetLeft + th.offsetWidth <= board.scrollLeft + board.clientWidth;
+        if (!seen) board.scrollLeft = Math.max(0, th.offsetLeft - lead.offsetWidth - 12);
+      }
+    }
+  }
+  let reveal = true;
+
+  // ---- player card -------------------------------------------------------------------------------------------------
+  function niceTicks(lo, hi, count = 3) {
+    if (!(hi > lo)) { hi = lo + 1; }
+    const raw = (hi - lo) / count, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= raw) || 10 * mag;
+    const start = Math.floor(lo / step) * step, end = Math.ceil(hi / step) * step;
+    const ticks = [];
+    for (let v = start; v <= end + step / 2; v += step) ticks.push(+v.toFixed(6));
+    return ticks;
+  }
+
+  function chart({ line, dots, boundary, width, height, digits, cap }) {
+    const L = 34, R = 44, T = 10, B = 18;
+    const vals = line.filter(isNum).concat((dots || []).filter(isNum));
+    if (!vals.length) return "";
+    const ticks = niceTicks(Math.min(...vals), Math.max(...vals));
+    const lo = ticks[0], hi = ticks[ticks.length - 1];
+    const n = line.length, w = width - L - R, h = height - T - B;
+    const x = (i) => L + (n <= 1 ? w / 2 : (i / (n - 1)) * w);
+    const y = (v) => T + h - ((v - lo) / (hi - lo || 1)) * h;
+    let s = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(cap)}">`;
+    for (const t of ticks) s += `<line class="gridln" x1="${L}" x2="${L + w}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L - 6}" y="${y(t) + 3}" text-anchor="end">${t}</text>`;
+    if (boundary > 0 && boundary < n) {
+      const bx = (x(boundary - 1) + x(boundary)) / 2;
+      s += `<line class="boundary" x1="${bx}" x2="${bx}" y1="${T}" y2="${T + h}"/>`;
+      s += `<text class="ax" x="${bx + 4}" y="${T + h + 13}">${seasonLabel(M.season)}</text>`;
+      s += `<text class="ax" x="${L}" y="${T + h + 13}">${seasonLabel(M.season - 1)}</text>`;
+    } else {
+      s += `<text class="ax" x="${L}" y="${T + h + 13}">${boundary === 0 ? seasonLabel(M.season) : seasonLabel(M.season - 1)}</text>`;
+    }
+    if (dots) dots.forEach((v, i) => { if (isNum(v)) s += `<circle class="dot" cx="${x(i)}" cy="${y(v)}" r="1.8"/>`; });
+    const pts = [];
+    line.forEach((v, i) => { if (isNum(v)) pts.push([x(i), y(v)]); });
+    if (pts.length) {
+      const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join("");
+      s += `<path class="area" d="${d}L${pts[pts.length - 1][0].toFixed(1)} ${T + h}L${pts[0][0].toFixed(1)} ${T + h}Z"/>`;
+      s += `<path class="ln" d="${d}"/>`;
+      const [ex, ey] = pts[pts.length - 1];
+      const last = line.filter(isNum).pop();
+      s += `<circle class="endpt" cx="${ex}" cy="${ey}" r="4"/><text class="endlbl" x="${ex + 7}" y="${ey + 4}">${last.toFixed(digits)}</text>`;
+    }
+    return `<div class="chart"><div class="cap">${esc(cap)}</div>${s}</svg></div>`;
+  }
+
+  function rolling(log, n) {
+    const fp = [], mn = [], fpm = [];
+    for (let i = 0; i < log.length; i++) {
+      if (i < n - 1) { fp.push(null); mn.push(null); fpm.push(null); continue; }
+      let a = 0, m = 0, am = 0;
+      for (let j = i - n + 1; j <= i; j++) {
+        const g = log[j];
+        a += g[LF.fp]; m += g[LF.min];
+        if (g[LF.min] > 0) am += g[LF.fp];
+      }
+      fp.push(a / n); mn.push(m / n); fpm.push(m > 0 ? am / m : null);
+    }
+    return { fp, mn, fpm };
+  }
+
+  function drivers(p) {
+    const a = p.w.base, b = p.w.l10;
+    if (!a || !b || b[F.gp] < TREND_N || a[F.gp] < 15) {
+      return `<p class="say">Needs ${TREND_N + 15}+ games on record (he has ${(b ? b[F.gp] : 0) + (a ? a[F.gp] : 0)} in the window) to compare his last ${TREND_N} with the ${BASE_N} before them.</p>`;
+    }
+    const mA = a[F.mpg], rA = a[F.fpm], mB = b[F.mpg], rB = b[F.fpm];
+    const minEff = (mB - mA) * rA, rateEff = mB * (rB - rA);
+    const scale = Math.max(Math.abs(minEff), Math.abs(rateEff), 2);
+    const bar = (v) => {
+      const pct = Math.min(50, (Math.abs(v) / scale) * 50);
+      return `<div class="track"><div class="bar ${v >= 0 ? "pos" : "neg"}" style="width:${pct}%"></div></div>`;
+    };
+    const dir = (v, up, down) => (v >= 0 ? up : down);
+    const say = `His minutes are ${dir(mB - mA, "up", "down")} ${Math.abs(mB - mA).toFixed(1)} a night (${signed(minEff)} FP/G). `
+      + `His fantasy points per minute are ${dir(rB - rA, "up", "down")} ${Math.abs(rB - rA).toFixed(2)} (${signed(rateEff)} FP/G). `
+      + (Math.abs(minEff) >= Math.abs(rateEff) ? "Most of the change is minutes, the circumstantial part." : "Most of the change is per-minute production, the talent part.");
+    return `<div class="panel drivers">
+      <div class="drv"><span class="lbl">FP/G</span><span class="num">${f1(a[F.fpg])} → <b>${f1(b[F.fpg])}</b></span><span class="val ${tone(b[F.fpg] - a[F.fpg], 0.5)}">${signed(b[F.fpg] - a[F.fpg])}</span></div>
+      <div class="drv"><span class="lbl">From minutes</span>${bar(minEff)}<span class="val ${tone(minEff, 0.3)}">${signed(minEff)}</span></div>
+      <div class="drv"><span class="lbl">From per-minute</span>${bar(rateEff)}<span class="val ${tone(rateEff, 0.3)}">${signed(rateEff)}</span></div>
+      <p class="say">${say}</p></div>`;
+  }
+
+  function renderPlayer(id) {
+    const r = ROWS.find((x) => x.p.id === id);
+    const el = document.getElementById("player");
+    if (!r) { el.hidden = true; return; }
+    const p = r.p, l10 = p.w.l10, sea = p.w.season, last = p.w.last;
+    const log = p.log;
+    el.hidden = false; // shown first so the charts can measure the screen
+    const seasonStart = Math.floor((Date.UTC(M.season - 1, 8, 1) - EPOCH) / DAY);
+    const found = log.findIndex((g) => g[LF.day] >= seasonStart);
+    const curStart = found < 0 ? log.length : found;
+    const roll = rolling(log, TREND_N);
+    const width = Math.max(280, Math.min(760, el.clientWidth || 360) - 32);
+
+    const status = !r.active ? `Hasn't played this season. Last game ${md(p.last)}, ${dateOf(p.last).getUTCFullYear()}.`
+      : p.miss >= 1 ? `Last played ${md(p.last)}, missed his team's last ${p.miss === 1 ? "game" : p.miss + " games"}${p.why ? " (" + esc(p.why) + ")" : ""}.`
+      : `Last played ${md(p.last)}.`;
+    const window = l10 ? `${Math.min(p.now, l10[F.gp])} of his last ${l10[F.gp]} games are from ${seasonLabel(M.season)}.` : "";
+
+    const tiles = `<div class="tiles">
+      <div class="tile key"><div class="k">L10 FP/G</div><div class="v">${f1(l10 && l10[F.fpg])}</div><div class="d">prev ${BASE_N}: ${f1(p.w.base && p.w.base[F.fpg])}</div></div>
+      <div class="tile key"><div class="k">L10 FP/Min</div><div class="v">${f2(l10 && l10[F.fpm])}</div><div class="d">prev ${BASE_N}: ${f2(p.w.base && p.w.base[F.fpm])}</div></div>
+      <div class="tile"><div class="k">L10 Min</div><div class="v">${f1(l10 && l10[F.mpg])}</div><div class="d">prev ${BASE_N}: ${f1(p.w.base && p.w.base[F.mpg])}</div></div>
+      <div class="tile"><div class="k">${seasonLabel(M.season)} FP/G</div><div class="v">${f1(sea && sea[F.fpg])}</div><div class="d">${sea ? sea[F.gp] + " GP" : "no games"} · ${seasonLabel(M.season - 1)}: ${f1(last && last[F.fpg])}</div></div>
+    </div>`;
+
+    const charts = log.length >= TREND_N ? `<div class="charts">
+      ${chart({ line: roll.fp, boundary: curStart, width, height: 140, digits: 1, cap: "Rolling 10 FP/G" })}
+      ${chart({ line: roll.fpm, boundary: curStart, width, height: 110, digits: 2, cap: "Rolling 10 FP per minute" })}
+      ${chart({ line: roll.mn, boundary: curStart, width, height: 110, digits: 1, cap: "Rolling 10 minutes" })}
+    </div>` : `<p class="say">Not enough games yet for a rolling 10 chart.</p>`;
+
+    const up = (upcoming[p.tm] || []).slice(0, 8);
+    const games = r.active && up.length ? `<div>
+      <h3>Coming up <small>${r.gl} left this week · ${r.gn} next week</small></h3>
+      <div class="games">${up.map(([d, opp, at]) => `<div class="game${d <= WEEK_END ? " thisweek" : ""}"><div class="dt">${fmt(d, { weekday: "short" })} ${md(d)}</div>${at} ${esc(TEAM[opp] || "")}</div>`).join("")}</div>
+    </div>` : "";
+
+    const recent = log.slice(-15).reverse();
+    const gamelog = recent.length ? `<div><h3>Game log <small>last ${recent.length}</small></h3><div class="scroll"><table class="mini">
+      <thead><tr><th>Date</th><th>Opp</th><th>Min</th><th>FP</th><th>FP/Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>TO</th><th>FG</th><th>FT</th></tr></thead>
+      <tbody>${recent.map((g) => `<tr><td>${md(g[LF.day])}</td><td>${g[LF.home] ? "" : "@"}${esc(TEAM[g[LF.opp]] || "")}</td><td>${g[LF.min]}</td><td class="hl">${g[LF.fp]}</td><td>${g[LF.min] > 0 ? (g[LF.fp] / g[LF.min]).toFixed(2) : "–"}</td>`
+        + `<td>${g[LF.pts]}</td><td>${g[LF.reb]}</td><td>${g[LF.ast]}</td><td>${g[LF.stl]}</td><td>${g[LF.blk]}</td><td>${g[LF.tov]}</td><td>${g[LF.fgm]}-${g[LF.fga]}</td><td>${g[LF.ftm]}-${g[LF.fta]}</td></tr>`).join("")}</tbody>
+    </table></div></div>` : "";
+
+    const ADV = [["TS%", "ts"], ["eFG%", "efg"], ["Usage%", "usg"], ["AST%", "astp"], ["REB%", "rebp"], ["OREB%", "orebp"], ["DREB%", "drebp"], ["TOV%", "tovp"], ["STL%", "stlp"], ["BLK%", "blkp"],
+      ["Pts", "ppg"], ["Reb", "rpg"], ["Ast", "apg"], ["Stl", "spg"], ["Blk", "bpg"], ["TO", "tpg"]];
+    const advCols = [["L10", l10], [seasonLabel(M.season), sea], [seasonLabel(M.season - 1), last]];
+    const adv = `<div><h3>Advanced <small>from the box score</small></h3><div class="scroll"><table class="mini">
+      <thead><tr><th></th>${advCols.map(([l]) => `<th>${l}</th>`).join("")}</tr></thead>
+      <tbody>${ADV.map(([l, k]) => `<tr><td>${l}</td>${advCols.map(([, w]) => `<td>${f1(w && w[F[k]])}</td>`).join("")}</tr>`).join("")}</tbody>
+    </table></div></div>`;
+
+    const hist = p.hist.length ? `<div><h3>By season <small>regular season, since ${seasonLabel(M.firstSeason)}</small></h3><div class="scroll"><table class="mini">
+      <thead><tr><th>Season</th><th>Team</th><th>GP</th><th>Min</th><th>FP/G</th><th>FP/Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>TS%</th><th>Usg%</th><th>AST%</th><th>REB%</th></tr></thead>
+      <tbody>${p.hist.slice().reverse().map((h) => `<tr class="${h[0] === M.season ? "cur" : ""}"><td>${seasonLabel(h[0])}</td><td>${esc(h[1])}</td>`
+        + `<td>${h[2 + SF.gp]}</td><td>${f1(h[2 + SF.mpg])}</td><td class="hl">${f1(h[2 + SF.fpg])}</td><td class="hl">${f2(h[2 + SF.fpm])}</td><td>${f1(h[2 + SF.ppg])}</td><td>${f1(h[2 + SF.rpg])}</td><td>${f1(h[2 + SF.apg])}</td>`
+        + `<td>${f1(h[2 + SF.ts])}</td><td>${f1(h[2 + SF.usg])}</td><td>${f1(h[2 + SF.astp])}</td><td>${f1(h[2 + SF.rebp])}</td></tr>`).join("")}</tbody>
+    </table></div></div>` : "";
+
+    el.innerHTML = `<div class="sheet-bar"><button type="button" class="back" data-close>← Board</button><span class="title">${esc(p.n)}</span></div>
+      <div class="sheet-body">
+        <div class="hero"><h2>${esc(p.n)}</h2><div class="meta"><span>${esc(r.team)} · ${esc(p.pos || "–")}</span>${flags(r)}</div><p class="say">${status} ${window}</p></div>
+        ${tiles}
+        <div><h3>What's moving his number <small>last ${TREND_N} vs the ${BASE_N} before</small></h3>${drivers(p)}</div>
+        ${charts}
+        ${games}
+        ${gamelog}
+        ${adv}
+        ${hist}
+      </div>`;
+    el.hidden = false;
+    el.scrollTop = 0;
+  }
+
+  function renderHow() {
+    const S = M.scoring;
+    const names = [["points", "Point"], ["rebounds", "Rebound"], ["assists", "Assist"], ["steals", "Steal"], ["blocks", "Block"], ["turnovers", "Turnover"],
+      ["fg_made", "Made FG"], ["fg_missed", "Missed FG"], ["ft_made", "Made FT"], ["ft_missed", "Missed FT"]];
+    document.getElementById("how").innerHTML = `<div class="sheet-bar"><button type="button" class="back" data-close>← Board</button><span class="title">How the numbers work</span></div>
+      <div class="sheet-body how">
+        <div><h3>Scoring</h3><div class="formula">${names.map(([k, l]) => `<span class="${S[k] < 0 ? "neg" : ""}">${l} ${S[k] > 0 ? "+" : "−"}${Math.abs(S[k])}</span>`).join("")}</div></div>
+        <div><h3>Windows</h3><ul>
+          <li><b>L5, L10, L20</b> are his last 5, 10 or 20 games played. Games he sat out are skipped, not counted as zeros.</li>
+          <li>Early in a season, a window reaches back into last season to fill up. The "x/10 this season" tag shows when most of it is old.</li>
+          <li>Regular season only: no playoffs, play-in, All-Star game or NBA Cup final.</li>
+          <li>"Played in ${seasonLabel(M.season)}" hides anyone without a game this season. Untick it to see injured players and last season's numbers for them.</li>
+        </ul></div>
+        <div><h3>FP per minute</h3><p>Fantasy points divided by minutes, over the whole window (total points over total minutes, so a 40-minute game counts more than a 6-minute one). Minutes are the circumstantial part of a player's line; points per minute is the talent part.</p></div>
+        <div><h3>L${TREND_N} vs prev ${BASE_N}</h3><p>His last ${TREND_N} games compared with the ${BASE_N} he played before them, across seasons if needed. On a player's card, the change in FP/G is split into what came from minutes and what came from points per minute; the two add up to the total.</p></div>
+        <div><h3>Wk (rest of week)</h3><p>Games his team has left this week (Monday to Sunday) that aren't in the box scores yet. The small number is that times his L10 FP/G, a rough guide for weekly lineups. It's blank for players who've missed 2+ straight games.</p></div>
+        <div><h3>Advanced stats</h3><p>Calculated from the box scores with Basketball-Reference's formulas: TS% and eFG% (shooting), Usage% (share of team plays he finishes while on the floor), and AST%, REB%, TOV%, STL%, BLK% (rates while on the floor). Ratings like offensive rating and NBA.com's tracking stats aren't in here yet.</p></div>
+        <div><h3>Data</h3><p>ESPN box scores, republished daily by the sportsdataverse hoopR project, ${seasonLabel(M.firstSeason)} through ${md(M.through)}, ${dateOf(M.through).getUTCFullYear()}. Built ${new Date(M.built).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}.</p></div>
+      </div>`;
+  }
+
+  // ---- routing: #p-<id> opens a player, #how opens the notes --------------------------------------------------------
+  function route() {
+    const h = location.hash.slice(1);
+    const pl = document.getElementById("player"), how = document.getElementById("how");
+    const m = /^p-(\d+)$/.exec(h);
+    if (m) { how.hidden = true; renderPlayer(Number(m[1])); }
+    else if (h === "how") { pl.hidden = true; renderHow(); how.hidden = false; how.scrollTop = 0; }
+    else { pl.hidden = true; how.hidden = true; }
+  }
+  const close = () => { if (location.hash) location.hash = ""; route(); };
+
+  // ---- wiring ------------------------------------------------------------------------------------------------------
+  document.getElementById("activelbl").textContent = `Played in ${seasonLabel(M.season)}`;
+  document.getElementById("through").textContent = `${seasonLabel(M.season)} · box scores through ${fmt(M.through, { weekday: "short" })} ${md(M.through)}`;
+  document.getElementById("howbtn").addEventListener("click", () => { location.hash = "how"; });
+  document.getElementById("q").addEventListener("input", (e) => { state.q = e.target.value; state.limit = 100; renderBoard(); });
+  document.getElementById("active").addEventListener("change", (e) => { state.active = e.target.checked; save(); renderBoard(); });
+  document.querySelector(".top").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.win) { state.win = b.dataset.win; }
+    else if (b.dataset.pos !== undefined) { state.pos = b.dataset.pos; }
+    else if (b.dataset.preset) {
+      const x = PRESETS.find((p) => p.id === b.dataset.preset);
+      state.preset = x.id; state.sort = x.sort; state.dir = x.dir; if (x.win) state.win = x.win;
+      document.getElementById("board").scrollTop = 0;
+      reveal = true;
+    } else return;
+    state.limit = 100; save(); renderControls(); renderBoard();
+  });
+  document.getElementById("board").addEventListener("click", (e) => {
+    const s = e.target.closest("[data-sort]");
+    if (s) {
+      const k = s.dataset.sort;
+      if (state.sort === k) state.dir = -state.dir; else { state.sort = k; state.dir = -1; }
+      const match = PRESETS.find((p) => p.sort === state.sort && p.dir === state.dir && (!p.win || p.win === state.win));
+      state.preset = match ? match.id : "";
+      save(); renderControls(); renderBoard(); return;
+    }
+    if (e.target.closest("#more")) { state.limit = Infinity; renderBoard(); return; }
+    const tr = e.target.closest("tr[data-id]");
+    if (tr) location.hash = "p-" + tr.dataset.id;
+  });
+  for (const id of ["player", "how"]) document.getElementById(id).addEventListener("click", (e) => { if (e.target.closest("[data-close]")) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && location.hash) close(); });
+  window.addEventListener("hashchange", route);
+  // Redraw the charts when the width changes (rotating the phone), not when the toolbar hides on scroll
+  let rt, lastW = window.innerWidth;
+  window.addEventListener("resize", () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      const m = /^p-(\d+)$/.exec(location.hash.slice(1));
+      if (m) { const el = document.getElementById("player"), top = el.scrollTop; renderPlayer(Number(m[1])); el.scrollTop = top; }
+    }, 150);
+  });
+
+  renderControls();
+  renderBoard();
+  route();
+}
+
+(function load() {
+  if (EMBEDDED) { start(EMBEDDED); return; }
+  const board = document.getElementById("board"), through = document.getElementById("through");
+  through.textContent = "Loading the numbers…";
+  board.innerHTML = `<p class="empty">Loading the latest box scores…</p>`;
+  const fail = () => {
+    through.textContent = "";
+    board.innerHTML = `<div class="empty"><p>Couldn't load the numbers. Check your connection, then try again.</p>`
+      + `<button type="button" class="back" id="retry">Try again</button></div>`;
+    document.getElementById("retry").addEventListener("click", load);
+  };
+  fetch(DATA_URL, { cache: "no-cache" })
+    .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(start, fail);
+})();
+</script>
