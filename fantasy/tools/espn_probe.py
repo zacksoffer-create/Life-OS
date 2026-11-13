@@ -49,11 +49,28 @@ def main():
     print(f"status: {json.dumps({k: st.get(k) for k in ['currentMatchupPeriod', 'firstScoringPeriod', 'latestScoringPeriod', 'isActive', 'previousSeasons']})}")
     print(f"scoringPeriodId: {status.get('scoringPeriodId')}; seasonId: {status.get('seasonId')}")
     sp = status.get("scoringPeriodId") or st.get("latestScoringPeriod")
-    rosters(get(base + "?view=mTeam&view=mRoster&view=mSettings&view=mStatus"), "combined views")
-    rosters(get(base + "?view=mRoster"), "mRoster alone")
-    if sp:
-        rosters(get(base + f"?view=mRoster&scoringPeriodId={sp}"), f"mRoster, scoringPeriodId={sp}")
-    rosters(get(base + "?view=mRoster&view=mTeam&view=mMatchup&view=mSettings&view=mStandings"), "espn-api style")
+    full = get(base + "?view=mTeam&view=mRoster&view=mSettings&view=mStatus") or {}
+    rosters(full, "combined views")
+    dd = full.get("draftDetail") or {}
+    ds = (full.get("settings") or {}).get("draftSettings") or {}
+    print(f"  draftDetail: { {k: v for k, v in dd.items() if k != 'picks'} }; picks: {len(dd.get('picks') or [])}")
+    print(f"  draftSettings: {ds}")
+    for t in full.get("teams") or []:
+        for e in (t.get("roster") or {}).get("entries") or []:
+            ppe = e.get("playerPoolEntry") or {}
+            print(f"    team {t['id']}: {(ppe.get('player') or {}).get('fullName')} acquisitionType={e.get('acquisitionType')} "
+                  f"status={e.get('status')} keeperValue={ppe.get('keeperValue')} keeperValueFuture={ppe.get('keeperValueFuture')}")
+    prev = espn.API.format(season=season - 1, league=config.ESPN_LEAGUE_ID)
+    last = get(prev + "?view=mTeam&view=mRoster&view=mSettings&view=mStatus")
+    rosters(last, f"LAST season ({season - 1})")
+    if last:
+        print(f"    last season status: { {k: (last.get('status') or {}).get(k) for k in ['latestScoringPeriod', 'finalScoringPeriod', 'isActive']} }")
+        items = ((last.get("settings") or {}).get("scoringSettings") or {}).get("scoringItems", [])
+        print("    last season scoring: " + ", ".join(f"{espn.STAT_NAMES.get(i.get('statId'), i.get('statId'))} {i.get('points'):+g}" for i in items))
+        t1 = next((t for t in last.get("teams") or [] if t.get("id") == 1), None)
+        if t1:
+            print("    team 1 last season: " + ", ".join(((e.get('playerPoolEntry') or {}).get('player') or {}).get('fullName', '?')
+                                                    for e in (t1.get('roster') or {}).get('entries') or []))
 
     for label, flt in [
         ("pool, FA+WAIVERS+ONTEAM", {"players": {"filterStatus": {"value": ["FREEAGENT", "WAIVERS", "ONTEAM"]}, "limit": 1500, "sortPercOwned": {"sortPriority": 1, "sortAsc": False}}}),
