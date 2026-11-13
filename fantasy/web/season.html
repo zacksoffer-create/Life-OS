@@ -1,58 +1,9 @@
-<title>Season 2025-26</title>
+<title>Season __SEASON_LABEL__</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
 <style>/*__BASE_CSS__*/
-/* The season page: the same scorer's-table system, with tabs for the four ways into a finished season. */
-.tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--raised); border-radius: 10px; padding: 3px; gap: 2px; }
-.tabs button { border: 0; background: transparent; padding: 7px 4px; border-radius: 8px; font-family: var(--display); font-weight: 600; font-size: 1.02rem; letter-spacing: 0.02em; color: var(--muted); cursor: pointer; }
-.tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
-#sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.brand a { color: var(--muted); font-size: 0.8rem; text-decoration: none; white-space: nowrap; }
-.brand a:hover { color: var(--accent); }
-.pane { max-width: 860px; display: grid; gap: 22px; padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 14px 40px; }
-.pane > * { min-width: 0; }
-.wk { display: grid; grid-template-columns: 4.3rem minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
-.wk:hover { background: var(--raised); }
-.wk .n { font-family: var(--display); font-weight: 700; font-size: 1.15rem; line-height: 1.1; }
-.wk .n small { display: block; font-family: var(--body); font-size: 0.7rem; color: var(--muted); font-weight: 500; }
-.wk .top { font-size: 0.82rem; min-width: 0; }
-.wk .top div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wk .top span { color: var(--muted); }
-.res { font-weight: 700; font-size: 0.78rem; padding: 2px 8px; border-radius: 6px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.res.w { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
-.res.l { background: color-mix(in srgb, var(--down) 14%, transparent); color: var(--down); }
-.res.t { background: var(--raised); color: var(--muted); }
-.list { display: grid; gap: 6px; }
-.mu { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr); gap: 8px; align-items: center; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font-size: 0.86rem; }
-.mu.mine { border-color: var(--accent); }
-.mu .tm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
-.mu .tm:last-child { text-align: right; }
-.mu .pts { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--muted); }
-.mu .won { color: var(--ink); font-weight: 700; }
-.mu .vs { color: var(--muted); font-size: 0.72rem; }
-.heat td.c { text-align: center; min-width: 2.6rem; }
-.heat td.c b { font-weight: 700; }
-.bar2 { display: inline-block; height: 6px; border-radius: 3px; background: var(--accent); vertical-align: middle; }
-.chips2 { display: flex; flex-wrap: wrap; gap: 6px; }
-.chips2 span { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; font-size: 0.8rem; }
-.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 8px; }
-.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
-.fact .k { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
-.fact .v { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 1.05rem; }
-.fact .d { font-size: 0.72rem; color: var(--muted); }
-.band.hot { fill: var(--up); opacity: 0.12; }
-.band.cold { fill: var(--down); opacity: 0.1; }
-.mini tr.click { cursor: pointer; }
-.mini tr.click:hover td { background: var(--raised); }
-.mini tr.sep td { background: var(--bg); color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding-block: 4px; }
-.mini tr.line td { border-top: 2px solid var(--accent); }
-.mini td.nm, .mini th.nm { text-align: left; }
-.mini td.nm { max-width: 11rem; overflow: hidden; text-overflow: ellipsis; }
-.k { color: var(--accent); font-weight: 700; font-size: 0.7rem; margin-left: 4px; }
-#board { --grouph: 0px; }
-.lead2 { font-size: 0.9rem; color: var(--muted); max-width: 65ch; margin: 0; }
 </style>
 
 <div id="app">
@@ -60,7 +11,7 @@
     <div class="brand">
       <h1 id="title">Season</h1>
       <span class="through" id="sub"></span>
-      <a href="../">This season →</a>
+      <select class="pick" id="season" aria-label="Season"></select>
     </div>
     <nav class="tabs" id="tabs" aria-label="Views"></nav>
     <div id="controls" class="row"></div>
@@ -344,7 +295,7 @@ function start(D) {
         <div class="top"><div>${top ? `${esc(top.p.n)} <span>${f0(top.wk[w.mp].fp)} FP</span>` : ""}</div><div>${best ? `${tag(best[0])} <span>${f0(best[1])} high score</span>` : ""}</div></div>
         <div>${mine ? `<span class="res ${mine.res}">${mine.res.toUpperCase()} ${f0(mine.pts)}–${f0(mine.oppPts)}</span>` : ""}</div></div>`;
     }).join("");
-    board().innerHTML = `<div class="pane"><p class="lead2">${WEEKS.length} matchup weeks: ${REG} in the regular season, then the playoffs (two weeks a round, three around the All-Star break). Each row: the week's top player, its highest team score and ${ME ? "your result" : "results"}. Tap a week for all of it.</p><div class="list">${rows}</div></div>`;
+    board().innerHTML = `<div class="pane"><p class="lead2">${WEEKS.length} matchup weeks: ${REG} in the regular season, then ${WEEKS.filter((w) => w.po).length} playoff rounds${WEEKS.some((w) => w.po && w.b - w.a > 7) ? " (a round can run two or three weeks)" : ""}. Each row: the week's top player, its highest team score and ${ME ? "your result" : "results"}. Tap a week for all of it.</p><div class="list">${rows}</div></div>`;
   }
   function renderWeek(mp) {
     const w = WEEKS.find((x) => x.mp === mp);
@@ -445,7 +396,7 @@ function start(D) {
     const rows = sorted.map((d) => {
       const sep = state.draftSort === "order" && d.round !== lastRound ? `<tr class="sep"><td colspan="6">Round ${d.round}</td></tr>` : "";
       lastRound = d.round;
-      return sep + `<tr class="click${TEAMS[d.team] && TEAMS[d.team].mine ? " cur" : ""}" data-player="${d.pid}"><td>${d.round}.${String(d.rp).padStart(2, "0")}</td><td>${tag(d.team)}</td><td class="nm">${esc(pname(d.pid))}${d.keeper ? '<span class="k">K</span>' : ""}</td><td class="hl">${f0(d.total)}</td><td>${d.rank ? "#" + d.rank : "–"}</td><td class="${tone(d.vs)}">${signed(d.vs)}</td></tr>`;
+      return sep + `<tr class="click${TEAMS[d.team] && TEAMS[d.team].mine ? " cur" : ""}" data-player="${d.pid}"><td>${d.round}.${String(d.rp).padStart(2, "0")}</td><td>${tag(d.team)}</td><td class="nm">${esc(pname(d.pid))}${d.keeper ? '<span class="kbadge">K</span>' : ""}</td><td class="hl">${f0(d.total)}</td><td>${d.rank ? "#" + d.rank : "–"}</td><td class="${tone(d.vs)}">${signed(d.vs)}</td></tr>`;
     }).join("");
     const byTeam = TLIST.map((t) => {
       const mine = DRAFT.filter((d) => d.team === t.id);
@@ -520,6 +471,11 @@ function start(D) {
   const go = (hash) => { location.hash = hash; };
 
   document.getElementById("title").innerHTML = `${M.seasonLabel} <b>Season</b>`;
+  // Jump between seasons, the league's history and the live page
+  const seasonSel = document.getElementById("season");
+  seasonSel.innerHTML = [["", M.seasonLabel]].concat((M.seasons || []).filter((x) => x !== M.seasonLabel).map((x) => ["../" + x + "/", x]),
+    [["../history/", "League history"], ["../", "This season (live)"]]).map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
+  seasonSel.addEventListener("change", (e) => { if (e.target.value) location.href = e.target.value; });
   document.getElementById("sub").textContent = LG ? LG.name : "Full regular season";
   document.querySelector(".top").addEventListener("click", (e) => {
     const b = e.target.closest("button");

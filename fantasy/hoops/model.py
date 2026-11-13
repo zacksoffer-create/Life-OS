@@ -40,11 +40,50 @@ NBA_TEAM_IDS = set(range(1, 31))  # ESPN's ids for the 30 teams; All-Star teams 
 NOT_REGULAR = {"ALLSTAR", "CC"}  # CC is the NBA Cup championship game, which doesn't count in regular-season stats
 
 
+# Scoring keys and the box-score column each one counts. dd/td/qd are double-, triple- and quadruple-doubles.
+SCORING_COLUMNS = {"points": "pts", "rebounds": "reb", "assists": "ast", "steals": "stl", "blocks": "blk",
+                   "turnovers": "tov", "fgm": "fgm", "fga": "fga", "ftm": "ftm", "fta": "fta", "tpm": "tpm",
+                   "tpa": "tpa", "oreb": "oreb", "dreb": "dreb", "pf": "pf"}
+DOUBLES = {"dd": 2, "td": 3, "qd": 4}
+
+# ESPN's basketball stat ids, as scoring keys. A "missed" stat folds into made and attempted: missed = attempted - made.
+ESPN_STATS = {0: "points", 1: "blocks", 2: "steals", 3: "assists", 4: "oreb", 5: "dreb", 6: "rebounds", 9: "pf",
+              11: "turnovers", 13: "fgm", 14: "fga", 15: "ftm", 16: "fta", 17: "tpm", 18: "tpa", 37: "dd", 38: "td",
+              39: "qd"}
+ESPN_MISSED = {23: ("fgm", "fga"), 24: ("ftm", "fta"), 25: ("tpm", "tpa")}
+
+
+def scoring_from_espn(items: list) -> tuple[dict, list]:
+    """A league's ESPN scoring items as a SCORING dict, plus any stat ids this can't score (empty when all fit)."""
+    out: dict[str, float] = {}
+    unknown = []
+    for it in items or []:
+        sid, pts = (it.get("statId"), it.get("points")) if isinstance(it, dict) else it
+        if not pts:
+            continue
+        if sid in ESPN_STATS:
+            out[ESPN_STATS[sid]] = out.get(ESPN_STATS[sid], 0) + pts
+        elif sid in ESPN_MISSED:
+            made, att = ESPN_MISSED[sid]
+            out[made] = out.get(made, 0) - pts
+            out[att] = out.get(att, 0) + pts
+        else:
+            unknown.append(sid)
+    return {k: v for k, v in out.items() if v}, unknown
+
+
 def fantasy_points(df: pd.DataFrame, scoring: dict | None = None) -> pd.Series:
     s = scoring or config.SCORING
-    return (s["points"] * df.pts + s["rebounds"] * df.reb + s["assists"] * df.ast + s["steals"] * df.stl
-            + s["blocks"] * df.blk + s["turnovers"] * df.tov
-            + s["fgm"] * df.fgm + s["fga"] * df.fga + s["ftm"] * df.ftm + s["fta"] * df.fta)
+    total = pd.Series(0.0, index=df.index)
+    for key, pts in s.items():
+        if key in SCORING_COLUMNS:
+            total += pts * df[SCORING_COLUMNS[key]]
+        elif key in DOUBLES:
+            tens = sum((df[c] >= 10).astype(int) for c in ("pts", "reb", "ast", "stl", "blk"))
+            total += pts * (tens >= DOUBLES[key]).astype(int)
+        elif pts:
+            raise ValueError(f"Unknown scoring key {key!r}")
+    return total
 
 
 def regular_season(box: pd.DataFrame, sched: pd.DataFrame) -> pd.DataFrame:

@@ -32,6 +32,18 @@ def live_ages() -> dict[int, int]:
         return {}
 
 
+def my_owner() -> str | None:
+    """Your manager key: the owner of MY_TEAM in the newest imported season. It follows you through name changes."""
+    seasons = sorted((d for d in os.listdir(os.path.join(HERE, "seasons")) if d.isdigit()), reverse=True)
+    for d in seasons:
+        with open(os.path.join(HERE, "seasons", d, "espn", "league.json"), encoding="utf-8") as f:
+            for t in json.load(f)["teams"]:
+                name = (t.get("name") or f"{t.get('location', '')} {t.get('nickname', '')}").strip()
+                if name.lower() == config.MY_TEAM.lower() and t.get("owner"):
+                    return t["owner"]
+    return None
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("season", type=int, help="the year the season ends, e.g. 2026 for 2025-26")
@@ -44,13 +56,24 @@ def main(argv=None) -> int:
         if not os.path.exists(fetch.local_path(raw, "player_box", s)):
             fetch.download(raw, s, s)
     box, sched = load(raw, args.season - 1, args.season)
-    df = model.add_advanced(model.clean(model.regular_season(box, sched)))
     label = f"{args.season - 1}-{str(args.season)[2:]}"
-
     espn = season.load_espn(os.path.join(HERE, "seasons", str(args.season)))
+
+    # Score the season the way the league scored it that year (it may have changed), else with SCORING
+    scoring = config.SCORING
+    if espn:
+        theirs, unknown = model.scoring_from_espn(espn["league"]["settings"].get("scoring"))
+        if theirs and not unknown:
+            scoring = theirs
+            print("  League scoring that season: " + ", ".join(f"{k} {v:+g}" for k, v in theirs.items()))
+        else:
+            print(f"  Can't score ESPN stat ids {unknown}; using SCORING from hoops/config.py")
+    df = model.clean(model.regular_season(box, sched))
+    df["fp"] = model.fantasy_points(df, scoring)
+    df = model.add_advanced(df)
     print(f"{label}: {int(df[(df.season == args.season) & df.played].shape[0]):,} games played; "
           + ("league import found" if espn else "no league import (player side only)"))
-    payload = season.build(df, args.season, espn, live_ages())
+    payload = season.build(df, args.season, espn, live_ages(), scoring, my_owner())
     if espn:
         opening = df[(df.season == args.season) & df.played].date.min()
         same, total = season.check_against_espn(payload, espn, opening)
@@ -60,6 +83,9 @@ def main(argv=None) -> int:
         print(f"  {len(payload['teams'])} teams (yours: {me}), {len(payload['matchups'])} matchups, "
               f"{len(payload['draft'])} picks, {len(payload['moves'])} roster moves, {len(payload['weeks'])} weeks")
 
+    # Every season with a league import gets a page; the season picker lists them all, newest first
+    payload["meta"]["seasons"] = sorted((f"{int(d) - 1}-{d[2:]}" for d in os.listdir(os.path.join(HERE, "seasons"))
+                                         if d.isdigit()), reverse=True)
     out = os.path.join(HERE, "..", "docs", "fantasy", label)
     os.makedirs(out, exist_ok=True)
     data = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
@@ -67,7 +93,7 @@ def main(argv=None) -> int:
         f.write(data)
     template = page.read_template(os.path.join(HERE, "web", "season.html"))
     with open(os.path.join(out, "index.html"), "w", encoding="utf-8") as f:
-        f.write(page._document(template.replace(page.URL_MARK, json.dumps("data.json"))))
+        f.write(page._document(template.replace(page.URL_MARK, json.dumps("data.json")).replace("__SEASON_LABEL__", label)))
     page.icon(os.path.join(out, "apple-touch-icon.png"))
     print(f"Page: {len(payload['players'])} players, data {len(data) / 1e6:.1f} MB -> docs/fantasy/{label}/ "
           f"({time.time() - t0:.1f}s)")

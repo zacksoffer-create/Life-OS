@@ -27,7 +27,7 @@ def league(matchups):
 def test_weeks_come_from_the_matchup_scores():
     lg = league([{"mp": 1, "home": {"team": 1, "byDay": {"1": 5, "6": 9}}, "away": {"team": 2, "byDay": {"1": 3}}},
                  {"mp": 2, "home": {"team": 1, "byDay": {"7": 1, "27": 2}}, "away": None}])
-    weeks = season.calendar(lg, OPENING)
+    weeks = season.calendar(lg, BASE)
     assert weeks == [[1, BASE + 1, BASE + 6, 0], [2, BASE + 7, BASE + 27, 1]]  # week 2 is past the regular season
 
 
@@ -35,7 +35,7 @@ def test_lineups_and_roster_moves():
     days = {"1": [[1, 10, 0], [1, 11, 12], [2, 20, 11]],
             "2": [[1, 10, 0], [2, 11, 13], [2, 20, 11], [2, 30, 12]],
             "3": [[1, 10, 0], [2, 11, 1], [2, 30, 12]]}
-    lu = season.lineups(days, OPENING)
+    lu = season.lineups(days, BASE)
     st = {(d - BASE, p): s for d, p, s in zip(lu.day, lu.player_id, lu.st)}
     assert st[(1, 10)] == 1 and st[(1, 11)] == 0 and st[(2, 11)] == 2  # started, bench, IR
     moves = {(d - BASE, kind, team, pid, other) for d, kind, team, pid, other in season.transactions(lu)}
@@ -69,3 +69,11 @@ def test_a_players_season_shape_and_the_draft_review():
     assert pick1[5] == 1 and pick1[8] == 0  # a keeper who finished first, right at his slot
     assert pick2[8] == pytest.approx(5 - 5)  # pick 2 against the 2nd-best total (his own 5)
     assert out["meta"]["league"]["me"] == 1
+
+
+def test_day_zero_reads_espns_calendar():
+    # In 2022-23 ESPN's scoring period 1 was the day before opening night
+    espn = {"dates": {"2": "2022-10-18", "3": "2022-10-19"}}
+    opening = pd.Timestamp("2022-10-18")
+    assert season.day_zero(espn, opening) == int((opening - page.EPOCH).days) - 2
+    assert season.day_zero({}, opening) == int((opening - page.EPOCH).days) - 1  # no calendar: period 1 = opening

@@ -192,3 +192,54 @@ h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); fo
   .sheet:not([hidden]) { animation: slide 0.18s ease-out; }
   @keyframes slide { from { transform: translateY(12px); opacity: 0.6; } to { transform: none; opacity: 1; } }
 }
+
+/* Finished seasons and the league history: tabs, panes, weeks, matchups, facts */
+.tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--raised); border-radius: 10px; padding: 3px; gap: 2px; }
+.tabs button { border: 0; background: transparent; padding: 7px 4px; border-radius: 8px; font-family: var(--display); font-weight: 600; font-size: 1.02rem; letter-spacing: 0.02em; color: var(--muted); cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+#sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#season { height: 30px; font-size: 0.78rem; align-self: center; }
+.brand a { color: var(--muted); font-size: 0.8rem; text-decoration: none; white-space: nowrap; }
+.brand a:hover { color: var(--accent); }
+.pane { max-width: 860px; display: grid; gap: 22px; padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 14px 40px; }
+.pane > * { min-width: 0; }
+.wk { display: grid; grid-template-columns: 4.3rem minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+.wk:hover { background: var(--raised); }
+.wk .n { font-family: var(--display); font-weight: 700; font-size: 1.15rem; line-height: 1.1; }
+.wk .n small { display: block; font-family: var(--body); font-size: 0.7rem; color: var(--muted); font-weight: 500; }
+.wk .top { font-size: 0.82rem; min-width: 0; }
+.wk .top div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wk .top span { color: var(--muted); }
+.res { font-weight: 700; font-size: 0.78rem; padding: 2px 8px; border-radius: 6px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.res.w { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.res.l { background: color-mix(in srgb, var(--down) 14%, transparent); color: var(--down); }
+.res.t { background: var(--raised); color: var(--muted); }
+.list { display: grid; gap: 6px; }
+.mu { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr); gap: 8px; align-items: center; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font-size: 0.86rem; }
+.mu.mine { border-color: var(--accent); }
+.mu .tm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.mu .tm:last-child { text-align: right; }
+.mu .pts { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--muted); }
+.mu .won { color: var(--ink); font-weight: 700; }
+.mu .vs { color: var(--muted); font-size: 0.72rem; }
+.heat td.c { text-align: center; min-width: 2.6rem; }
+.heat td.c b { font-weight: 700; }
+.bar2 { display: inline-block; height: 6px; border-radius: 3px; background: var(--accent); vertical-align: middle; }
+.chips2 { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips2 span { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; font-size: 0.8rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 8px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.fact .k { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.fact .v { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 1.05rem; }
+.fact .d { font-size: 0.72rem; color: var(--muted); }
+.band.hot { fill: var(--up); opacity: 0.12; }
+.band.cold { fill: var(--down); opacity: 0.1; }
+.mini tr.click { cursor: pointer; }
+.mini tr.click:hover td { background: var(--raised); }
+.mini tr.sep td { background: var(--bg); color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding-block: 4px; }
+.mini tr.line td { border-top: 2px solid var(--accent); }
+.mini td.nm, .mini th.nm { text-align: left; }
+.mini td.nm { max-width: 11rem; overflow: hidden; text-overflow: ellipsis; }
+.kbadge { color: var(--accent); font-weight: 700; font-size: 0.7rem; margin-left: 4px; }
+#board { --grouph: 0px; }
+.lead2 { font-size: 0.9rem; color: var(--muted); max-width: 65ch; margin: 0; }
