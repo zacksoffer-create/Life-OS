@@ -1,0 +1,243 @@
+<title>League History</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>/*__BASE_CSS__*/
+/* The league's history: one manager per row, one season per column. */
+.fin { display: inline-block; min-width: 2.4rem; padding: 2px 6px; border-radius: 6px; font-weight: 700; font-size: 0.78rem; text-align: center; font-variant-numeric: tabular-nums; }
+.fin.won { background: var(--accent); color: var(--accent-ink); }
+.fin.po { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.fin.out { background: var(--raised); color: var(--muted); }
+.cell { text-align: center !important; }
+.cell .sub { margin-top: 2px; }
+.champs { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 8px; }
+.champ { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.champ.mine { border-color: var(--accent); }
+.champ .yr { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
+.champ .who { font-size: 0.85rem; }
+.champ .as { font-size: 0.72rem; color: var(--muted); }
+.meter { display: inline-block; vertical-align: middle; height: 8px; border-radius: 4px; background: var(--accent); }
+.meter.alt { background: var(--muted); opacity: 0.5; }
+.finding { display: grid; gap: 10px; }
+.finding .take { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 0.9rem; max-width: 65ch; }
+.finding .take b { color: var(--accent); }
+</style>
+
+<div id="app">
+  <header class="top">
+    <div class="brand">
+      <h1>League <b>History</b></h1>
+      <span class="through" id="sub"></span>
+      <select class="pick" id="season" aria-label="Go to a season"></select>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Views"></nav>
+    <div id="controls" class="row" hidden></div>
+  </header>
+  <main class="board" id="board"></main>
+</div>
+
+<script>
+const DATA_URL = /*__DATA_URL__*/null;
+function start(D) {
+  "use strict";
+  const M = D.meta;
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const isNum = (v) => typeof v === "number" && isFinite(v);
+  const f0 = (v) => (isNum(v) ? Math.round(v).toLocaleString("en-US") : "–");
+  const f1 = (v) => (isNum(v) ? v.toFixed(1) : "–");
+  const f2 = (v) => (isNum(v) ? v.toFixed(2) : "–");
+  const pct = (v) => (isNum(v) ? Math.round(v * 100) + "%" : "–");
+  const signed = (v, d = 0) => (isNum(v) ? (v > 0 ? "+" : v < 0 ? "−" : "±") + Math.abs(v).toFixed(d) : "–");
+  const tone = (v) => (!isNum(v) || Math.abs(v) < 0.05 ? "dim" : v > 0 ? "up" : "down");
+  const ordinal = (n) => (isNum(n) && n > 0 ? n + (n % 10 === 1 && n !== 11 ? "st" : n % 10 === 2 && n !== 12 ? "nd" : n % 10 === 3 && n !== 13 ? "rd" : "th") : "–");
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("h10:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem("h10:" + k, JSON.stringify(v)); } catch (e) { /* storage off */ } },
+  };
+
+  // ---- managers, followed across seasons by an opaque key ----------------------------------------------------------
+  const MGR = {};
+  for (const m of D.managers) MGR[m.key] = Object.assign({ mine: m.key === M.me, w: 0, l: 0, t: 0, titles: 0, finals: 0, po: 0, fin: 0, n: 0, xw: 0, apw: 0, apl: 0, pf: 0, weeks: 0, by: {} }, m);
+  const SEASONS = D.seasons;
+  for (const s of SEASONS) {
+    const finals = s.teams.filter((t) => t[9] === 1 || t[9] === 2).map((t) => t[0]);
+    for (const [o, nm, ab, w, l, t, pf, pa, seed, fin, apw, apl, xw] of s.teams) {
+      const m = MGR[o]; if (!m) continue;
+      Object.assign(m, { w: m.w + w, l: m.l + l, t: m.t + t, titles: m.titles + (fin === 1), finals: m.finals + finals.includes(o) * 1,
+        po: m.po + (isNum(seed) && seed <= s.playoffTeams), fin: m.fin + (fin || 0), n: m.n + 1, xw: m.xw + xw, apw: m.apw + apw, apl: m.apl + apl,
+        pf: m.pf + pf, weeks: m.weeks + s.regularWeeks });
+      m.by[s.label] = { nm, ab, w, l, t, fin, seed, po: isNum(seed) && seed <= s.playoffTeams, xw };
+    }
+  }
+  const MGRS = Object.values(MGR).sort((a, b) => b.titles - a.titles || a.fin / a.n - b.fin / b.n);
+  const ME = MGR[M.me];
+  const mname = (k) => (MGR[k] ? MGR[k].name : "?");
+  const NAMES = D.names;
+  const PICKS = D.picks.map(([year, overall, round, owner, pid, keeper, total, rank, vs]) => ({ year, overall, round, owner, pid, keeper: !!keeper, total, rank, vs, label: `${year - 1}-${String(year).slice(2)}` }));
+
+  // ---- state and shell --------------------------------------------------------------------------------------------
+  const TABS = [["managers", "Managers"], ["rivals", "Rivals"], ["draft", "Draft"], ["lessons", "Lessons"]];
+  const state = { tab: "managers", rival: store.get("rival", M.me), draftOwner: store.get("draftOwner", "all") };
+  const board = () => document.getElementById("board");
+  const mgrOptions = (sel, extra) => extra.concat(ME ? [[ME.key, ME.name + " (you)"]] : [], MGRS.filter((m) => !m.mine).sort((a, b) => a.name.localeCompare(b.name)).map((m) => [m.key, m.name]))
+    .map(([k, l]) => `<option value="${esc(k)}"${sel === k ? " selected" : ""}>${esc(l)}</option>`).join("");
+
+  // ---- Managers -----------------------------------------------------------------------------------------------------
+  function renderManagers() {
+    const champs = SEASONS.slice().reverse().map((s) => {
+      const t = s.teams.find((x) => x[9] === 1);
+      if (!t) return "";
+      const m = MGR[t[0]];
+      return `<div class="champ${m && m.mine ? " mine" : ""}"><div class="yr">${s.label}</div><div class="who">${esc(m ? m.name : t[1])}</div>${m && t[1] !== m.name ? `<div class="as">as ${esc(t[1])}</div>` : ""}</div>`;
+    }).join("");
+    const cols = SEASONS.map((s) => `<th class="cell">${s.label.slice(2)}</th>`).join("");
+    const grid = MGRS.map((m) => `<tr${m.mine ? ' class="cur"' : ""}><td class="nm">${esc(m.name)}</td>${SEASONS.map((s) => {
+      const x = m.by[s.label];
+      if (!x) return `<td class="cell dim">·</td>`;
+      const cls = x.fin === 1 ? "won" : x.po ? "po" : "out";
+      return `<td class="cell"><span class="fin ${cls}" title="${esc(x.nm)}">${ordinal(x.fin)}</span><span class="sub">${x.w}-${x.l}${x.t ? "-" + x.t : ""}</span></td>`;
+    }).join("")}</tr>`).join("");
+    const rows = MGRS.map((m) => `<tr${m.mine ? ' class="cur"' : ""}><td class="nm">${esc(m.name)}</td><td>${m.n}</td><td>${m.w}-${m.l}${m.t ? "-" + m.t : ""}</td><td>${pct(m.w / Math.max(1, m.w + m.l + m.t))}</td><td class="hl">${m.titles}</td><td>${m.finals}</td><td>${m.po}/${m.n}</td><td>${f1(m.fin / m.n)}</td><td>${pct(m.apw / Math.max(1, m.apw + m.apl))}</td><td class="${tone(m.w - m.xw)}">${signed(m.w - m.xw, 1)}</td><td>${f0(m.pf / Math.max(1, m.weeks))}</td></tr>`).join("");
+    const luckiest = MGRS.filter((m) => m.n >= 3).sort((a, b) => (b.w - b.xw) - (a.w - a.xw));
+    board().innerHTML = `<div class="pane">
+      <div><h3>Champions</h3><div class="champs">${champs}</div></div>
+      ${ME ? `<p class="lead2">${esc(ME.name)}: ${ME.titles} title${ME.titles === 1 ? "" : "s"} in ${ME.n} seasons, playoffs ${ME.po} of ${ME.n} times, ${ME.w}-${ME.l} all-time. Against every team every week your scores went ${ME.apw}-${ME.apl}, worth ${f1(ME.xw)} wins; you have ${ME.w}, so luck is ${signed(ME.w - ME.xw, 1)}.${luckiest.length ? ` Luckiest manager: ${esc(luckiest[0].name)} (${signed(luckiest[0].w - luckiest[0].xw, 1)}); unluckiest: ${esc(luckiest[luckiest.length - 1].name)} (${signed(luckiest[luckiest.length - 1].w - luckiest[luckiest.length - 1].xw, 1)}).` : ""}</p>` : ""}
+      <div><h3>Every season <small>finish, then regular-season record · orange won it, green made the playoffs</small></h3><div class="scroll"><table class="mini"><thead><tr><th class="nm">Manager</th>${cols}</tr></thead><tbody>${grid}</tbody></table></div></div>
+      <div><h3>All-time <small>regular season · All-play = against every team every week · Luck = wins minus all-play's expected wins</small></h3><div class="scroll"><table class="mini"><thead><tr><th class="nm">Manager</th><th>Seasons</th><th>W-L</th><th>Win%</th><th>Titles</th><th>Finals</th><th>Playoffs</th><th>Avg finish</th><th>All-play</th><th>Luck</th><th>Pts/week</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+      <p class="lead2">Managers are shown under their latest team name and followed through name changes. Team names in a season are on hover.</p>
+    </div>`;
+  }
+
+  // ---- Rivals --------------------------------------------------------------------------------------------------------
+  function renderRivals() {
+    const me = state.rival, rec = D.h2h[me] || {};
+    const rows = Object.entries(rec).map(([o, r]) => ({ o, r, g: r.reg[0] + r.reg[1] + r.reg[2] + r.po[0] + r.po[1] }))
+      .sort((a, b) => b.g - a.g || mname(a.o).localeCompare(mname(b.o)));
+    const total = rows.reduce((s, x) => [s[0] + x.r.reg[0], s[1] + x.r.reg[1], s[2] + x.r.reg[2], s[3] + x.r.po[0], s[4] + x.r.po[1]], [0, 0, 0, 0, 0]);
+    const body = rows.map(({ o, r }) => {
+      const d = r.reg[0] - r.reg[1];
+      return `<tr><td class="nm">${esc(mname(o))}</td><td class="${tone(d)}">${r.reg[0]}-${r.reg[1]}${r.reg[2] ? "-" + r.reg[2] : ""}</td><td>${r.po[0] + r.po[1] ? `${r.po[0]}-${r.po[1]}` : "–"}</td></tr>`;
+    }).join("");
+    const reg = rows.filter((x) => x.r.reg[0] + x.r.reg[1] >= 5);
+    const best = reg.slice().sort((a, b) => (b.r.reg[0] - b.r.reg[1]) - (a.r.reg[0] - a.r.reg[1]))[0];
+    const worst = reg.slice().sort((a, b) => (a.r.reg[0] - a.r.reg[1]) - (b.r.reg[0] - b.r.reg[1]))[0];
+    const poWorst = rows.filter((x) => x.r.po[1] > x.r.po[0]).sort((a, b) => b.r.po[1] - a.r.po[1])[0];
+    board().innerHTML = `<div class="pane">
+      <p class="lead2">${esc(mname(me))} against everyone: ${total[0]}-${total[1]}${total[2] ? "-" + total[2] : ""} in the regular season, ${total[3]}-${total[4]} in the playoffs.
+        ${best ? `Owns ${esc(mname(best.o))} (${best.r.reg[0]}-${best.r.reg[1]}).` : ""} ${worst && worst !== best ? `Toughest: ${esc(mname(worst.o))} (${worst.r.reg[0]}-${worst.r.reg[1]}).` : ""}
+        ${poWorst ? `Playoff problem: ${esc(mname(poWorst.o))} (${poWorst.r.po[0]}-${poWorst.r.po[1]} in the playoffs).` : ""}</p>
+      <div class="scroll"><table class="mini"><thead><tr><th class="nm">Against</th><th>Regular season</th><th>Playoffs</th></tr></thead><tbody>${body}</tbody></table></div>
+    </div>`;
+  }
+
+  // ---- Draft and keepers across seasons ------------------------------------------------------------------------------
+  function renderDraft() {
+    const sel = state.draftOwner;
+    const pool = PICKS.filter((p) => sel === "all" || p.owner === sel);
+    const rounds = {};
+    for (const p of PICKS.filter((x) => !x.keeper)) {
+      const r = (rounds[p.round] = rounds[p.round] || { n: 0, vs: 0, beat: 0, total: 0 });
+      r.n++; r.vs += p.vs || 0; r.beat += (p.vs || 0) > 0; r.total += p.total || 0;
+    }
+    const maxAbs = Math.max(...Object.values(rounds).map((r) => Math.abs(r.vs / r.n)), 1);
+    const roundRows = Object.entries(rounds).map(([rd, r]) => {
+      const v = r.vs / r.n, w = Math.round((Math.abs(v) / maxAbs) * 70);
+      return `<tr><td>${rd}</td><td>${r.n}</td><td>${f0(r.total / r.n)}</td><td class="${tone(v)}">${signed(v)}</td><td><span class="meter${v < 0 ? " alt" : ""}" style="width:${w}px"></span></td><td>${pct(r.beat / r.n)}</td></tr>`;
+    }).join("");
+    const kr = {};
+    for (const p of PICKS.filter((x) => x.keeper)) { const r = (kr[p.round] = kr[p.round] || { n: 0, vs: 0, beat: 0 }); r.n++; r.vs += p.vs || 0; r.beat += (p.vs || 0) > 0; }
+    const keeperRows = Object.entries(kr).map(([rd, r]) => `<tr><td>${rd}</td><td>${r.n}</td><td class="${tone(r.vs / r.n)}">${signed(r.vs / r.n)}</td><td>${pct(r.beat / r.n)}</td></tr>`).join("");
+    const kept = {};
+    for (const p of PICKS.filter((x) => x.keeper && (sel === "all" || x.owner === sel))) (kept[p.pid] = kept[p.pid] || []).push(p);
+    const keptRows = Object.entries(kept).sort((a, b) => b[1].length - a[1].length || b[1].reduce((s, p) => s + (p.vs || 0), 0) - a[1].reduce((s, p) => s + (p.vs || 0), 0)).slice(0, 15)
+      .map(([pid, ps]) => `<tr><td class="nm">${esc(NAMES[pid] || pid)}</td><td>${ps.length}</td><td class="nm">${[...new Set(ps.map((p) => mname(p.owner)))].map(esc).join(", ")}</td><td>${ps.map((p) => p.label.slice(2) + " R" + p.round).join(", ")}</td><td class="${tone(ps.reduce((s, p) => s + (p.vs || 0), 0))}">${signed(ps.reduce((s, p) => s + (p.vs || 0), 0))}</td></tr>`).join("");
+    const byMgr = MGRS.map((m) => {
+      const ps = PICKS.filter((p) => p.owner === m.key);
+      if (!ps.length) return "";
+      const vs = ps.reduce((s, p) => s + (p.vs || 0), 0), drafted = ps.filter((p) => !p.keeper);
+      const best = drafted.slice().sort((a, b) => b.vs - a.vs)[0];
+      return `<tr${m.mine ? ' class="cur"' : ""}><td class="nm">${esc(m.name)}</td><td>${new Set(ps.map((p) => p.year)).size}</td><td class="${tone(vs)}">${signed(vs / new Set(ps.map((p) => p.year)).size)}</td><td>${pct(drafted.filter((p) => (p.vs || 0) > 0).length / Math.max(1, drafted.length))}</td><td class="nm">${best ? esc(NAMES[best.pid] || "") + " (" + best.label.slice(2) + ", " + signed(best.vs) + ")" : ""}</td></tr>`;
+    }).join("");
+    const top = pool.filter((p) => !p.keeper).sort((a, b) => b.vs - a.vs);
+    const pickRow = (p) => `<tr><td>${p.label.slice(2)}</td><td>${p.round}.${String(p.overall - (p.round - 1) * (SEASONS.find((s) => s.year === p.year).teams.length)).padStart(2, "0")}</td><td class="nm">${esc(mname(p.owner))}</td><td class="nm">${esc(NAMES[p.pid] || p.pid)}</td><td>${f0(p.total)}</td><td class="${tone(p.vs)}">${signed(p.vs)}</td></tr>`;
+    board().innerHTML = `<div class="pane">
+      <p class="lead2">Every pick from ${SEASONS.length} drafts against how the season went. <b>vs slot</b> = his season's fantasy points minus those of the player who finished at that pick's rank (pick 12 against the 12th-best season).</p>
+      <div><h3>Which rounds pay <small>drafted players, every season</small></h3><div class="scroll"><table class="mini"><thead><tr><th>Round</th><th>Picks</th><th>Avg FP</th><th>Avg vs slot</th><th></th><th>Beat slot</th></tr></thead><tbody>${roundRows}</tbody></table></div></div>
+      <div><h3>How keepers paid off <small>by the round they cost</small></h3><div class="scroll"><table class="mini"><thead><tr><th>Round</th><th>Keepers</th><th>Avg vs slot</th><th>Beat slot</th></tr></thead><tbody>${keeperRows}</tbody></table></div></div>
+      <div><h3>Who drafts best <small>vs slot per season, keepers included · Hit rate = drafted players who beat their slot</small></h3><div class="scroll"><table class="mini"><thead><tr><th class="nm">Manager</th><th>Drafts</th><th>Per draft</th><th>Hit rate</th><th class="nm">Best pick</th></tr></thead><tbody>${byMgr}</tbody></table></div></div>
+      <div class="row"><select class="pick" id="draftOwner" aria-label="Manager">${mgrOptions(sel, [["all", "Every manager"]])}</select></div>
+      <div><h3>Most-kept players</h3><div class="scroll"><table class="mini"><thead><tr><th class="nm">Player</th><th>Times</th><th class="nm">By</th><th>When</th><th>vs slot</th></tr></thead><tbody>${keptRows || '<tr><td colspan="5" class="dim">No keepers</td></tr>'}</tbody></table></div></div>
+      <div><h3>Best picks</h3><div class="scroll"><table class="mini"><thead><tr><th>Yr</th><th>Pick</th><th class="nm">Manager</th><th class="nm">Player</th><th>FP</th><th>vs slot</th></tr></thead><tbody>${top.slice(0, 12).map(pickRow).join("")}</tbody></table></div></div>
+      <div><h3>Worst picks</h3><div class="scroll"><table class="mini"><thead><tr><th>Yr</th><th>Pick</th><th class="nm">Manager</th><th class="nm">Player</th><th>FP</th><th>vs slot</th></tr></thead><tbody>${top.slice(-12).reverse().map(pickRow).join("")}</tbody></table></div></div>
+    </div>`;
+  }
+
+  // ---- Lessons: what nine seasons of box scores say --------------------------------------------------------------------
+  function renderLessons() {
+    const S = D.studies, yy = S.yearToYear, wb = S.windows, st = S.streaks;
+    const span = `${M.firstStudySeason - 1}-${String(M.firstStudySeason).slice(2)} to ${M.lastStudySeason - 1}-${String(M.lastStudySeason).slice(2)}`;
+    const ylab = { fpg: "FP/G", mpg: "Minutes", fpm: "FP per minute", usg: "Usage%", ts: "TS%", astp: "AST%", rebp: "REB%" };
+    const yrows = Object.entries(yy.corr).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<tr${k === "fpm" || k === "mpg" ? ' class="cur"' : ""}><td class="nm">${ylab[k]}</td><td class="hl">${f2(v)}</td><td><span class="meter" style="width:${Math.round(Math.max(0, v) * 90)}px"></span></td><td>${yy.typical_change[k] != null ? pct(yy.typical_change[k]) : ""}</td></tr>`).join("");
+    const wlab = { l5: "Last 5", l10: "Last 10", l20: "Last 20", szn: "Season so far", blend: "30% L10 + 70% season" };
+    const best = Math.min(...Object.values(wb.mae));
+    const wrows = Object.entries(wb.mae).map(([k, v]) => `<tr${v === best ? ' class="cur"' : ""}><td class="nm">${wlab[k]}</td><td class="hl">${f2(v)}</td><td><span class="meter${v === best ? "" : " alt"}" style="width:${Math.round((v / 4.5) * 110)}px"></span></td></tr>`).join("");
+    const srow = (lab, x) => `<tr><td class="nm">${lab}</td><td>${f0(x.cases)}</td><td class="hl">${pct(x.kept)}</td></tr>`;
+    board().innerHTML = `<div class="pane">
+      <p class="lead2">Tests on every NBA regular season from ${span} with your league's scoring, each checking one way the page's numbers get read.</p>
+      <div class="finding"><h3>1. What carries over from one season to the next</h3>
+        <p class="take">FP per minute <b>carries over much better than minutes</b>: it correlates ${f2(yy.corr.fpm)} from one season to the next, against ${f2(yy.corr.mpg)} for minutes (rebounding and assist rates are steadier still). A player's points per minute moves about ${pct(yy.typical_change.fpm)} a year; his FP/G moves ${pct(yy.typical_change.fpg)}, because minutes add their own swings. Your read holds up: per-minute is the talent, minutes are the circumstance.</p>
+        <div class="scroll"><table class="mini"><thead><tr><th class="nm">Number</th><th>Year to year</th><th></th><th>Typical change</th></tr></thead><tbody>${yrows}</tbody></table></div>
+        <p class="lead2">${f0(yy.pairs)} pairs of back-to-back seasons with 40+ games and 15+ minutes a night in both. 1.00 would mean the number never moves.</p></div>
+      <div class="finding"><h3>2. What predicts the next 10 games</h3>
+        <p class="take">The <b>season so far</b> beats the last 10 games. Predicting a player's next 10 games, the last 10 miss by ${f2(wb.mae.l10)} FP/G on average and the season average by ${f2(wb.mae.szn)}. The best mix is about ${Math.round(wb.best_l10_weight * 100)}% last 10 and ${100 - Math.round(wb.best_l10_weight * 100)}% season (miss ${f2(wb.best_mae)}). So read L10 as a lean, not a verdict. Same for minutes (${f2(wb.minutes_mae.l10)} vs ${f2(wb.minutes_mae.szn)}) and FP per minute (${f2(wb.fpm_mae.l10)} vs ${f2(wb.fpm_mae.szn)}).</p>
+        <div class="scroll"><table class="mini"><thead><tr><th class="nm">Predict the next 10 with</th><th>Average miss (FP/G)</th><th></th></tr></thead><tbody>${wrows}</tbody></table></div>
+        <p class="lead2">${f0(wb.cases)} predictions: every game from a player's 20th on, for players averaging 15+ FP/G, against what he did in the next 10.</p></div>
+      <div class="finding"><h3>3. How much of a hot streak lasts</h3>
+        <p class="take">When a player's last 10 run 5+ FP/G above his season, only about <b>${pct(st.hot.kept)}</b> of that gap shows up in his next 10. It depends on where it came from: a jump from <b>more minutes keeps ${pct(st.hot.minutes_driven.kept)}</b>, a jump from <b>more per minute keeps ${pct(st.hot.rate_driven.kept)}</b>. Cold streaks work the same way (${pct(st.cold.minutes_driven.kept)} vs ${pct(st.cold.rate_driven.kept)}). Because per-minute production is a steady talent, a per-minute spike is mostly noise, while more minutes usually means a real role change. For pickups, chase minutes, not hot shooting.</p>
+        <div class="scroll"><table class="mini"><thead><tr><th class="nm">Streak</th><th>Cases</th><th>Share that lasted</th></tr></thead><tbody>
+          ${srow("Hot, all", st.hot)}${srow("Hot, from minutes", st.hot.minutes_driven)}${srow("Hot, from per-minute", st.hot.rate_driven)}
+          ${srow("Cold, all", st.cold)}${srow("Cold, from minutes", st.cold.minutes_driven)}${srow("Cold, from per-minute", st.cold.rate_driven)}
+        </tbody></table></div>
+        <p class="lead2">"From minutes" or "from per-minute" uses the same split as the player card on the live page: whichever part moved his FP/G more.</p></div>
+    </div>`;
+  }
+
+  function renderTab() {
+    document.getElementById("tabs").innerHTML = TABS.map(([k, l]) => `<button type="button" data-tab="${k}" aria-pressed="${state.tab === k}">${l}</button>`).join("");
+    const c = document.getElementById("controls");
+    c.innerHTML = state.tab === "rivals" ? `<select class="pick" id="rival" aria-label="Manager">${mgrOptions(state.rival, [])}</select>` : "";
+    c.hidden = !c.innerHTML;
+    ({ managers: renderManagers, rivals: renderRivals, draft: renderDraft, lessons: renderLessons })[state.tab]();
+  }
+  function route() {
+    const h = location.hash.slice(1);
+    if (TABS.some((t) => t[0] === h) && h !== state.tab) { state.tab = h; renderTab(); board().scrollTop = 0; }
+  }
+
+  document.getElementById("sub").textContent = `${SEASONS.length} seasons, ${SEASONS[0].label} to ${SEASONS[SEASONS.length - 1].label}`;
+  const sel = document.getElementById("season");
+  sel.innerHTML = [["", "Go to a season"]].concat(SEASONS.slice().reverse().map((s) => ["../" + s.label + "/", s.label]), [["../", "This season (live)"]])
+    .map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
+  sel.addEventListener("change", (e) => { if (e.target.value) location.href = e.target.value; });
+  document.querySelector(".top").addEventListener("click", (e) => { const b = e.target.closest("[data-tab]"); if (b) location.hash = b.dataset.tab; });
+  document.addEventListener("change", (e) => {
+    if (e.target.id === "rival") { state.rival = e.target.value; store.set("rival", state.rival); renderRivals(); }
+    if (e.target.id === "draftOwner") { state.draftOwner = e.target.value; store.set("draftOwner", state.draftOwner); renderDraft(); }
+  });
+  window.addEventListener("hashchange", route);
+  const h0 = location.hash.slice(1);
+  if (TABS.some((t) => t[0] === h0)) state.tab = h0;
+  renderTab();
+}
+
+(function load() {
+  const board = document.getElementById("board");
+  board.innerHTML = `<p class="empty">Loading the league's history…</p>`;
+  const fail = () => {
+    board.innerHTML = `<div class="empty"><p>Couldn't load the history. Check your connection, then try again.</p><button type="button" class="back" id="retry">Try again</button></div>`;
+    document.getElementById("retry").addEventListener("click", load);
+  };
+  fetch(DATA_URL, { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(start, fail);
+})();
+</script>

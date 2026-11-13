@@ -12,6 +12,8 @@ import json
 import os
 import urllib.request
 
+from . import model
+
 API = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/fba/seasons/{season}/segments/0/leagues/{league}"
 ROSTER_API = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/{team}/roster"
 UA = {"User-Agent": "Mozilla/5.0 (rolling10 fantasy page)", "Accept": "application/json"}
@@ -80,14 +82,10 @@ def _team_name(t: dict) -> str:
     return (t.get("name") or f"{t.get('location', '')} {t.get('nickname', '')}").strip() or t.get("abbrev", "")
 
 
-# How the league's ESPN scoring items line up with SCORING in config.py
-CONFIG_STAT = {"points": 0, "rebounds": 6, "assists": 3, "steals": 2, "blocks": 1, "turnovers": 11, "fgm": 13,
-               "fga": 14, "ftm": 15, "fta": 16}
-
-
 def scoring_matches(league_items: list[tuple[int, float]], scoring: dict) -> bool:
-    ours = {CONFIG_STAT[k]: float(v) for k, v in scoring.items() if v}
-    return ours == {sid: float(pts) for sid, pts in league_items if pts}
+    """Whether the league's ESPN scoring items score exactly like a SCORING dict."""
+    theirs, unknown = model.scoring_from_espn(league_items)
+    return not unknown and theirs == {k: v for k, v in scoring.items() if v}
 
 
 def _entries(league: dict | None):

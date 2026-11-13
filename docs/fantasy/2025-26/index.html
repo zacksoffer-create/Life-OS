@@ -50,6 +50,8 @@ button { font: inherit; color: inherit; }
 .brand h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.75rem; letter-spacing: 0.01em; line-height: 1; }
 .brand h1 b { color: var(--accent); font-weight: 700; }
 .through { color: var(--muted); font-size: 0.8rem; flex: 1; min-width: 0; }
+.seasonlink { flex: none; align-self: center; color: var(--muted); font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.seasonlink:hover { color: var(--accent); }
 .iconbtn {
   flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
   font-weight: 700; cursor: pointer; align-self: center;
@@ -196,11 +198,12 @@ h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); fo
   @keyframes slide { from { transform: translateY(12px); opacity: 0.6; } to { transform: none; opacity: 1; } }
 }
 
-/* The season page: the same scorer's-table system, with tabs for the four ways into a finished season. */
+/* Finished seasons and the league history: tabs, panes, weeks, matchups, facts */
 .tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--raised); border-radius: 10px; padding: 3px; gap: 2px; }
 .tabs button { border: 0; background: transparent; padding: 7px 4px; border-radius: 8px; font-family: var(--display); font-weight: 600; font-size: 1.02rem; letter-spacing: 0.02em; color: var(--muted); cursor: pointer; }
 .tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
 #sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#season { height: 30px; font-size: 0.78rem; align-self: center; }
 .brand a { color: var(--muted); font-size: 0.8rem; text-decoration: none; white-space: nowrap; }
 .brand a:hover { color: var(--accent); }
 .pane { max-width: 860px; display: grid; gap: 22px; padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 14px 40px; }
@@ -242,9 +245,10 @@ h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); fo
 .mini tr.line td { border-top: 2px solid var(--accent); }
 .mini td.nm, .mini th.nm { text-align: left; }
 .mini td.nm { max-width: 11rem; overflow: hidden; text-overflow: ellipsis; }
-.k { color: var(--accent); font-weight: 700; font-size: 0.7rem; margin-left: 4px; }
+.kbadge { color: var(--accent); font-weight: 700; font-size: 0.7rem; margin-left: 4px; }
 #board { --grouph: 0px; }
 .lead2 { font-size: 0.9rem; color: var(--muted); max-width: 65ch; margin: 0; }
+
 </style>
 
 </head><body><div id="app">
@@ -252,7 +256,7 @@ h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); fo
     <div class="brand">
       <h1 id="title">Season</h1>
       <span class="through" id="sub"></span>
-      <a href="../">This season →</a>
+      <select class="pick" id="season" aria-label="Season"></select>
     </div>
     <nav class="tabs" id="tabs" aria-label="Views"></nav>
     <div id="controls" class="row"></div>
@@ -536,7 +540,7 @@ function start(D) {
         <div class="top"><div>${top ? `${esc(top.p.n)} <span>${f0(top.wk[w.mp].fp)} FP</span>` : ""}</div><div>${best ? `${tag(best[0])} <span>${f0(best[1])} high score</span>` : ""}</div></div>
         <div>${mine ? `<span class="res ${mine.res}">${mine.res.toUpperCase()} ${f0(mine.pts)}–${f0(mine.oppPts)}</span>` : ""}</div></div>`;
     }).join("");
-    board().innerHTML = `<div class="pane"><p class="lead2">${WEEKS.length} matchup weeks: ${REG} in the regular season, then the playoffs (two weeks a round, three around the All-Star break). Each row: the week's top player, its highest team score and ${ME ? "your result" : "results"}. Tap a week for all of it.</p><div class="list">${rows}</div></div>`;
+    board().innerHTML = `<div class="pane"><p class="lead2">${WEEKS.length} matchup weeks: ${REG} in the regular season, then ${WEEKS.filter((w) => w.po).length} playoff rounds${WEEKS.some((w) => w.po && w.b - w.a > 7) ? " (a round can run two or three weeks)" : ""}. Each row: the week's top player, its highest team score and ${ME ? "your result" : "results"}. Tap a week for all of it.</p><div class="list">${rows}</div></div>`;
   }
   function renderWeek(mp) {
     const w = WEEKS.find((x) => x.mp === mp);
@@ -637,7 +641,7 @@ function start(D) {
     const rows = sorted.map((d) => {
       const sep = state.draftSort === "order" && d.round !== lastRound ? `<tr class="sep"><td colspan="6">Round ${d.round}</td></tr>` : "";
       lastRound = d.round;
-      return sep + `<tr class="click${TEAMS[d.team] && TEAMS[d.team].mine ? " cur" : ""}" data-player="${d.pid}"><td>${d.round}.${String(d.rp).padStart(2, "0")}</td><td>${tag(d.team)}</td><td class="nm">${esc(pname(d.pid))}${d.keeper ? '<span class="k">K</span>' : ""}</td><td class="hl">${f0(d.total)}</td><td>${d.rank ? "#" + d.rank : "–"}</td><td class="${tone(d.vs)}">${signed(d.vs)}</td></tr>`;
+      return sep + `<tr class="click${TEAMS[d.team] && TEAMS[d.team].mine ? " cur" : ""}" data-player="${d.pid}"><td>${d.round}.${String(d.rp).padStart(2, "0")}</td><td>${tag(d.team)}</td><td class="nm">${esc(pname(d.pid))}${d.keeper ? '<span class="kbadge">K</span>' : ""}</td><td class="hl">${f0(d.total)}</td><td>${d.rank ? "#" + d.rank : "–"}</td><td class="${tone(d.vs)}">${signed(d.vs)}</td></tr>`;
     }).join("");
     const byTeam = TLIST.map((t) => {
       const mine = DRAFT.filter((d) => d.team === t.id);
@@ -712,6 +716,11 @@ function start(D) {
   const go = (hash) => { location.hash = hash; };
 
   document.getElementById("title").innerHTML = `${M.seasonLabel} <b>Season</b>`;
+  // Jump between seasons, the league's history and the live page
+  const seasonSel = document.getElementById("season");
+  seasonSel.innerHTML = [["", M.seasonLabel]].concat((M.seasons || []).filter((x) => x !== M.seasonLabel).map((x) => ["../" + x + "/", x]),
+    [["../history/", "League history"], ["../", "This season (live)"]]).map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
+  seasonSel.addEventListener("change", (e) => { if (e.target.value) location.href = e.target.value; });
   document.getElementById("sub").textContent = LG ? LG.name : "Full regular season";
   document.querySelector(".top").addEventListener("click", (e) => {
     const b = e.target.closest("button");

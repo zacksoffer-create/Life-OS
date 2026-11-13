@@ -27,17 +27,30 @@ def load_espn(season_dir: str) -> dict | None:
     if not os.path.exists(os.path.join(d, "league.json")):
         return None
     out = {}
-    for name in ("league", "days", "names"):
-        with open(os.path.join(d, f"{name}.json"), encoding="utf-8") as f:
-            out[name] = json.load(f)
+    for name in ("league", "days", "names", "dates"):
+        path = os.path.join(d, f"{name}.json")
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                out[name] = json.load(f)
     return out
+
+
+def day_zero(espn: dict | None, opening: pd.Timestamp) -> int:
+    """The page day of ESPN's scoring period 0, so period n is day_zero + n.
+
+    Usually period 1 is opening night, but not always (in 2022-23 it was the day before), so read it off ESPN's
+    calendar when the import has one.
+    """
+    dates = (espn or {}).get("dates") or {}
+    offsets = sorted(_day(d) - int(k) for k, d in dates.items())
+    return offsets[len(offsets) // 2] if offsets else _day(opening) - 1
 
 
 def _day(ts) -> int:
     return int((pd.Timestamp(ts) - page.EPOCH).days)
 
 
-def calendar(league: dict, opening: pd.Timestamp) -> list[list[int]]:
+def calendar(league: dict, base: int) -> list[list[int]]:
     """The league's matchup weeks as [week, first day, last day, playoffs?], days counted like the page (from 2017)."""
     spans: dict[int, list[int]] = {}
     for m in league["schedule"]:
@@ -46,13 +59,11 @@ def calendar(league: dict, opening: pd.Timestamp) -> list[list[int]]:
                 a = spans.setdefault(m["mp"], [10**6, 0])
                 a[0], a[1] = min(a[0], int(k)), max(a[1], int(k))
     regular = league["settings"]["schedule"].get("matchupPeriodCount") or 0
-    base = _day(opening) - 1  # scoring period 1 is opening night
     return [[mp, base + a, base + b, int(mp > regular)] for mp, (a, b) in sorted(spans.items())]
 
 
-def lineups(days: dict, opening: pd.Timestamp) -> pd.DataFrame:
+def lineups(days: dict, base: int) -> pd.DataFrame:
     """Every team-player-day from the daily lineups: day, fantasy team, player, lineup (1 started, 0 bench, 2 IR)."""
-    base = _day(opening) - 1
     rows = [(base + int(sp), team, pid, 2 if slot == IR else 0 if slot == BENCH else 1)
             for sp, entries in days.items() for team, pid, slot in entries]
     return pd.DataFrame(rows, columns=["day", "ft", "player_id", "st"])
@@ -111,7 +122,8 @@ def arcs(g: pd.DataFrame, box: pd.DataFrame) -> dict:
     return out
 
 
-def build(df: pd.DataFrame, season: int, espn: dict | None, ages: dict[int, int] | None = None) -> dict:
+def build(df: pd.DataFrame, season: int, espn: dict | None, ages: dict[int, int] | None = None,
+          scoring: dict | None = None, my_owner: str | None = None) -> dict:
     """The season page's data."""
     s = df[df.season == season].copy()
     s["day"] = (s.date - page.EPOCH).dt.days
@@ -120,8 +132,9 @@ def build(df: pd.DataFrame, season: int, espn: dict | None, ages: dict[int, int]
     teams_nba = {int(t): a for t, a in df.groupby("team_id").team.last().items()}
 
     league = espn["league"] if espn else None
-    lu = lineups(espn["days"], opening) if espn else pd.DataFrame(columns=["day", "ft", "player_id", "st"])
-    weeks = calendar(league, opening) if league else []
+    base = day_zero(espn, opening)
+    lu = lineups(espn["days"], base) if espn else pd.DataFrame(columns=["day", "ft", "player_id", "st"])
+    weeks = calendar(league, base) if league else []
 
     # Fantasy context on every game: whose team he was on that day and whether he was in the starting lineup
     s = s.merge(lu, on=["day", "player_id"], how="left")
@@ -210,8 +223,8 @@ def build(df: pd.DataFrame, season: int, espn: dict | None, ages: dict[int, int]
             "season": season, "seasonLabel": f"{season - 1}-{str(season)[2:]}",
             "first": _day(opening), "last": int(played.day.max()),
             "built": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "scoring": config.SCORING, "fields": page.FIELDS, "logFields": LOG_FIELDS, "arcFields": ARC_FIELDS,
-            "league": {"name": league["settings"]["name"], "me": _my_team(teams), "keepers": league["settings"]["draft"].get("keeperCount")
+            "scoring": scoring or config.SCORING, "fields": page.FIELDS, "logFields": LOG_FIELDS, "arcFields": ARC_FIELDS,
+            "league": {"name": league["settings"]["name"], "me": _my_team(teams, league, my_owner), "keepers": league["settings"]["draft"].get("keeperCount")
                        or config.KEEPERS, "playoffTeams": league["settings"]["schedule"].get("playoffTeamCount"),
                        "regularWeeks": league["settings"]["schedule"].get("matchupPeriodCount")} if league else None,
         },
@@ -226,7 +239,11 @@ def build(df: pd.DataFrame, season: int, espn: dict | None, ages: dict[int, int]
     }
 
 
-def _my_team(teams: list[list]) -> int | None:
+def _my_team(teams: list[list], league: dict, my_owner: str | None) -> int | None:
+    """Your team that season: by manager (team names change), else by MY_TEAM's name."""
+    for t in league.get("teams") or []:
+        if my_owner and t.get("owner") == my_owner:
+            return t["id"]
     for t in teams:
         if str(t[2]).strip().lower() == config.MY_TEAM.strip().lower():
             return t[0]
@@ -235,7 +252,7 @@ def _my_team(teams: list[list]) -> int | None:
 
 def check_against_espn(payload: dict, espn: dict, opening: pd.Timestamp) -> tuple[int, int]:
     """Recompute every team's daily score from the lineups and compare with ESPN's: (matching team-days, all)."""
-    base = _day(opening) - 1
+    base = day_zero(espn, opening)
     ours: dict[tuple[int, int], float] = {}
     for p in payload["players"]:
         for g in p["log"]:

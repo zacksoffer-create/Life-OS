@@ -74,3 +74,13 @@ def test_fp_per_minute_weights_by_minutes():
     l5 = model.rates(model.windows(df, 2027)["l5"]).loc[1]
     assert l5.fpm == pytest.approx(40 / 50)  # total points over total minutes, not the average of 1.0 and 0.0
     assert l5.fpg == pytest.approx(20)
+
+
+def test_scoring_from_espn_settings():
+    # FGM +1, FG missed -1 (statId 23) and a double-double bonus (statId 37)
+    sc, unknown = model.scoring_from_espn([{"statId": 0, "points": 1}, {"statId": 13, "points": 1},
+                                           {"statId": 23, "points": -1}, {"statId": 37, "points": 2}])
+    assert not unknown and sc == {"points": 1, "fgm": 2, "fga": -1, "dd": 2}
+    df = model.clean(pd.DataFrame([box_row(1, "2026-11-11", pts=20, reb=10, fgm=8, fga=15)]))
+    assert model.fantasy_points(df, sc).iloc[0] == 20 + 2 * 8 - 15 + 2  # a double-double
+    assert model.scoring_from_espn([{"statId": 999, "points": 1}])[1] == [999]

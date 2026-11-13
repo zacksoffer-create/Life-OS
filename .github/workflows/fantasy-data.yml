@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       import_season:
-        description: "Import a finished ESPN season instead of refreshing (e.g. 2026 for 2025-26). Leave empty to refresh."
+        description: "Import finished ESPN seasons instead of refreshing (e.g. 2026 for 2025-26, or 2020-2026). Leave empty to refresh."
         required: false
         default: ""
 permissions:

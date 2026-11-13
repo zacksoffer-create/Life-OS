@@ -6,10 +6,23 @@ The output is one phone page.
 
 **On your phone:** https://zacksoffer-create.github.io/Life-OS/fantasy/ (Safari, then Share > Add to Home Screen).
 
-## Finished seasons
+## League history and finished seasons
 
-**2025-26:** https://zacksoffer-create.github.io/Life-OS/fantasy/2025-26/. A finished season is its own page and never
-needs refreshing. It has four tabs:
+**History:** https://zacksoffer-create.github.io/Life-OS/fantasy/history/. Every season the league has played on ESPN
+(2019-20 on), together:
+- **Managers:** champions, every manager's finish and record each season, and the all-time table (titles, playoffs,
+  average finish, all-play record and luck). Managers are followed by an opaque owner key from ESPN, never a name, and
+  shown under their latest team name.
+- **Rivals:** any manager's record against each other manager, regular season and playoffs.
+- **Draft:** which rounds produce value, how keepers paid off by the round they cost, who drafts best, the most-kept
+  players, and the best and worst picks.
+- **Lessons:** three tests on every NBA season since 2017-18: what carries over from season to season (FP per minute
+  far more than minutes), what predicts the next 10 games (the season so far beats L10; about 80/20 is best), and how
+  much of a hot streak lasts (minutes-driven streaks keep about twice as much as per-minute ones).
+
+**Each season:** https://zacksoffer-create.github.io/Life-OS/fantasy/2025-26/ (and 2024-25 back to 2019-20, from the
+season picker). A finished season is its own page and never needs refreshing. Each season is scored with that
+season's own league settings, read from the import. It has four tabs:
 
 - **Players:** every player's whole season. The board has Total FP, FP/G, FP per minute, best 10-game stretch, floor
   and ceiling games, how much his games swing, and games missed. A player's card adds his rolling-10 arc with the hot
@@ -24,13 +37,15 @@ needs refreshing. It has four tabs:
   final roster ranked by full-season FP/G, with the keeper line.
 
 How it's made, once per season:
-1. **Import the league from ESPN:** Actions tab > Rolling 10 data > Run workflow, with `import_season` set to `2026`.
-   This saves `fantasy/seasons/2026/espn/` (settings, standings, matchups, the draft, and every team's lineup every day)
-   and commits it.
+1. **Import the league from ESPN:** Actions tab > Rolling 10 data > Run workflow, with `import_season` set to `2026`
+   (or a range like `2020-2026`). This saves `fantasy/seasons/<season>/espn/` (settings, standings, matchups, the
+   draft, and every team's lineup every day) and commits it.
 2. **Build the page:** run `python3 fantasy/build_season.py 2026` and commit `docs/fantasy/2025-26/`.
+3. **Rebuild the history:** run `python3 fantasy/build_history.py` and commit `docs/fantasy/history/`.
 
-The build rebuilds every team's daily score from the lineups and the box scores and checks it against ESPN's. For
-2025-26 they match on 1,592 of 1,600 team-days; the other 8 are off by a point or so from ESPN stat corrections.
+The build rebuilds every team's daily score from the lineups and the box scores and checks it against ESPN's: 97-99.5%
+of team-days match exactly in every season (the rest are a point or two off from ESPN stat corrections), except the
+last two weeks of 2019-20, before the shutdown, where ESPN's lineups don't fully line up with the box scores.
 
 ## How it stays current
 
@@ -70,6 +85,8 @@ same for the claude.ai Artifact.
 | `web/template.html` | The live page (layout, board, player card, charts). |
 | `web/season.html` | A finished season's page. Both pages share `web/base.css`. |
 | `hoops/season.py`, `build_season.py` | A finished season: player arcs, weeks, the league replayed, the draft review. |
+| `build_history.py`, `web/history.html` | The league history page. |
+| `hoops/studies.py` | The tests on the Lessons tab. |
 | `tools/import_season.py` | The one-time ESPN import of a finished season, into `seasons/<season>/espn/` (committed). |
 | `tools/espn_probe.py` | Prints the shape of ESPN's answers, for debugging the league read. |
 | `../docs/fantasy/` | The GitHub Pages copy of the page, built from the template (committed). |

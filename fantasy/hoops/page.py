@@ -5,6 +5,7 @@ import datetime as dt
 import json
 import math
 import os
+import re
 
 import pandas as pd
 
@@ -148,8 +149,10 @@ def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int, league: di
             "windows": WINDOW_KEYS,
             "league": league_meta,
             # Finished seasons that have their own page (docs/fantasy/<label>/), newest first
-            "seasonPages": sorted((d for d in os.listdir(SEASON_PAGES) if os.path.exists(os.path.join(SEASON_PAGES, d, "index.html"))),
+            "seasonPages": sorted((d for d in os.listdir(SEASON_PAGES) if re.fullmatch(r"\d{4}-\d{2}", d)
+                                   and os.path.exists(os.path.join(SEASON_PAGES, d, "index.html"))),
                                   reverse=True) if os.path.isdir(SEASON_PAGES) else [],
+            "historyPage": os.path.exists(os.path.join(SEASON_PAGES, "history", "index.html")),
             "pagesUrl": config.PAGES_URL,
         },
         "teams": teams,
