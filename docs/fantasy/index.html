@@ -50,8 +50,7 @@ button { font: inherit; color: inherit; }
 .brand h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.75rem; letter-spacing: 0.01em; line-height: 1; }
 .brand h1 b { color: var(--accent); font-weight: 700; }
 .through { color: var(--muted); font-size: 0.8rem; flex: 1; min-width: 0; }
-.seasonlink { flex: none; align-self: center; color: var(--muted); font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
-.seasonlink:hover { color: var(--accent); }
+.navsel, #nav { height: 30px; font-size: 0.78rem; align-self: center; max-width: 8.5rem; }
 .iconbtn {
   flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
   font-weight: 700; cursor: pointer; align-self: center;
@@ -255,7 +254,7 @@ h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); fo
     <div class="brand">
       <h1>Rolling <b>10</b></h1>
       <span class="through" id="through"></span>
-      <a class="seasonlink" id="seasonlink" hidden></a>
+      <select class="pick navsel" id="nav" aria-label="Go to" hidden></select>
       <button class="iconbtn" id="howbtn" type="button" aria-label="How the numbers work">?</button>
     </div>
     <p class="note" id="leaguenote" hidden></p>
@@ -705,12 +704,17 @@ function start(DATA) {
     note.hidden = false;
   }
   document.getElementById("howbtn").addEventListener("click", () => { location.hash = "how"; });
-  if (M.historyPage || (M.seasonPages && M.seasonPages.length)) {
-    const a = document.getElementById("seasonlink");
-    a.href = (M.pagesUrl || "") + (M.historyPage ? "history/" : M.seasonPages[0] + "/");
-    a.textContent = M.historyPage ? "Past seasons →" : M.seasonPages[0] + " →";
-    a.title = M.historyPage ? "Every finished season and the league's history" : "The full " + M.seasonPages[0] + " season";
-    a.hidden = false;
+  {
+    // Links to the other pages: young players, the league's history and each finished season
+    const base = M.pagesUrl || "";
+    const pages = [].concat(M.youngPage ? [[base + "young/", "Young players"]] : [], M.historyPage ? [[base + "history/", "League history"]] : [],
+      (M.seasonPages || []).map((x) => [base + x + "/", x + " season"]));
+    const nav = document.getElementById("nav");
+    if (pages.length) {
+      nav.innerHTML = [["", "More"]].concat(pages).map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
+      nav.addEventListener("change", (e) => { if (e.target.value) location.href = e.target.value; });
+      nav.hidden = false;
+    }
   }
   document.getElementById("q").addEventListener("input", (e) => { state.q = e.target.value; state.limit = 100; renderBoard(); });
   for (const id of ["roster", "pos"]) {

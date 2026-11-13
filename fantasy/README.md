@@ -6,6 +6,25 @@ The output is one phone page.
 
 **On your phone:** https://zacksoffer-create.github.io/Life-OS/fantasy/ (Safari, then Share > Add to Home Screen).
 
+## Young players
+
+**https://zacksoffer-create.github.io/Life-OS/fantasy/young/**, refreshed every morning with the live page. Every
+player in his first three seasons, with:
+- **Starter odds and star odds:** the chance of a top-100 or a top-30 fantasy season in years 3 to 5, from a model
+  trained on every rookie class since 2002-03 (box scores back to 2001-02, scored with the league's formula, each
+  season ranked on its own so eras compare fairly). One model reads a first season, one reads the first two.
+- **His rolling-10 arc** (FP per minute, FP/G and minutes across his career), what's moving his odds, and where he
+  stands against past players at the same point.
+- **The five closest past players** by early profile, and what each became.
+
+What the research behind it found: the year-2 average carries most of the signal. On top of it, a rolling-10 FP per
+minute that keeps climbing, producing efficiently on limited minutes, the year 1 to year 2 jump and youth predict a
+better career; hot 10-game stretches, finishing strong and consistency don't. Out of sample, the two-season model
+separates future starters from the rest with an AUC of 0.88 (stars 0.94), and when it says 90%+, 96% did.
+
+Ages come from `seasons/birthdates.json` (fetched once from ESPN: Actions tab > Rolling 10 data > Run workflow >
+birthdates; the daily job fills in new rookies). Code: `hoops/young.py`, page `web/young.html`.
+
 ## League history and finished seasons
 
 **History:** https://zacksoffer-create.github.io/Life-OS/fantasy/history/. Every season the league has played on ESPN
@@ -87,6 +106,8 @@ same for the claude.ai Artifact.
 | `hoops/season.py`, `build_season.py` | A finished season: player arcs, weeks, the league replayed, the draft review. |
 | `build_history.py`, `web/history.html` | The league history page. |
 | `hoops/studies.py` | The tests on the Lessons tab. |
+| `hoops/young.py`, `web/young.html` | The young-player model and page. |
+| `tools/fetch_birthdates.py` | The one-time birthdate fetch (into `seasons/birthdates.json`). |
 | `tools/import_season.py` | The one-time ESPN import of a finished season, into `seasons/<season>/espn/` (committed). |
 | `tools/espn_probe.py` | Prints the shape of ESPN's answers, for debugging the league read. |
 | `../docs/fantasy/` | The GitHub Pages copy of the page, built from the template (committed). |

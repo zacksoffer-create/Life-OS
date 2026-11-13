@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import os
 import sys
 import time
@@ -27,15 +28,44 @@ import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from hoops import config, espn, fetch, model, page  # noqa: E402
+from hoops import config, espn, fetch, model, page, young  # noqa: E402
 
 
 def load(raw_dir: str, first: int, last: int) -> tuple[pd.DataFrame, pd.DataFrame]:
     boxes, scheds = [], []
     for season in range(first, last + 1):
-        boxes.append(pd.read_parquet(fetch.local_path(raw_dir, "player_box", season)))
+        b = pd.read_parquet(fetch.local_path(raw_dir, "player_box", season))
+        if "reason" not in b:  # older seasons don't say why a player sat
+            b["reason"] = None
+        boxes.append(b)
         scheds.append(pd.read_parquet(fetch.local_path(raw_dir, "schedule", season)))
     return pd.concat(boxes, ignore_index=True), pd.concat(scheds, ignore_index=True)
+
+
+def build_young(df_all: pd.DataFrame, season: int, out_dir: str, pages_dir: str, offline: bool) -> None:
+    """The Young Players page: its data (young.json, published with data.json) and its GitHub Pages copy."""
+    path = os.path.join(HERE, "seasons", "birthdates.json")
+    birthdates = {}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            birthdates = json.load(f)
+    if not offline:  # this season's new rookies: fetch the few birthdates the saved file doesn't have yet
+        played = df_all[df_all.played]
+        debut = played.groupby("player_id").season.min()
+        missing = [int(p) for p in debut[debut >= season - 2].index if str(p) not in birthdates][:80]
+        found = {str(p): d for p, d in zip(missing, map(espn.birthdate, missing)) if d}
+        birthdates.update(found)
+        if missing:
+            print(f"  birthdates: {len(found)} of {len(missing)} new young players found")
+    data = young.build(df_all, season, birthdates)
+    with open(os.path.join(out_dir, "young.json"), "w", encoding="utf-8") as f:
+        json.dump(data, f, separators=(",", ":"), ensure_ascii=False)
+    shell = page.read_template(os.path.join(HERE, "web", "young.html"))
+    os.makedirs(os.path.join(pages_dir, "young"), exist_ok=True)
+    with open(os.path.join(pages_dir, "young", "index.html"), "w", encoding="utf-8") as f:
+        f.write(page._document(shell.replace(page.URL_MARK, json.dumps(config.YOUNG_URL))))
+    page.icon(os.path.join(pages_dir, "young", "apple-touch-icon.png"))
+    print(f"Young players: {len(data['players'])} -> young.json")
 
 
 def report_league(league: dict | None, df: pd.DataFrame, season: int) -> None:
@@ -97,11 +127,15 @@ def main(argv=None) -> int:
             season -= 1
     else:
         print("Downloading box scores and schedules")
-        season = fetch.download(raw, config.FIRST_SEASON, season)
-
-    box, sched = load(raw, config.FIRST_SEASON, season)
-    df = model.clean(model.regular_season(box, sched))
-    df = model.add_rolling(model.add_advanced(df), config.TREND_WINDOW)
+        season = fetch.download(raw, config.YOUNG_FIRST_SEASON, season, log=lambda *a: None)
+    # Everything since 2001-02 for the young-player model; the live page uses 2017-18 on
+    first = config.YOUNG_FIRST_SEASON
+    while first < config.FIRST_SEASON and not os.path.exists(fetch.local_path(raw, "player_box", first)):
+        first += 1
+    box, sched = load(raw, first, season)
+    df_all = model.add_advanced(model.clean(model.regular_season(box, sched)))
+    sched = sched[sched.season >= config.FIRST_SEASON]
+    df = model.add_rolling(df_all[df_all.season >= config.FIRST_SEASON].reset_index(drop=True), config.TREND_WINDOW)
     through = df[df.played].date.max().date()
     print(f"{df.played.sum():,} games played by {df[df.played].player_id.nunique():,} players, "
           f"{config.FIRST_SEASON - 1}-{str(config.FIRST_SEASON)[2:]} through {through:%b %d, %Y}")
@@ -122,6 +156,13 @@ def main(argv=None) -> int:
     paths = page.render(payload, os.path.join(HERE, "web", "template.html"), args.out, args.pages, args.data_url)
     size = os.path.getsize(paths[0]) / 1e6
     print(f"Page: {len(payload['players'])} players, {size:.1f} MB -> {os.path.relpath(paths[0])}")
+    if first <= config.YOUNG_FIRST_SEASON + 1:
+        try:
+            build_young(df_all, season, args.out, args.pages, args.offline)
+        except Exception as e:  # noqa: BLE001 - the live page still publishes
+            print(f"Young players page skipped: {e!r}")
+    else:
+        print("Young players page skipped: box scores before 2017-18 aren't downloaded (run without --offline once)")
     print(f"Done in {time.time() - t0:.1f}s")
     return 0
 

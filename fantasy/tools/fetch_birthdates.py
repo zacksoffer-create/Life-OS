@@ -12,34 +12,15 @@ import concurrent.futures as cf
 import json
 import os
 import sys
-import urllib.request
 
 import pandas as pd
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, ".."))
 from hoops import config, fetch  # noqa: E402
+from hoops.espn import birthdate  # noqa: E402
 
 OUT = os.path.join(HERE, "..", "seasons", "birthdates.json")
-SOURCES = [
-    "https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/athletes/{id}",
-    "https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/{id}",
-]
-UA = {"User-Agent": "Mozilla/5.0 (rolling10 birthdates)", "Accept": "application/json"}
-
-
-def birthdate(pid: int) -> str | None:
-    for url in SOURCES:
-        try:
-            req = urllib.request.Request(url.format(id=pid), headers=UA)
-            with urllib.request.urlopen(req, timeout=30) as r:
-                d = json.load(r)
-        except Exception:  # noqa: BLE001
-            continue
-        dob = d.get("dateOfBirth") or (d.get("athlete") or {}).get("dateOfBirth")
-        if dob:
-            return dob[:10]
-    return None
 
 
 def main() -> int:
