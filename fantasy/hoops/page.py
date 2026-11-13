@@ -35,12 +35,23 @@ def _day(ts) -> int:
     return int((pd.Timestamp(ts) - EPOCH).days)
 
 
-def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int) -> dict:
+def keeper_scores(sums: dict[str, pd.DataFrame], weight: float) -> pd.Series:
+    """FP/G over this season and last, with each of last season's games counting `weight` of one of this season's."""
+    cur, prev = sums["season"], sums["last"]
+    ids = cur.index.union(prev.index)
+    fp = cur.fp.reindex(ids, fill_value=0) + weight * prev.fp.reindex(ids, fill_value=0)
+    gp = cur.gp.reindex(ids, fill_value=0) + weight * prev.gp.reindex(ids, fill_value=0)
+    return (fp / gp.where(gp > 0)).dropna()
+
+
+def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int, league: dict | None = None) -> dict:
     played = df[df.played]
     through = played.date.max()
     on_page = played[played.season >= season - config.PAGE_SEASONS_BACK].player_id.unique()
 
-    win = {k: model.rates(v) for k, v in model.windows(df, season).items()}
+    sums = model.windows(df, season)
+    win = {k: model.rates(v) for k, v in sums.items()}
+    kv = keeper_scores(sums, config.KEEPER_LAST_SEASON_WEIGHT)
     last = model.missed_games(df, season)
     hist = model.seasons(df)
     latest = played.groupby("player_id").tail(1).set_index("player_id")
@@ -82,7 +93,35 @@ def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int) -> dict:
         }
         p["log"] = log_rows.get(pid, [])
         p["hist"] = hist_rows.get(pid, [])
+        p["kv"] = _num(kv.get(pid))
         players.append(p)
+
+    league_meta = None
+    if league:
+        lp = league["players"]
+        shown = {p["id"] for p in players}
+        # Rostered players with no games in the last two seasons (a rookie who hasn't debuted, a long injury) still
+        # belong on their fantasy team's list
+        for pid, x in lp.items():
+            if x.get("team") and pid not in shown and x.get("name"):
+                players.append({"id": pid, "n": x["name"], "pos": "", "tm": int(x["pro"]) if x.get("pro") else 0,
+                                "last": None, "miss": None, "now": 0, "why": None,
+                                "w": {k: None for k in WINDOW_KEYS}, "log": [], "hist": [], "kv": None})
+        for p in players:
+            x = lp.get(p["id"], {})
+            p["ft"] = x.get("team", 0)  # fantasy team id; 0 = available
+            if x.get("waivers"):
+                p["wv"] = 1
+            for k in ("inj", "own", "age"):
+                if x.get(k) is not None:
+                    p[k] = x[k]
+        league_meta = {
+            "name": league["name"],
+            "teams": [[t["id"], t["abbrev"], t["name"]] for t in league["teams"]],
+            "me": league["me"],
+            "keepers": league.get("keepers") or config.KEEPERS,
+            "lastWeight": config.KEEPER_LAST_SEASON_WEIGHT,
+        }
 
     start_of_week = through.normalize() - pd.Timedelta(days=through.weekday())
     upcoming = sched[(sched.season_type == 2) & ~sched.type_abbreviation.isin(model.NOT_REGULAR)
@@ -104,6 +143,7 @@ def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int) -> dict:
             "seasonFields": SEASON_FIELDS,
             "logFields": LOG_FIELDS,
             "windows": WINDOW_KEYS,
+            "league": league_meta,
         },
         "teams": teams,
         "players": players,

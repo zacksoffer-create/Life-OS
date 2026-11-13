@@ -27,7 +27,7 @@ import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from hoops import config, fetch, model, page  # noqa: E402
+from hoops import config, espn, fetch, model, page  # noqa: E402
 
 
 def load(raw_dir: str, first: int, last: int) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -36,6 +36,29 @@ def load(raw_dir: str, first: int, last: int) -> tuple[pd.DataFrame, pd.DataFram
         boxes.append(pd.read_parquet(fetch.local_path(raw_dir, "player_box", season)))
         scheds.append(pd.read_parquet(fetch.local_path(raw_dir, "schedule", season)))
     return pd.concat(boxes, ignore_index=True), pd.concat(scheds, ignore_index=True)
+
+
+def report_league(league: dict | None, df: pd.DataFrame) -> None:
+    """What came back from ESPN, in the build log, so a bad read is easy to spot."""
+    if not league:
+        print("  No league data this run; the page builds without the league columns")
+        return
+    mine = next((t for t in league["teams"] if t["id"] == league["me"]), None)
+    print(f"  \"{league['name']}\": {len(league['teams'])} teams; yours: "
+          + (f"{mine['name']} (team {mine['id']})" if mine else "NOT FOUND - check MY_TEAM in hoops/config.py"))
+    known = set(df[df.played].player_id.unique())
+    rostered = {pid: x for pid, x in league["players"].items() if x.get("team")}
+    for t in league["teams"]:
+        n = sum(1 for x in rostered.values() if x["team"] == t["id"])
+        print(f"    {t['abbrev']:>5}  {t['name']}: {n} players")
+    missing = [x.get("name") or str(pid) for pid, x in rostered.items() if pid not in known]
+    print(f"  Rostered: {len(rostered)}; with box scores: {len(rostered) - len(missing)}"
+          + (f"; no games on record: {', '.join(missing)}" if missing else ""))
+    ages = sum(1 for x in league["players"].values() if "age" in x)
+    inj = sum(1 for x in league["players"].values() if x.get("inj"))
+    print(f"  Ages: {ages} players; injury tags: {inj}; keepers per team: {league.get('keepers') or config.KEEPERS}")
+    if league["scoring"]:
+        print("  League scoring: " + ", ".join(f"{name} {pts:+g}" for name, pts in league["scoring"]))
 
 
 def main(argv=None) -> int:
@@ -70,8 +93,14 @@ def main(argv=None) -> int:
     df.to_parquet(os.path.join(wh, "player_games.parquet"), index=False)
     model.seasons(df).to_parquet(os.path.join(wh, "player_seasons.parquet"), index=False)
 
+    league = None
+    if config.ESPN_LEAGUE_ID:
+        print(f"ESPN league {config.ESPN_LEAGUE_ID}")
+        league = espn.parse(espn.download(raw, season, config.ESPN_LEAGUE_ID, offline=args.offline), config.MY_TEAM)
+        report_league(league, df)
+
     cur_sched = sched[sched.season == season]
-    payload = page.build_payload(df, cur_sched, season)
+    payload = page.build_payload(df, cur_sched, season, league)
     paths = page.render(payload, os.path.join(HERE, "web", "template.html"), args.out, args.pages, args.data_url)
     size = os.path.getsize(paths[0]) / 1e6
     print(f"Page: {len(payload['players'])} players, {size:.1f} MB -> {os.path.relpath(paths[0])}")

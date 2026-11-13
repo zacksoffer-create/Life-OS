@@ -29,6 +29,15 @@ BASELINE_GAMES = 30
 # The page lists anyone who played in the current or the previous regular season.
 PAGE_SEASONS_BACK = 1
 
+# The ESPN league (public, so no login needed) and your team in it. Set the id to None to build without a league.
+ESPN_LEAGUE_ID = 24493685
+MY_TEAM = "The Process"
+
+# Keepers per team, unless ESPN's league settings say otherwise. The keeper score is FP/G over this season and last,
+# with last season's games counting this much each (so early on it leans on last year, by spring on this one).
+KEEPERS = 6
+KEEPER_LAST_SEASON_WEIGHT = 0.5
+
 # Where the GitHub Pages copy of the page (docs/fantasy/) reads its numbers. The "Rolling 10 data" workflow rewrites this
 # file every morning on the fantasy-data branch, a branch that only ever holds the latest copy.
 DATA_URL = "https://raw.githubusercontent.com/zacksoffer-create/Life-OS/fantasy-data/data.json"
