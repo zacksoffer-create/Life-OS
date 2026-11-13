@@ -3,7 +3,8 @@
 # is replaced on every run, so it never grows and main never gets a daily commit.
 # To refresh by hand: Actions tab > Rolling 10 data > Run workflow.
 # To import a finished season from ESPN (once per season): Run workflow with import_season set, e.g. 2026 for 2025-26.
-# That commits fantasy/seasons/<season>/espn/ to the branch it runs on.
+# That commits fantasy/seasons/<season>/espn/ to the branch it runs on. With birthdates ticked it fetches any missing
+# player birthdates for the young-player model and commits fantasy/seasons/birthdates.json.
 name: Rolling 10 data
 on:
   schedule:
@@ -15,13 +16,17 @@ on:
         description: "Import finished ESPN seasons instead of refreshing (e.g. 2026 for 2025-26, or 2020-2026). Leave empty to refresh."
         required: false
         default: ""
+      birthdates:
+        description: "Fetch missing player birthdates (for the young-player model) instead of refreshing"
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
   group: fantasy-data
 jobs:
   publish:
-    if: ${{ !inputs.import_season }}
+    if: ${{ !inputs.import_season && !inputs.birthdates }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -41,29 +46,33 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir pub && cp fantasy/site/data.json pub/ && cd pub
+          mkdir pub && cp fantasy/site/data.json pub/ && (cp fantasy/site/young.json pub/ || true) && cd pub
           git init -q -b fantasy-data
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data.json
+          git add .
           git commit -q -m "Rolling 10 numbers, built $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" fantasy-data
 
   import-season:
-    if: ${{ inputs.import_season }}
+    if: ${{ inputs.import_season || inputs.birthdates }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Import the season from ESPN
+        if: ${{ inputs.import_season }}
         run: python fantasy/tools/import_season.py "${{ inputs.import_season }}"
+      - name: Fetch player birthdates
+        if: ${{ inputs.birthdates }}
+        run: pip install -r fantasy/requirements.txt && python fantasy/tools/fetch_birthdates.py
       - name: Commit it
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add fantasy/seasons
-          git commit -q -m "Import the ${{ inputs.import_season }} ESPN season" || echo "Nothing new to commit"
+          git commit -q -m "Import from ESPN: ${{ inputs.import_season }}${{ inputs.birthdates && ' birthdates' || '' }}" || echo "Nothing new to commit"
           git push -q origin "HEAD:${{ github.ref_name }}"

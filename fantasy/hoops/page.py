@@ -153,6 +153,7 @@ def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int, league: di
                                    and os.path.exists(os.path.join(SEASON_PAGES, d, "index.html"))),
                                   reverse=True) if os.path.isdir(SEASON_PAGES) else [],
             "historyPage": os.path.exists(os.path.join(SEASON_PAGES, "history", "index.html")),
+            "youngPage": os.path.exists(os.path.join(SEASON_PAGES, "young", "index.html")),
             "pagesUrl": config.PAGES_URL,
         },
         "teams": teams,

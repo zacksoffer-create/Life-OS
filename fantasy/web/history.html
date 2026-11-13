@@ -217,7 +217,7 @@ function start(D) {
 
   document.getElementById("sub").textContent = `${SEASONS.length} seasons, ${SEASONS[0].label} to ${SEASONS[SEASONS.length - 1].label}`;
   const sel = document.getElementById("season");
-  sel.innerHTML = [["", "Go to a season"]].concat(SEASONS.slice().reverse().map((s) => ["../" + s.label + "/", s.label]), [["../", "This season (live)"]])
+  sel.innerHTML = [["", "Go to a season"]].concat(SEASONS.slice().reverse().map((s) => ["../" + s.label + "/", s.label]), [["../young/", "Young players"], ["../", "This season (live)"]])
     .map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
   sel.addEventListener("change", (e) => { if (e.target.value) location.href = e.target.value; });
   document.querySelector(".top").addEventListener("click", (e) => { const b = e.target.closest("[data-tab]"); if (b) location.hash = b.dataset.tab; });

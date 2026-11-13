@@ -474,7 +474,7 @@ function start(D) {
   // Jump between seasons, the league's history and the live page
   const seasonSel = document.getElementById("season");
   seasonSel.innerHTML = [["", M.seasonLabel]].concat((M.seasons || []).filter((x) => x !== M.seasonLabel).map((x) => ["../" + x + "/", x]),
-    [["../history/", "League history"], ["../", "This season (live)"]]).map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
+    [["../young/", "Young players"], ["../history/", "League history"], ["../", "This season (live)"]]).map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
   seasonSel.addEventListener("change", (e) => { if (e.target.value) location.href = e.target.value; });
   document.getElementById("sub").textContent = LG ? LG.name : "Full regular season";
   document.querySelector(".top").addEventListener("click", (e) => {

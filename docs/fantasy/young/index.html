@@ -1,0 +1,509 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Rolling 10"><meta name="theme-color" content="#F2F4F8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0C1423" media="(prefers-color-scheme: dark)"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="apple-touch-icon.png"><style>html{box-sizing:border-box;-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style><title>Young Players</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>/* Layout: a scorer's table. One dense, sortable stat sheet under a fixed header; tap a player and his card slides over it. */
+:root {
+  --bg: #F2F4F8;
+  --surface: #FFFFFF;
+  --raised: #E9EDF4;
+  --ink: #15213A;
+  --muted: #5E6B82;
+  --line: #DAE0EA;
+  --accent: #D2561B;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #FBE6DA;
+  --up: #1B7C45;
+  --down: #BC3A2F;
+  --warn: #8E6210;
+  --warn-soft: #FAEED3;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1423; --surface: #121D31; --raised: #1A2740; --ink: #E6EBF4; --muted: #92A0B7; --line: #233049;
+    --accent: #FF7D3C; --accent-ink: #1B0E05; --accent-soft: #3B2316; --up: #4DC58B; --down: #FF7268;
+    --warn: #E9B14C; --warn-soft: #382B12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1423; --surface: #121D31; --raised: #1A2740; --ink: #E6EBF4; --muted: #92A0B7; --line: #233049;
+  --accent: #FF7D3C; --accent-ink: #1B0E05; --accent-soft: #3B2316; --up: #4DC58B; --down: #FF7268;
+  --warn: #E9B14C; --warn-soft: #382B12; color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 14px; line-height: 1.4; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+#app { height: 100%; display: flex; flex-direction: column; }
+.top {
+  flex: none; display: grid; gap: 10px; background: var(--bg); border-bottom: 1px solid var(--line);
+  padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 12px 10px;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.brand h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.75rem; letter-spacing: 0.01em; line-height: 1; }
+.brand h1 b { color: var(--accent); font-weight: 700; }
+.through { color: var(--muted); font-size: 0.8rem; flex: 1; min-width: 0; }
+.navsel, #nav { height: 30px; font-size: 0.78rem; align-self: center; max-width: 8.5rem; }
+.iconbtn {
+  flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
+  font-weight: 700; cursor: pointer; align-self: center;
+}
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.search {
+  flex: 1 1 8rem; min-width: 0; height: 36px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface);
+  padding: 0 12px; font: inherit; color: var(--ink);
+}
+.search::placeholder { color: var(--muted); }
+.seg { display: inline-flex; background: var(--raised); border-radius: 9px; padding: 3px; gap: 2px; }
+.seg button {
+  border: 0; background: transparent; padding: 5px 9px; border-radius: 7px; font-size: 0.8rem; font-weight: 600;
+  color: var(--muted); cursor: pointer; white-space: nowrap;
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-right: calc(-1 * var(--gutter-r)); padding-right: var(--gutter-r); }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.pick {
+  flex: none; max-width: 48%; height: 36px; border-radius: 9px; border: 1px solid var(--line); background-color: var(--surface);
+  color: var(--ink); font: inherit; font-size: 0.85rem; font-weight: 600; padding: 0 30px 0 11px; cursor: pointer;
+  -webkit-appearance: none; appearance: none; text-overflow: ellipsis;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%; background-size: 5px 5px; background-repeat: no-repeat;
+}
+.row .seg + .pick { height: 32px; }
+.tag { font-size: 0.66rem; font-weight: 700; padding: 1px 6px; border-radius: 5px; background: var(--raised); color: var(--muted); letter-spacing: 0.03em; }
+.tag.mine { background: var(--accent); color: var(--accent-ink); }
+.tag.fa { background: transparent; color: var(--up); box-shadow: inset 0 0 0 1px var(--up); }
+.tag.kept { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.note { margin: -2px 0 0; font-size: 0.75rem; color: var(--warn); background: var(--warn-soft); border-radius: 8px; padding: 5px 9px; }
+.cut td { background: var(--bg) !important; color: var(--accent); font-size: 0.72rem; font-weight: 700; text-align: left; letter-spacing: 0.03em; padding: 5px 0; cursor: default; border-top: 2px solid var(--accent); }
+.cut td span { position: sticky; left: 0; display: inline-block; padding-left: var(--gutter-l); }
+
+.board { flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch; }
+table.grid { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; }
+.grid th, .grid td { padding: 7px 9px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.grid thead th {
+  position: sticky; top: 0; z-index: 2; background: var(--bg); font-size: 0.7rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; vertical-align: bottom; padding-block: 8px 6px;
+}
+.grid thead tr.group th { padding-block: 6px 0; border-bottom: 0; text-align: center; font-size: 0.62rem; letter-spacing: 0.08em; }
+.grid thead tr.group th span { display: block; border-bottom: 1px solid var(--line); padding-bottom: 3px; }
+.grid thead tr.cols th { top: var(--grouph, 22px); }
+.grid th button { border: 0; background: none; padding: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.grid th[aria-sort] { color: var(--accent); }
+.grid th[aria-sort] button::after { content: " ▾"; }
+.grid th[aria-sort="ascending"] button::after { content: " ▴"; }
+.grid tbody tr { background: var(--surface); cursor: pointer; }
+.grid tbody tr:hover td { background: var(--raised); }
+.grid td { font-variant-numeric: tabular-nums; font-size: 0.86rem; }
+.grid .lead { position: sticky; left: 0; z-index: 1; text-align: left; background: var(--surface); padding-left: var(--gutter-l); border-right: 1px solid var(--line); }
+.grid thead .lead { z-index: 3; background: var(--bg); }
+.grid td.sorted { font-weight: 700; }
+.grid td:last-child, .grid th:last-child { padding-right: var(--gutter-r); }
+.pname { display: flex; gap: 8px; align-items: baseline; }
+.rank { color: var(--muted); font-size: 0.72rem; width: 1.6em; text-align: right; flex: none; }
+.who { min-width: 0; max-width: 9.5rem; white-space: normal; }
+.who strong { font-weight: 600; display: block; line-height: 1.2; }
+.meta { color: var(--muted); font-size: 0.72rem; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+.flag { font-size: 0.66rem; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); letter-spacing: 0.02em; }
+.flag.soft { background: var(--raised); color: var(--muted); }
+.up { color: var(--up); }
+.down { color: var(--down); }
+.dim { color: var(--muted); }
+.sub { display: block; font-size: 0.68rem; color: var(--muted); font-weight: 500; }
+.more { position: sticky; left: 0; display: block; margin: 14px var(--gutter-r) 24px var(--gutter-l); padding: 10px 16px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; cursor: pointer; }
+.empty { padding: 32px var(--gutter-r) 32px var(--gutter-l); color: var(--muted); position: sticky; left: 0; max-width: 36rem; }
+
+/* Player card and the notes: full-screen sheets over the board */
+.sheet { position: fixed; inset: 0; z-index: 20; background: var(--bg); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.sheet-bar {
+  position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 10px; background: var(--bg);
+  border-bottom: 1px solid var(--line); padding-top: calc(env(safe-area-inset-top, 0px) + 8px); padding-bottom: 8px;
+  padding-left: var(--gutter-l); padding-right: var(--gutter-r);
+}
+.back { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; padding: 6px 12px; font-weight: 600; cursor: pointer; }
+.sheet-bar .title { font-family: var(--display); font-weight: 600; font-size: 1.15rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet-body {
+  max-width: 760px; margin: 0 auto; display: grid; gap: 22px;
+  padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 16px calc(env(safe-area-inset-bottom, 0px) + 32px);
+}
+.sheet-body > * { min-width: 0; }
+.hero h2 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 2.3rem; line-height: 1; text-wrap: balance; }
+.hero .meta { font-size: 0.85rem; margin-top: 6px; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 560px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.tile .k { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.tile .v { font-family: var(--display); font-weight: 700; font-size: 2rem; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.tile.key .v { color: var(--accent); }
+.tile .d { font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+h3 { margin: 0 0 8px; font-family: var(--display); font-weight: 600; font-size: 1.2rem; letter-spacing: 0.01em; text-wrap: balance; }
+h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); font-weight: 500; letter-spacing: 0; margin-left: 6px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.drivers { display: grid; gap: 10px; }
+.drv { display: grid; grid-template-columns: 7.5rem 1fr 3.6rem; gap: 10px; align-items: center; font-size: 0.85rem; }
+.drv .lbl { color: var(--muted); }
+.drv .val { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 12px; background: var(--raised); border-radius: 6px; }
+.track::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--muted); opacity: 0.5; }
+.bar { position: absolute; top: 0; bottom: 0; border-radius: 6px; }
+.bar.pos { left: 50%; background: var(--up); }
+.bar.neg { right: 50%; background: var(--down); }
+.say { margin: 2px 0 0; color: var(--muted); font-size: 0.85rem; max-width: 65ch; }
+.charts { display: grid; gap: 4px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart .cap { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.ax { fill: var(--muted); font-size: 10px; font-family: var(--body); }
+.gridln { stroke: var(--line); stroke-width: 1; }
+.boundary { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
+.ln { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ln.ink { stroke: var(--ink); }
+.area { fill: var(--accent); opacity: 0.1; stroke: none; }
+.dot { fill: var(--muted); opacity: 0.35; }
+.endpt { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.endlbl { fill: var(--ink); font-size: 11px; font-weight: 700; font-family: var(--body); }
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 6px; }
+.game { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; padding: 6px 10px; font-size: 0.82rem; }
+.game .dt { color: var(--muted); font-size: 0.72rem; }
+.game.thisweek { border-color: var(--accent); }
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.mini { border-collapse: collapse; width: 100%; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.mini th, .mini td { padding: 6px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.mini tr:last-child td { border-bottom: 0; }
+.mini th { font-size: 0.66rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; background: var(--raised); }
+.mini td:first-child, .mini th:first-child { text-align: left; padding-left: 12px; }
+.mini td:last-child, .mini th:last-child { padding-right: 12px; }
+.mini .hl { font-weight: 700; }
+.mini tr.cur td { background: var(--accent-soft); }
+.how { display: grid; gap: 14px; max-width: 65ch; }
+.how p, .how li { margin: 0; color: var(--ink); }
+.how ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; }
+.how .formula { display: flex; flex-wrap: wrap; gap: 6px; }
+.how .formula span { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.how .formula span.neg { color: var(--down); }
+@media (prefers-reduced-motion: no-preference) {
+  .sheet:not([hidden]) { animation: slide 0.18s ease-out; }
+  @keyframes slide { from { transform: translateY(12px); opacity: 0.6; } to { transform: none; opacity: 1; } }
+}
+
+/* Finished seasons and the league history: tabs, panes, weeks, matchups, facts */
+.tabs { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--raised); border-radius: 10px; padding: 3px; gap: 2px; }
+.tabs button { border: 0; background: transparent; padding: 7px 4px; border-radius: 8px; font-family: var(--display); font-weight: 600; font-size: 1.02rem; letter-spacing: 0.02em; color: var(--muted); cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+#sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#season { height: 30px; font-size: 0.78rem; align-self: center; }
+.brand a { color: var(--muted); font-size: 0.8rem; text-decoration: none; white-space: nowrap; }
+.brand a:hover { color: var(--accent); }
+.pane { max-width: 860px; display: grid; gap: 22px; padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 14px 40px; }
+.pane > * { min-width: 0; }
+.wk { display: grid; grid-template-columns: 4.3rem minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+.wk:hover { background: var(--raised); }
+.wk .n { font-family: var(--display); font-weight: 700; font-size: 1.15rem; line-height: 1.1; }
+.wk .n small { display: block; font-family: var(--body); font-size: 0.7rem; color: var(--muted); font-weight: 500; }
+.wk .top { font-size: 0.82rem; min-width: 0; }
+.wk .top div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wk .top span { color: var(--muted); }
+.res { font-weight: 700; font-size: 0.78rem; padding: 2px 8px; border-radius: 6px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.res.w { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.res.l { background: color-mix(in srgb, var(--down) 14%, transparent); color: var(--down); }
+.res.t { background: var(--raised); color: var(--muted); }
+.list { display: grid; gap: 6px; }
+.mu { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr); gap: 8px; align-items: center; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font-size: 0.86rem; }
+.mu.mine { border-color: var(--accent); }
+.mu .tm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.mu .tm:last-child { text-align: right; }
+.mu .pts { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--muted); }
+.mu .won { color: var(--ink); font-weight: 700; }
+.mu .vs { color: var(--muted); font-size: 0.72rem; }
+.heat td.c { text-align: center; min-width: 2.6rem; }
+.heat td.c b { font-weight: 700; }
+.bar2 { display: inline-block; height: 6px; border-radius: 3px; background: var(--accent); vertical-align: middle; }
+.chips2 { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips2 span { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; font-size: 0.8rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 8px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.fact .k { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.fact .v { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 1.05rem; }
+.fact .d { font-size: 0.72rem; color: var(--muted); }
+.band.hot { fill: var(--up); opacity: 0.12; }
+.band.cold { fill: var(--down); opacity: 0.1; }
+.mini tr.click { cursor: pointer; }
+.mini tr.click:hover td { background: var(--raised); }
+.mini tr.sep td { background: var(--bg); color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding-block: 4px; }
+.mini tr.line td { border-top: 2px solid var(--accent); }
+.mini td.nm, .mini th.nm { text-align: left; }
+.mini td.nm { max-width: 11rem; overflow: hidden; text-overflow: ellipsis; }
+.kbadge { color: var(--accent); font-weight: 700; font-size: 0.7rem; margin-left: 4px; }
+#board { --grouph: 0px; }
+.lead2 { font-size: 0.9rem; color: var(--muted); max-width: 65ch; margin: 0; }
+
+/* Young players: odds up front, the per-minute arc and the closest past players behind a tap. */
+.odds { font-family: var(--display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.odds.hi { color: var(--accent); }
+.flag.good { background: color-mix(in srgb, var(--up) 15%, transparent); color: var(--up); }
+.pctrow { display: grid; grid-template-columns: 9.5rem 1fr 2.6rem; gap: 10px; align-items: center; font-size: 0.84rem; }
+.pctrow .lbl { color: var(--muted); }
+.pctrow .val { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pctbar { position: relative; height: 10px; background: var(--raised); border-radius: 5px; overflow: hidden; }
+.pctbar span { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 5px; opacity: 0.85; }
+.became { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+.became.star { background: var(--accent); color: var(--accent-ink); }
+.became.starter { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.became.rotation { background: var(--raised); color: var(--ink); }
+.became.fringe, .became.didnt { background: var(--raised); color: var(--muted); }
+.cls { font-size: 0.66rem; font-weight: 700; padding: 1px 6px; border-radius: 5px; background: var(--raised); color: var(--muted); }
+</style>
+
+</head><body><div id="app">
+  <header class="top">
+    <div class="brand">
+      <h1>Young <b>Players</b></h1>
+      <span class="through" id="sub"></span>
+      <select class="pick" id="nav" aria-label="Go to"></select>
+      <button class="iconbtn" id="howbtn" type="button" aria-label="How the odds work">?</button>
+    </div>
+    <div class="row">
+      <input class="search" id="q" type="search" placeholder="Find a player" autocomplete="off" aria-label="Find a player">
+      <div class="seg" id="cls" role="group" aria-label="Season"></div>
+    </div>
+    <div class="chips" id="presets" role="group" aria-label="Sort"></div>
+  </header>
+  <main class="board" id="board"></main>
+</div>
+
+<section class="sheet" id="sheet" hidden aria-label="Details"></section>
+
+<script>
+const DATA_URL = "https://raw.githubusercontent.com/zacksoffer-create/Life-OS/fantasy-data/young.json";
+function start(D) {
+  "use strict";
+  const M = D.meta, TEAM = D.teams;
+  const EPOCH = Date.UTC(2017, 0, 1), DAY = 86400000;
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const isNum = (v) => typeof v === "number" && isFinite(v);
+  const f1 = (v) => (isNum(v) ? v.toFixed(1) : "–");
+  const f2 = (v) => (isNum(v) ? v.toFixed(2) : "–");
+  const pct = (v) => (isNum(v) ? Math.round(v * 100) + "%" : "–");
+  const label = (s) => `${s - 1}-${String(s).slice(2)}`;
+  const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("y10:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem("y10:" + k, JSON.stringify(v)); } catch (e) { /* storage off */ } },
+  };
+  const NAMES = {
+    fpg_y1: "Year-1 production", fpg_y2: "Year-2 production", mpg_y1: "Year-1 minutes", mpg_y2: "Year-2 minutes",
+    fpm_y1: "Year-1 FP per minute", fpm_y2: "Year-2 FP per minute", growth: "Per-minute climb", end_r10: "Latest rolling 10",
+    stlp: "Steal rate", usg: "Usage", age: "Youth",
+  };
+  const CLS = { 1: "Rookie", 2: "2nd year", 3: "3rd year" };
+
+  // ---- players ------------------------------------------------------------------------------------------------------
+  const ROWS = D.players.map((p) => {
+    const last = p.seasons[p.seasons.length - 1] || [];
+    const cur = last[0] === M.current ? last : null;
+    // The season to show: this one once he has 10 games in it, else his latest with 10+
+    const shown = (cur && cur[1] >= 10 ? cur : p.seasons.slice().reverse().find((x) => x[1] >= 10)) || last;
+    const k = p.stage === 2 ? "y2" : "y1";
+    const flags = [];
+    if (p.early) flags.push(["Early sample", ""]);
+    if ((p.pct.growth ?? 0) >= 0.75) flags.push(["Per-minute climbing", "good"]);
+    if ((p.pct["fpm_" + k] ?? 0) >= 0.67 && (p.pct["mpg_" + k] ?? 1) <= 0.5) flags.push(["Efficient on limited minutes", "good"]);
+    if ((p.pct.age ?? 0) >= 0.8) flags.push(["Young for a rookie", "good"]);
+    return { p, key: norm(p.n), cur, last, shown, flags, team: TEAM[p.tm] || "" };
+  });
+
+  const PRESETS = [
+    { id: "odds", label: "Best odds", val: (r) => r.p.p },
+    { id: "star", label: "Star odds", val: (r) => r.p.pStar },
+    { id: "climb", label: "Per-minute climbers", val: (r) => r.p.pct.growth },
+    { id: "young", label: "Youngest", val: (r) => (isNum(r.p.age) ? -r.p.age : null) },
+    { id: "now", label: "FP/G", val: (r) => (r.shown ? r.shown[3] : null) },
+  ];
+  const state = { preset: store.get("preset", "odds"), cls: store.get("cls", 0), q: "" };
+  if (!PRESETS.some((x) => x.id === state.preset)) state.preset = "odds";
+
+  function renderControls() {
+    document.getElementById("cls").innerHTML = [[0, "All"], [1, "Rookies"], [2, "2nd yr"], [3, "3rd yr"]]
+      .map(([k, l]) => `<button type="button" data-cls="${k}" aria-pressed="${state.cls === k}">${l}</button>`).join("");
+    document.getElementById("presets").innerHTML = PRESETS.map((x) => `<button type="button" class="chip" data-preset="${x.id}" aria-pressed="${state.preset === x.id}">${x.label}</button>`).join("");
+  }
+  function renderBoard() {
+    const preset = PRESETS.find((x) => x.id === state.preset);
+    const q = norm(state.q.trim());
+    const rows = ROWS.filter((r) => (!state.cls || r.p.yr === state.cls) && (!q || r.key.includes(q)))
+      .sort((a, b) => { const va = preset.val(a), vb = preset.val(b); if (!isNum(va) || !isNum(vb)) return !isNum(va) - !isNum(vb); return vb - va; });
+    const body = rows.map((r, i) => {
+      const p = r.p, s = r.shown;
+      return `<tr data-player="${p.id}"><td class="lead"><div class="pname"><span class="rank">${i + 1}</span><div class="who"><strong>${esc(p.n)}</strong>`
+        + `<div class="meta"><span class="cls">${CLS[p.yr] || ""}</span><span>${esc(r.team)} · ${esc(p.pos || "–")}${isNum(p.age) ? " · age " + Math.floor(p.age + (M.current - p.debut)) : ""}</span>${r.flags.map(([t, c]) => `<span class="flag ${c}">${t}</span>`).join("")}</div></div></div></td>`
+        + `<td><span class="odds${p.p >= 0.7 ? " hi" : ""}">${pct(p.p)}</span></td><td>${pct(p.pStar)}</td>`
+        + `<td>${f1(s && s[3])}<span class="sub">${s ? label(s[0]).slice(2) : ""}</span></td><td>${f1(s && s[2])}</td><td>${f2(s && s[4])}</td>`
+        + `<td>${isNum(p.pct.growth) ? Math.round(p.pct.growth * 100) : "–"}</td></tr>`;
+    }).join("");
+    document.getElementById("board").innerHTML = `<table class="grid"><thead><tr class="cols"><th class="lead" style="text-align:left">Player</th>`
+      + `<th title="Odds of a top-100 fantasy season in years 3-5">Starter</th><th title="Odds of a top-30 fantasy season in years 3-5">Star</th>`
+      + `<th>FP/G</th><th>Min</th><th>FP/Min</th><th title="Per-minute climb, as a percentile of past players at the same point">Climb</th></tr></thead><tbody>${body}</tbody></table>`
+      + (rows.length ? "" : `<p class="empty">No players match. Clear the search or pick All.</p>`);
+  }
+
+  // ---- charts --------------------------------------------------------------------------------------------------------
+  function niceTicks(lo, hi, count = 3) {
+    if (!(hi > lo)) hi = lo + 1;
+    const raw = (hi - lo) / count, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= raw) || 10 * mag;
+    const t = [];
+    for (let v = Math.floor(lo / step) * step; v <= Math.ceil(hi / step) * step + step / 2; v += step) t.push(+v.toFixed(6));
+    return t;
+  }
+  function chart({ line, marks, width, height, digits, cap }) {
+    const L = 34, R = 44, T = 10, B = 18;
+    const vals = line.filter(isNum);
+    if (!vals.length) return "";
+    const ticks = niceTicks(Math.min(...vals), Math.max(...vals));
+    const lo = ticks[0], hi = ticks[ticks.length - 1], n = line.length, w = width - L - R, h = height - T - B;
+    const x = (i) => L + (n <= 1 ? w / 2 : (i / (n - 1)) * w), y = (v) => T + h - ((v - lo) / (hi - lo || 1)) * h;
+    let s = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(cap)}">`;
+    for (const t of ticks) s += `<line class="gridln" x1="${L}" x2="${L + w}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L - 6}" y="${y(t) + 3}" text-anchor="end">${t}</text>`;
+    for (const [i, lab] of marks) {
+      if (i > 0) s += `<line class="boundary" x1="${x(i) - 0.5}" x2="${x(i) - 0.5}" y1="${T}" y2="${T + h}"/>`;
+      s += `<text class="ax" x="${x(i) + 3}" y="${T + h + 13}">${lab}</text>`;
+    }
+    const pts = [];
+    line.forEach((v, i) => { if (isNum(v)) pts.push([x(i), y(v)]); });
+    if (pts.length) {
+      const d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join("");
+      s += `<path class="area" d="${d}L${pts[pts.length - 1][0].toFixed(1)} ${T + h}L${pts[0][0].toFixed(1)} ${T + h}Z"/><path class="ln" d="${d}"/>`;
+      const [ex, ey] = pts[pts.length - 1];
+      s += `<circle class="endpt" cx="${ex}" cy="${ey}" r="4"/><text class="endlbl" x="${ex + 7}" y="${ey + 4}">${vals[vals.length - 1].toFixed(digits)}</text>`;
+    }
+    return `<div class="chart"><div class="cap">${esc(cap)}</div>${s}</svg></div>`;
+  }
+
+  // ---- player card --------------------------------------------------------------------------------------------------
+  function renderPlayer(id) {
+    const r = ROWS.find((x) => x.p.id === id);
+    if (!r) return "";
+    const p = r.p, s = r.shown;
+    const el = document.getElementById("sheet");
+    const width = Math.max(280, Math.min(760, el.clientWidth || 360) - 32);
+    // Rolling 10 across his career, with the seasons marked
+    const arc = p.arc, fpm = [], fpg = [], mn = [], marks = [];
+    let season = null;
+    arc.forEach((g, i) => {
+      const yr = new Date(EPOCH + g[0] * DAY), sz = yr.getUTCMonth() >= 8 ? yr.getUTCFullYear() + 1 : yr.getUTCFullYear();
+      if (sz !== season) { season = sz; marks.push([i, "Yr " + (sz - p.debut + 1)]); }
+      if (i < 9) { fpm.push(null); fpg.push(null); mn.push(null); return; }
+      let a = 0, m = 0;
+      for (let j = i - 9; j <= i; j++) { a += arc[j][2]; m += arc[j][1]; }
+      fpg.push(a / 10); mn.push(m / 10); fpm.push(m > 0 ? a / m : null);
+    });
+    const basis = p.stage === 2 ? "his first two seasons" : p.early ? `his rookie season so far (${p.f.gp} games: an early read)` : "his first season";
+    const drivers = Object.entries(p.drivers).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 6);
+    const maxD = Math.max(...drivers.map((d) => Math.abs(d[1])), 0.5);
+    const driverRows = drivers.map(([k, v]) => `<div class="drv"><span class="lbl">${NAMES[k] || k}</span><div class="track"><div class="bar ${v >= 0 ? "pos" : "neg"}" style="width:${Math.min(50, (Math.abs(v) / maxD) * 50)}%"></div></div><span class="val ${v >= 0 ? "up" : "down"}">${v >= 0 ? "+" : "−"}</span></div>`).join("");
+    const pctRows = Object.entries(p.pct).filter(([k]) => NAMES[k]).map(([k, v]) => `<div class="pctrow"><span class="lbl">${NAMES[k]}</span><div class="pctbar"><span style="width:${Math.round(v * 100)}%"></span></div><span class="val">${Math.round(v * 100)}</span></div>`).join("");
+    const cls = (l) => ({ Star: "star", Starter: "starter", Rotation: "rotation", Fringe: "fringe" }[l] || "didnt");
+    const comps = p.comps.map(([n, d, age, rank, fpgBest, lab]) => `<tr><td class="nm">${esc(n)}</td><td>${label(d)}</td><td>${isNum(age) ? age.toFixed(1) : "–"}</td><td><span class="became ${cls(lab)}">${lab}</span></td><td>${isNum(rank) ? "#" + rank : "–"}</td><td>${f1(fpgBest)}</td></tr>`).join("");
+    const seasons = p.seasons.map((x) => `<tr${x[0] === M.current ? ' class="cur"' : ""}><td>${label(x[0])}</td><td>${x[1]}</td><td>${f1(x[2])}</td><td class="hl">${f1(x[3])}</td><td class="hl">${f2(x[4])}</td><td>${f1(x[5])}</td><td>${f1(x[6])}</td><td>${isNum(x[7]) ? "#" + x[7] : "–"}</td></tr>`).join("");
+    const became = p.comps.filter((c) => c[5] === "Star" || c[5] === "Starter").length;
+    return `<div class="sheet-bar"><button type="button" class="back" data-close>← Back</button><span class="title">${esc(p.n)}</span></div>
+      <div class="sheet-body">
+        <div class="hero"><h2>${esc(p.n)}</h2><div class="meta"><span class="cls">${CLS[p.yr]}</span><span>${esc(r.team)} · ${esc(p.pos || "–")} · debuted ${label(p.debut)} at ${f1(p.age)}</span>${r.flags.map(([t, c]) => `<span class="flag ${c}">${t}</span>`).join("")}</div>
+          <p class="say">Odds from ${basis}, against every rookie class since 2002-03.</p></div>
+        <div class="tiles">
+          <div class="tile key"><div class="k">Starter odds</div><div class="v">${pct(p.p)}</div><div class="d">a top-100 season, years 3-5</div></div>
+          <div class="tile key"><div class="k">Star odds</div><div class="v">${pct(p.pStar)}</div><div class="d">a top-30 season, years 3-5</div></div>
+          <div class="tile"><div class="k">${s ? label(s[0]) : ""} FP/G</div><div class="v">${f1(s && s[3])}</div><div class="d">${s ? s[1] + " games · " + f1(s[2]) + " min" : ""}</div></div>
+          <div class="tile"><div class="k">FP per minute</div><div class="v">${f2(s && s[4])}</div><div class="d">${s ? "usage " + f1(s[5]) + "%" : ""}</div></div>
+        </div>
+        ${arc.length >= 10 ? `<div class="charts">
+          ${chart({ line: fpm, marks, width, height: 140, digits: 2, cap: "Rolling 10 FP per minute, his whole career" })}
+          ${chart({ line: fpg, marks, width, height: 110, digits: 1, cap: "Rolling 10 FP/G" })}
+          ${chart({ line: mn, marks, width, height: 110, digits: 1, cap: "Rolling 10 minutes" })}
+        </div>` : ""}
+        <div><h3>Closest past players <small>${became} of 5 became fantasy starters</small></h3><div class="scroll"><table class="mini"><thead><tr><th class="nm">Player</th><th>Rookie year</th><th>Age</th><th>Became</th><th>Best rank</th><th>Best FP/G</th></tr></thead><tbody>${comps}</tbody></table></div>
+          <p class="say">The past players whose ${p.stage === 2 ? "first two seasons" : "first season"} looked most like his (production, minutes, per minute, climb, usage, steals and age), and the best season each had in years 3 to 5.</p></div>
+        <div><h3>What's moving his odds <small>most to least</small></h3><div class="panel drivers">${driverRows}</div></div>
+        <div><h3>Against past players at the same point <small>percentile, 100 = best</small></h3><div class="panel drivers">${pctRows}</div></div>
+        <div><h3>Season by season</h3><div class="scroll"><table class="mini"><thead><tr><th>Season</th><th>GP</th><th>Min</th><th>FP/G</th><th>FP/Min</th><th>Usg%</th><th>TS%</th><th>Rank</th></tr></thead><tbody>${seasons}</tbody></table></div></div>
+      </div>`;
+  }
+
+  function renderHow() {
+    const bands = (st, k) => st[k].bands.map(([lo, hi, n, rate]) => `<tr><td>${Math.round(lo * 100)}–${Math.round(hi * 100)}%</td><td>${n}</td><td class="hl">${pct(rate)}</td></tr>`).join("");
+    const S1 = M.stages[1] || M.stages["1"], S2 = M.stages[2] || M.stages["2"];
+    const block = (name, st) => `<div><h3>${name} <small>${st.starter.n} past players, rookie classes ${label(st.classes[0])} to ${label(st.classes[1])}</small></h3>
+      <div class="scroll"><table class="mini"><thead><tr><th>Starter odds given</th><th>Players</th><th>Became starters</th></tr></thead><tbody>${bands(st, "starter")}</tbody></table></div></div>`;
+    return `<div class="sheet-bar"><button type="button" class="back" data-close>← Back</button><span class="title">How the odds work</span></div>
+      <div class="sheet-body how">
+        <div><h3>The odds</h3><p><b>Starter</b>: a top-${M.starter} fantasy season (a starter in a 10-team league) in years 3 to 5. <b>Star</b>: a top-${M.star} season. Seasons are ranked by FP/G among players with 40+ games, with the league's scoring, so different eras compare fairly.</p></div>
+        <div><h3>What predicts a career</h3><ul>
+          <li>His <b>year-2 production</b> carries most of it. Rolling 10 doesn't replace the average.</li>
+          <li>On top of it: a rolling-10 <b>FP per minute that keeps climbing</b>, being <b>efficient on limited minutes</b> (the talent is ahead of the role), the <b>year 1 to year 2 jump</b>, and <b>youth</b>.</li>
+          <li>No help beyond the average: his best 10-game stretch, finishing a season hot, consistency, or big-minute stretches.</li>
+        </ul></div>
+        <div><h3>Track record</h3><p>Checked out of sample: each rookie class was scored by a model that never saw it. When the odds said 90%+, this is how often it happened.</p></div>
+        ${block("From two seasons", S2)}
+        ${block("From one season", S1)}
+        <div><h3>Notes</h3><ul>
+          <li>Rookies with only part of a season get the one-season odds and an "Early sample" tag; read them loosely.</li>
+          <li>Draft position isn't in it. Age is (age on February 1 of his rookie season).</li>
+          <li>"Climb" is how much his rolling-10 FP per minute has risen since his first 10 games, as a percentile of past players at the same point.</li>
+        </ul></div>
+      </div>`;
+  }
+
+  // ---- shell ---------------------------------------------------------------------------------------------------------
+  function route() {
+    const h = location.hash.slice(1), el = document.getElementById("sheet");
+    const m = /^p-(\d+)$/.exec(h);
+    if (m || h === "how") { el.hidden = false; el.innerHTML = m ? renderPlayer(+m[1]) : renderHow(); el.scrollTop = 0; }
+    else el.hidden = true;
+  }
+  const close = () => { location.hash = ""; route(); };
+  document.getElementById("sub").textContent = `${ROWS.length} in their first three seasons, ${M.currentLabel}`;
+  const nav = document.getElementById("nav");
+  nav.innerHTML = [["", "Pages"], ["../", "This season"], ["../history/", "League history"]].map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
+  nav.addEventListener("change", (e) => { if (e.target.value) location.href = e.target.value; });
+  document.getElementById("howbtn").addEventListener("click", () => { location.hash = "how"; });
+  document.getElementById("q").addEventListener("input", (e) => { state.q = e.target.value; renderBoard(); });
+  document.querySelector(".top").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.cls !== undefined) state.cls = +b.dataset.cls;
+    else if (b.dataset.preset) state.preset = b.dataset.preset;
+    else return;
+    store.set("cls", state.cls); store.set("preset", state.preset);
+    renderControls(); renderBoard(); document.getElementById("board").scrollTop = 0;
+  });
+  document.getElementById("board").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-player]"); if (tr) location.hash = "p-" + tr.dataset.player; });
+  document.getElementById("sheet").addEventListener("click", (e) => { if (e.target.closest("[data-close]")) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && location.hash) close(); });
+  window.addEventListener("hashchange", route);
+  renderControls();
+  renderBoard();
+  route();
+}
+
+(function load() {
+  const board = document.getElementById("board");
+  board.innerHTML = `<p class="empty">Loading young players…</p>`;
+  const fail = () => {
+    board.innerHTML = `<div class="empty"><p>Couldn't load the young players. Check your connection, then try again.</p><button type="button" class="back" id="retry">Try again</button></div>`;
+    document.getElementById("retry").addEventListener("click", load);
+  };
+  fetch(DATA_URL, { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(start, fail);
+})();
+</script>
+</body></html>

@@ -50,8 +50,7 @@ button { font: inherit; color: inherit; }
 .brand h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.75rem; letter-spacing: 0.01em; line-height: 1; }
 .brand h1 b { color: var(--accent); font-weight: 700; }
 .through { color: var(--muted); font-size: 0.8rem; flex: 1; min-width: 0; }
-.seasonlink { flex: none; align-self: center; color: var(--muted); font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
-.seasonlink:hover { color: var(--accent); }
+.navsel, #nav { height: 30px; font-size: 0.78rem; align-self: center; max-width: 8.5rem; }
 .iconbtn {
   flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
   font-weight: 700; cursor: pointer; align-self: center;
@@ -462,7 +461,7 @@ function start(D) {
 
   document.getElementById("sub").textContent = `${SEASONS.length} seasons, ${SEASONS[0].label} to ${SEASONS[SEASONS.length - 1].label}`;
   const sel = document.getElementById("season");
-  sel.innerHTML = [["", "Go to a season"]].concat(SEASONS.slice().reverse().map((s) => ["../" + s.label + "/", s.label]), [["../", "This season (live)"]])
+  sel.innerHTML = [["", "Go to a season"]].concat(SEASONS.slice().reverse().map((s) => ["../" + s.label + "/", s.label]), [["../young/", "Young players"], ["../", "This season (live)"]])
     .map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
   sel.addEventListener("change", (e) => { if (e.target.value) location.href = e.target.value; });
   document.querySelector(".top").addEventListener("click", (e) => { const b = e.target.closest("[data-tab]"); if (b) location.hash = b.dataset.tab; });

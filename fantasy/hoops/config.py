@@ -19,6 +19,8 @@ SCORING = {
 
 # Seasons are named by the year they end (ESPN's convention): 2018 is 2017-18.
 FIRST_SEASON = 2018
+# The young-player model learns from every rookie class since 2002-03, so it reads box scores from 2001-02 on
+YOUNG_FIRST_SEASON = 2002
 
 # Rolling windows, in games played. A game he sat out is skipped, not counted as a zero, and a window reaches back into
 # last season when this one is too young to fill it.
@@ -43,6 +45,7 @@ KEEPER_LAST_SEASON_WEIGHT = 0.5
 # Where the GitHub Pages copy of the page (docs/fantasy/) reads its numbers. The "Rolling 10 data" workflow rewrites this
 # file every morning on the fantasy-data branch, a branch that only ever holds the latest copy.
 DATA_URL = "https://raw.githubusercontent.com/zacksoffer-create/Life-OS/fantasy-data/data.json"
+YOUNG_URL = "https://raw.githubusercontent.com/zacksoffer-create/Life-OS/fantasy-data/young.json"
 
 # Where the pages live on GitHub Pages; finished seasons are at <PAGES_URL><2025-26>/ (build_season.py)
 PAGES_URL = "https://zacksoffer-create.github.io/Life-OS/fantasy/"

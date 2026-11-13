@@ -173,3 +173,22 @@ def parse(raw: dict, my_team: str | int | None = None) -> dict | None:
             "scoring": [(STAT_NAMES.get(sid, f"stat {sid}"), pts) for sid, pts in items], "scoring_items": items,
             "keepers": draft.get("keeperCount"), "mode": "predraft" if predraft else "season",
             "draft_date": draft.get("date"), "roster_season": (season - 1) if (predraft and season) else season}
+
+
+BIRTH_SOURCES = [
+    "https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/athletes/{id}",
+    "https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba/athletes/{id}",
+]
+
+
+def birthdate(pid: int) -> str | None:
+    """A player's birthdate (YYYY-MM-DD) from ESPN's athlete pages, or None."""
+    for url in BIRTH_SOURCES:
+        try:
+            d = _get(url.format(id=pid))
+        except Exception:  # noqa: BLE001
+            continue
+        dob = d.get("dateOfBirth") or (d.get("athlete") or {}).get("dateOfBirth")
+        if dob:
+            return dob[:10]
+    return None
