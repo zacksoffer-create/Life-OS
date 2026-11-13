@@ -6,6 +6,32 @@ The output is one phone page.
 
 **On your phone:** https://zacksoffer-create.github.io/Life-OS/fantasy/ (Safari, then Share > Add to Home Screen).
 
+## Finished seasons
+
+**2025-26:** https://zacksoffer-create.github.io/Life-OS/fantasy/2025-26/. A finished season is its own page and never
+needs refreshing. It has four tabs:
+
+- **Players:** every player's whole season. The board has Total FP, FP/G, FP per minute, best 10-game stretch, floor
+  and ceiling games, how much his games swing, and games missed. A player's card adds his rolling-10 arc with the hot
+  and cold stretches marked, month by month, week by week, and which fantasy teams had him and how many of his points
+  they started or benched.
+- **Weeks:** the league's 19 matchup weeks (16 regular season, then playoff rounds). Each week's card has every
+  matchup, the top players, points left on benches, and how many games each NBA team played.
+- **League:** standings with all-play records and luck, every team's score every week, and the playoffs. A team's
+  card has its week-by-week results and everyone who played for it: how they got him, when he left, and the points he
+  scored while started or benched.
+- **Draft:** every pick against where that player finished ("vs slot"), each team's draft, and the keepers view: each
+  final roster ranked by full-season FP/G, with the keeper line.
+
+How it's made, once per season:
+1. **Import the league from ESPN:** Actions tab > Rolling 10 data > Run workflow, with `import_season` set to `2026`.
+   This saves `fantasy/seasons/2026/espn/` (settings, standings, matchups, the draft, and every team's lineup every day)
+   and commits it.
+2. **Build the page:** run `python3 fantasy/build_season.py 2026` and commit `docs/fantasy/2025-26/`.
+
+The build rebuilds every team's daily score from the lineups and the box scores and checks it against ESPN's. For
+2025-26 they match on 1,592 of 1,600 team-days; the other 8 are off by a point or so from ESPN stat corrections.
+
 ## How it stays current
 
 The **Rolling 10 data** workflow (`.github/workflows/fantasy-data.yml`) runs every morning at 6:37 Eastern and again at
@@ -41,7 +67,11 @@ same for the claude.ai Artifact.
 | `hoops/espn.py` | Reads the ESPN fantasy league (rosters, free agents and waivers, injury tags, % owned) and NBA rosters (ages). |
 | `hoops/model.py` | Regular-season filter, fantasy points, advanced-stat pieces, windows, seasons. |
 | `hoops/page.py` | Packs what the page needs into JSON and writes the page. |
-| `web/template.html` | The page itself (layout, board, player card, charts). |
+| `web/template.html` | The live page (layout, board, player card, charts). |
+| `web/season.html` | A finished season's page. Both pages share `web/base.css`. |
+| `hoops/season.py`, `build_season.py` | A finished season: player arcs, weeks, the league replayed, the draft review. |
+| `tools/import_season.py` | The one-time ESPN import of a finished season, into `seasons/<season>/espn/` (committed). |
+| `tools/espn_probe.py` | Prints the shape of ESPN's answers, for debugging the league read. |
 | `../docs/fantasy/` | The GitHub Pages copy of the page, built from the template (committed). |
 | `../.github/workflows/fantasy-data.yml` | The twice-daily refresh. |
 | `data/raw/` | Downloads (not committed). |

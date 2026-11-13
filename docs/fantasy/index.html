@@ -3,8 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
-<style>
-/* Layout: a scorer's table. One dense, sortable stat sheet under a fixed header; tap a player and his card slides over it. */
+<style>/* Layout: a scorer's table. One dense, sortable stat sheet under a fixed header; tap a player and his card slides over it. */
 :root {
   --bg: #F2F4F8;
   --surface: #FFFFFF;
@@ -51,6 +50,8 @@ button { font: inherit; color: inherit; }
 .brand h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.75rem; letter-spacing: 0.01em; line-height: 1; }
 .brand h1 b { color: var(--accent); font-weight: 700; }
 .through { color: var(--muted); font-size: 0.8rem; flex: 1; min-width: 0; }
+.seasonlink { flex: none; align-self: center; color: var(--muted); font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.seasonlink:hover { color: var(--accent); }
 .iconbtn {
   flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
   font-weight: 700; cursor: pointer; align-self: center;
@@ -203,6 +204,7 @@ h3 small { font-family: var(--body); font-size: 0.75rem; color: var(--muted); fo
     <div class="brand">
       <h1>Rolling <b>10</b></h1>
       <span class="through" id="through"></span>
+      <a class="seasonlink" id="seasonlink" hidden></a>
       <button class="iconbtn" id="howbtn" type="button" aria-label="How the numbers work">?</button>
     </div>
     <p class="note" id="leaguenote" hidden></p>
@@ -652,6 +654,13 @@ function start(DATA) {
     note.hidden = false;
   }
   document.getElementById("howbtn").addEventListener("click", () => { location.hash = "how"; });
+  if (M.seasonPages && M.seasonPages.length) {
+    const a = document.getElementById("seasonlink");
+    a.href = (M.pagesUrl || "") + M.seasonPages[0] + "/";
+    a.textContent = M.seasonPages[0] + " →";
+    a.title = "The full " + M.seasonPages[0] + " season";
+    a.hidden = false;
+  }
   document.getElementById("q").addEventListener("input", (e) => { state.q = e.target.value; state.limit = 100; renderBoard(); });
   for (const id of ["roster", "pos"]) {
     document.getElementById(id).addEventListener("change", (e) => {

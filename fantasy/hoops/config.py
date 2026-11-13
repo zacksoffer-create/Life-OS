@@ -43,3 +43,6 @@ KEEPER_LAST_SEASON_WEIGHT = 0.5
 # Where the GitHub Pages copy of the page (docs/fantasy/) reads its numbers. The "Rolling 10 data" workflow rewrites this
 # file every morning on the fantasy-data branch, a branch that only ever holds the latest copy.
 DATA_URL = "https://raw.githubusercontent.com/zacksoffer-create/Life-OS/fantasy-data/data.json"
+
+# Where the pages live on GitHub Pages; finished seasons are at <PAGES_URL><2025-26>/ (build_season.py)
+PAGES_URL = "https://zacksoffer-create.github.io/Life-OS/fantasy/"

@@ -11,6 +11,7 @@ import pandas as pd
 from . import config, model
 
 EPOCH = pd.Timestamp("2017-01-01")  # the page counts days from here
+SEASON_PAGES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "docs", "fantasy")
 FIELDS = ["gp", "fpg", "mpg", "fpm", "ppg", "rpg", "apg", "spg", "bpg", "tpg", "ts", "efg", "usg", "astp", "rebp",
           "orebp", "drebp", "tovp", "stlp", "blkp"]
 SEASON_FIELDS = ["gp", "mpg", "fpg", "fpm", "ppg", "rpg", "apg", "spg", "bpg", "tpg", "ts", "efg", "usg", "astp",
@@ -146,6 +147,10 @@ def build_payload(df: pd.DataFrame, sched: pd.DataFrame, season: int, league: di
             "logFields": LOG_FIELDS,
             "windows": WINDOW_KEYS,
             "league": league_meta,
+            # Finished seasons that have their own page (docs/fantasy/<label>/), newest first
+            "seasonPages": sorted((d for d in os.listdir(SEASON_PAGES) if os.path.exists(os.path.join(SEASON_PAGES, d, "index.html"))),
+                                  reverse=True) if os.path.isdir(SEASON_PAGES) else [],
+            "pagesUrl": config.PAGES_URL,
         },
         "teams": teams,
         "players": players,
@@ -173,6 +178,17 @@ def _document(page: str) -> str:
     return HEAD + page[:cut] + "</head><body>" + page[cut:] + "</body></html>"
 
 
+BASE_CSS_MARK = "/*__BASE_CSS__*/"
+
+
+def read_template(path: str) -> str:
+    """A page template with the shared styles (web/base.css) filled in."""
+    with open(path, encoding="utf-8") as f:
+        template = f.read()
+    with open(os.path.join(os.path.dirname(path), "base.css"), encoding="utf-8") as f:
+        return template.replace(BASE_CSS_MARK, f.read())
+
+
 def render(payload: dict, template_path: str, out_dir: str, pages_dir: str | None = None,
            data_url: str | None = None) -> list[str]:
     """Write every form of the page.
@@ -182,8 +198,7 @@ def render(payload: dict, template_path: str, out_dir: str, pages_dir: str | Non
     out_dir/data.json       the numbers alone, which the workflow publishes on the fantasy-data branch
     pages_dir/index.html    the GitHub Pages copy: no numbers inside, it fetches data_url when it opens
     """
-    with open(template_path, encoding="utf-8") as f:
-        template = f.read()
+    template = read_template(template_path)
     for mark in (DATA_MARK, URL_MARK):
         if mark not in template:
             raise ValueError(f"{template_path} has no {mark} placeholder")
